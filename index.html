@@ -283,7 +283,7 @@ em{font-style:italic}
   border-radius:1.5rem;padding:32px 24px;display:flex;flex-direction:column;
   align-items:center;text-align:center;gap:4px;
 }
-.avatar-wrap{position:relative;width:158px;height:158px;display:grid;place-items:center;margin-bottom:8px}
+.avatar-wrap{position:relative;width:172px;height:172px;display:grid;place-items:center;margin-bottom:8px}
 .avatar-aura{
   position:absolute;inset:8px;border-radius:50%;
   background:var(--aura);opacity:.20;filter:blur(22px);
@@ -292,7 +292,7 @@ em{font-style:italic}
   position:absolute;inset:0;border-radius:50%;
   border:1px solid var(--aura);opacity:.35;
 }
-.avatar{width:132px;height:132px;position:relative;animation:bob 5.5s ease-in-out infinite}
+.avatar{width:148px;height:146px;position:relative;animation:bob 5.5s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @media (prefers-reduced-motion:reduce){ .avatar{animation:none} }
 .person .who{font-size:1.15rem;font-weight:600;color:#fff}
@@ -948,19 +948,19 @@ function faceOf(score){
     <path d="M75 62 q3 5 0 7 q-3 -2 0 -7z" fill="#7fd4ff"/>
     <path d="M50 77 Q60 68 70 77" style="${S}"/>`;
 }
-/* ทรงผมตามเพศ */
+/* ทรงผมตามเพศ — f ผมยาวสยายลงมาถึงไหล่ m ผมสั้นมีแสกข้าง n ทรงบ๊อบ */
 function hairOf(g, hair){
   if(g === 'f') return {
-    back:`<ellipse cx="60" cy="66" rx="41" ry="43" fill="${hair}"/>`,
-    front:`<path d="M27 52 Q31 20 60 20 Q89 20 93 52 Q84 33 60 33 Q36 33 27 52 Z" fill="${hair}"/>`
+    back:`<path d="M18 64 Q18 16 60 16 Q102 16 102 64 L102 110 Q95 88 89 70 L31 70 Q25 88 18 110 Z" fill="${hair}"/>`,
+    front:`<path d="M25 58 Q26 20 60 20 Q94 20 95 58 Q87 36 60 36 Q33 36 25 58 Z" fill="${hair}"/>`
   };
   if(g === 'm') return {
     back:'',
-    front:`<path d="M28 53 Q29 22 60 22 Q91 22 92 53 Q86 37 60 37 Q34 37 28 53 Z" fill="${hair}"/>`
+    front:`<path d="M25 56 Q25 19 60 19 Q95 19 95 56 Q92 39 79 33 Q67 44 51 39 Q35 36 28 46 Q26 50 25 56 Z" fill="${hair}"/>`
   };
   return {
-    back:`<path d="M24 62 Q22 22 60 22 Q98 22 96 62 L96 72 Q90 56 86 52 L34 52 Q30 56 24 72 Z" fill="${hair}"/>`,
-    front:`<path d="M28 52 Q31 24 60 24 Q89 24 92 52 Q83 36 60 36 Q37 36 28 52 Z" fill="${hair}"/>`
+    back:`<path d="M20 62 Q20 17 60 17 Q100 17 100 62 L100 86 Q93 73 89 64 L31 64 Q27 73 20 86 Z" fill="${hair}"/>`,
+    front:`<path d="M25 58 Q26 20 60 20 Q94 20 95 58 Q87 36 60 36 Q33 36 25 58 Z" fill="${hair}"/>`
   };
 }
 /* สัญลักษณ์ลอยข้างหัวตามสถานะความรู้สึก */
@@ -977,9 +977,9 @@ function auraMark(mood){
 function avatarSVG(name, score, mood){
   const cfg = personCfg(name);
   const h = hairOf(cfg.g, cfg.hair);
-  return `<svg class="avatar" viewBox="0 0 120 120" role="img" aria-label="ตัวการ์ตูนของ ${attr(name)}">
+  return `<svg class="avatar" viewBox="0 0 120 118" role="img" aria-label="ตัวการ์ตูนของ ${attr(name)}">
     ${h.back}
-    <circle cx="60" cy="57" r="32" fill="${cfg.skin}"/>
+    <circle cx="60" cy="58" r="34" fill="${cfg.skin}"/>
     ${h.front}
     ${faceOf(score)}
     ${auraMark(mood)}
