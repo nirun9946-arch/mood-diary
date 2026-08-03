@@ -275,6 +275,59 @@ em{font-style:italic}
 .band-btn:active{transform:scale(.95)}
 
 /* ============================================================
+   SECTION 4 — หน้ารวมตัวการ์ตูน
+   ============================================================ */
+.people{background:#000;padding:16px 24px 24px;overflow:hidden;position:relative}
+.people-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.person{
+  border-radius:1.5rem;padding:32px 24px;display:flex;flex-direction:column;
+  align-items:center;text-align:center;gap:4px;
+}
+.avatar-wrap{position:relative;width:158px;height:158px;display:grid;place-items:center;margin-bottom:8px}
+.avatar-aura{
+  position:absolute;inset:8px;border-radius:50%;
+  background:var(--aura);opacity:.20;filter:blur(22px);
+}
+.avatar-ring{
+  position:absolute;inset:0;border-radius:50%;
+  border:1px solid var(--aura);opacity:.35;
+}
+.avatar{width:132px;height:132px;position:relative;animation:bob 5.5s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@media (prefers-reduced-motion:reduce){ .avatar{animation:none} }
+.person .who{font-size:1.15rem;font-weight:600;color:#fff}
+.person .avg{
+  font-family:var(--serif);font-size:3.2rem;line-height:1.1;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;
+}
+.person .avg small{font-family:var(--sans);font-size:.8rem;color:var(--txt-40)}
+.person .mood-chip{
+  font-size:.72rem;padding:5px 14px;border-radius:9999px;font-weight:600;
+  background:rgba(255,255,255,.05);margin-top:6px;
+}
+.person .meta{font-size:.72rem;color:var(--txt-40);margin-top:10px;line-height:1.7}
+.person .bubble{
+  font-family:var(--serif);font-style:italic;font-size:.95rem;color:var(--txt-60);
+  margin-top:14px;padding-top:14px;border-top:1px solid var(--line-soft);width:100%;line-height:1.6;
+}
+
+.together{border-radius:1.5rem;padding:28px 24px;margin-top:20px}
+.together .top{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 18px;margin-bottom:20px}
+.together .top .k{color:var(--txt-40);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase}
+.together .top .big{font-family:var(--serif);font-size:2.4rem;line-height:1;font-variant-numeric:tabular-nums}
+.together .top .verdict{font-size:.9rem;color:var(--txt-60);flex:1;min-width:200px}
+.cmp{display:flex;flex-direction:column;gap:14px}
+.cmp .row{display:grid;grid-template-columns:64px 1fr 44px;align-items:center;gap:14px;font-size:.8rem}
+.cmp .row .nm{color:var(--txt-60);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cmp .row .track{height:6px;border-radius:9999px;background:rgba(255,255,255,.07);overflow:hidden}
+.cmp .row .fill{height:100%;border-radius:9999px;transition:width .9s cubic-bezier(.16,1,.3,1)}
+.cmp .row .v{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.gap-note{
+  margin-top:18px;padding-top:16px;border-top:1px solid var(--line-soft);
+  font-size:.8rem;color:var(--txt-60);line-height:1.75;
+}
+
+/* ============================================================
    DASHBOARD
    ============================================================ */
 .board{background:#000;padding:0 24px 120px;position:relative;overflow:hidden}
@@ -513,6 +566,7 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
           <span>Mood Diary</span>
         </div>
         <div class="nav-links">
+          <a href="#people">อารมณ์ทุกคน</a>
           <a href="#board">ภาพรวม</a>
           <a href="#write">เขียนบันทึก</a>
           <a href="#timeline-sec">ไทม์ไลน์</a>
@@ -588,6 +642,18 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
         <button class="band-btn liquid-glass lg-hover" id="bandWrite">เริ่มเขียนวันนี้</button>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ============================ PEOPLE ============================ -->
+<section class="people" id="people">
+  <div class="shell">
+    <div class="head-row reveal rv-sm" style="padding-top:96px">
+      <h2>อารมณ์ <em>ของทุกคน</em></h2>
+      <div class="k">สีหน้าเปลี่ยนตามคะแนนจริง</div>
+    </div>
+    <div class="people-grid reveal" id="peopleGrid"></div>
+    <div id="together"></div>
   </div>
 </section>
 
@@ -718,6 +784,13 @@ const DOW = ['อา','จ','อ','พ','พฤ','ศ','ส'];
 const KEY = 'moodDiary.v1';
 const LINE_COLORS = ['var(--p1)','var(--p2)','var(--p3)','var(--p4)','var(--p5)'];
 
+/* หน้าตาตัวการ์ตูนของแต่ละคน — g: f=หญิง m=ชาย n=ทรงกลาง (ใช้กับชื่อที่ไม่ได้ระบุไว้) */
+const PEOPLE = {
+  'ฝน':  {g:'f', hair:'#3d2b42', skin:'#f7cfb1'},
+  'เป็ด':{g:'m', hair:'#2a2334', skin:'#eebf95'},
+};
+const personCfg = n => PEOPLE[n] || {g:'n', hair:'#332f45', skin:'#ecc5a4'};
+
 /* ============ ข้อมูลตั้งต้น (จาก Google Sheet) ============ */
 const SEED = [
   {id:'s1', date:'2026-08-01', name:'ฝน', mood:'confused',  score:2, event:'ฝนไปปาร์ตี้ที่บ้านพี่ตั้ม', say:'คิดถึง', emoji:'🥺'},
@@ -839,6 +912,142 @@ function moveTip(ev){
   if(x + r.width > innerWidth - 8) x = ev.clientX - r.width - p;
   if(y + r.height > innerHeight - 8) y = ev.clientY - r.height - p;
   tip.style.left = x+'px'; tip.style.top = y+'px';
+}
+
+/* ============ ตัวการ์ตูน ============ */
+/* สีหน้า 5 ระดับตามคะแนนเฉลี่ย 0-10 */
+function faceOf(score){
+  const S = 'stroke:#3a2a30;stroke-width:3.2;stroke-linecap:round;fill:none';
+  if(score >= 8) return `
+    <path d="M41 55 Q48 47 55 55" style="${S}"/>
+    <path d="M65 55 Q72 47 79 55" style="${S}"/>
+    <path d="M48 67 Q60 79 72 67" style="${S}"/>
+    <ellipse cx="38" cy="65" rx="6" ry="4" fill="#ff8fb1" opacity=".55"/>
+    <ellipse cx="82" cy="65" rx="6" ry="4" fill="#ff8fb1" opacity=".55"/>`;
+  if(score >= 6) return `
+    <circle cx="48" cy="55" r="3.4" fill="#3a2a30"/>
+    <circle cx="72" cy="55" r="3.4" fill="#3a2a30"/>
+    <path d="M50 68 Q60 76 70 68" style="${S}"/>
+    <ellipse cx="38" cy="64" rx="5" ry="3.4" fill="#ff8fb1" opacity=".38"/>
+    <ellipse cx="82" cy="64" rx="5" ry="3.4" fill="#ff8fb1" opacity=".38"/>`;
+  if(score >= 4) return `
+    <circle cx="48" cy="55" r="3.2" fill="#3a2a30"/>
+    <circle cx="72" cy="55" r="3.2" fill="#3a2a30"/>
+    <path d="M51 71 L69 71" style="${S}"/>`;
+  if(score >= 2) return `
+    <path d="M42 48 Q48 45 54 48" style="${S};stroke-width:2.6"/>
+    <path d="M66 48 Q72 45 78 48" style="${S};stroke-width:2.6"/>
+    <circle cx="48" cy="57" r="3.2" fill="#3a2a30"/>
+    <circle cx="72" cy="57" r="3.2" fill="#3a2a30"/>
+    <path d="M51 75 Q60 68 69 75" style="${S}"/>`;
+  return `
+    <path d="M42 47 Q48 43 54 48" style="${S};stroke-width:2.6"/>
+    <path d="M66 48 Q72 43 78 47" style="${S};stroke-width:2.6"/>
+    <circle cx="48" cy="58" r="3.2" fill="#3a2a30"/>
+    <circle cx="72" cy="58" r="3.2" fill="#3a2a30"/>
+    <path d="M75 62 q3 5 0 7 q-3 -2 0 -7z" fill="#7fd4ff"/>
+    <path d="M50 77 Q60 68 70 77" style="${S}"/>`;
+}
+/* ทรงผมตามเพศ */
+function hairOf(g, hair){
+  if(g === 'f') return {
+    back:`<ellipse cx="60" cy="66" rx="41" ry="43" fill="${hair}"/>`,
+    front:`<path d="M27 52 Q31 20 60 20 Q89 20 93 52 Q84 33 60 33 Q36 33 27 52 Z" fill="${hair}"/>`
+  };
+  if(g === 'm') return {
+    back:'',
+    front:`<path d="M28 53 Q29 22 60 22 Q91 22 92 53 Q86 37 60 37 Q34 37 28 53 Z" fill="${hair}"/>`
+  };
+  return {
+    back:`<path d="M24 62 Q22 22 60 22 Q98 22 96 62 L96 72 Q90 56 86 52 L34 52 Q30 56 24 72 Z" fill="${hair}"/>`,
+    front:`<path d="M28 52 Q31 24 60 24 Q89 24 92 52 Q83 36 60 36 Q37 36 28 52 Z" fill="${hair}"/>`
+  };
+}
+/* สัญลักษณ์ลอยข้างหัวตามสถานะความรู้สึก */
+function auraMark(mood){
+  if(mood === 'inlove' || mood === 'crush') return `
+    <path d="M96 34 q4-5 8 0 q4 5-8 12 q-12-7-8-12 q4-5 8 0z" fill="var(--m-crush)" opacity=".85"/>`;
+  if(mood === 'hurt') return `
+    <path d="M96 34 q4-5 8 0 q4 5-8 12 q-12-7-8-12 q4-5 8 0z" fill="var(--m-hurt)" opacity=".8"/>
+    <path d="M100 30 L97 40 L103 44 L99 52" stroke="#000" stroke-width="2.4" fill="none"/>`;
+  if(mood === 'confused' || mood === 'undefined') return `
+    <text x="97" y="46" style="font-family:var(--serif);fill:var(--m-confused);font-size:26px" opacity=".85">?</text>`;
+  return '';
+}
+function avatarSVG(name, score, mood){
+  const cfg = personCfg(name);
+  const h = hairOf(cfg.g, cfg.hair);
+  return `<svg class="avatar" viewBox="0 0 120 120" role="img" aria-label="ตัวการ์ตูนของ ${attr(name)}">
+    ${h.back}
+    <circle cx="60" cy="57" r="32" fill="${cfg.skin}"/>
+    ${h.front}
+    ${faceOf(score)}
+    ${auraMark(mood)}
+  </svg>`;
+}
+
+/* ============ หน้ารวมตัวการ์ตูน ============ */
+function renderPeople(){
+  const grid = $('#peopleGrid'), tog = $('#together');
+  const all = names();
+  if(!all.length){ grid.innerHTML = ''; tog.innerHTML = ''; return; }
+
+  const stat = all.map(n=>{
+    const es = data.filter(e=>e.name===n).sort((a,b)=>a.date.localeCompare(b.date));
+    const avg = es.reduce((s,e)=>s+e.score,0)/es.length;
+    const last = es[es.length-1];
+    const cnt = {}; es.forEach(e=> cnt[e.mood]=(cnt[e.mood]||0)+1);
+    const top = M(Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0][0]);
+    const said = [...es].reverse().find(e=>e.say && e.say.trim());
+    return {n, es, avg, last, top, said};
+  });
+
+  grid.innerHTML = stat.map(p=>`
+    <div class="person liquid-glass" style="--aura:${scoreColor(p.avg)}">
+      <div class="avatar-wrap">
+        <div class="avatar-aura"></div>
+        <div class="avatar-ring"></div>
+        ${avatarSVG(p.n, p.avg, p.top.k)}
+      </div>
+      <div class="who">${esc(p.n)}</div>
+      <div class="avg" style="color:${scoreColor(p.avg)}">${p.avg.toFixed(1)}<small> / 10</small></div>
+      <div class="mood-chip" style="color:${p.top.c}">${p.top.em} ${p.top.en}</div>
+      <div class="meta">${p.es.length} บันทึก · ล่าสุด ${fmtDate(p.last.date)}<br>${esc(p.top.th)}</div>
+      ${p.said ? `<div class="bubble">“${esc(p.said.say)}”</div>` : ''}
+    </div>`).join('');
+
+  if(stat.length < 2){ tog.innerHTML = ''; return; }
+
+  const overall = data.reduce((s,e)=>s+e.score,0)/data.length;
+  const sorted = [...stat].sort((a,b)=>b.avg-a.avg);
+  const gap = sorted[0].avg - sorted[sorted.length-1].avg;
+  const verdict = overall>=7 ? 'โดยรวมเป็นช่วงที่ดีของทุกคน'
+                : overall>=5 ? 'โดยรวมอยู่ในเกณฑ์กลาง ๆ'
+                : overall>=3 ? 'โดยรวมยังหนักใจกันอยู่'
+                             : 'โดยรวมเป็นช่วงที่ทุกคนต้องดูแลใจตัวเอง';
+  const gapNote = gap < 1
+    ? `ทั้งสองคนรู้สึกใกล้เคียงกันมาก (ต่างกันแค่ ${gap.toFixed(1)} คะแนน) — กำลังอยู่ในจังหวะเดียวกัน`
+    : gap < 3
+    ? `<b>${esc(sorted[0].n)}</b> รู้สึกดีกว่า <b>${esc(sorted[sorted.length-1].n)}</b> อยู่ ${gap.toFixed(1)} คะแนน — ต่างกันพอสมควรแต่ยังไปด้วยกันได้`
+    : `<b>${esc(sorted[0].n)}</b> รู้สึกดีกว่า <b>${esc(sorted[sorted.length-1].n)}</b> ถึง ${gap.toFixed(1)} คะแนน — ระยะห่างค่อนข้างมาก อาจถึงเวลาคุยกันตรง ๆ`;
+
+  tog.innerHTML = `
+    <div class="together liquid-glass reveal">
+      <div class="top">
+        <span class="k">ค่าเฉลี่ยรวม</span>
+        <span class="big" style="color:${scoreColor(overall)}">${overall.toFixed(1)}</span>
+        <span class="verdict">${verdict} จากทั้งหมด ${data.length} บันทึกของ ${stat.length} คน</span>
+      </div>
+      <div class="cmp">
+        ${sorted.map(p=>`
+          <div class="row">
+            <span class="nm">${esc(p.n)}</span>
+            <span class="track"><span class="fill" style="width:${p.avg*10}%;background:${scoreColor(p.avg)}"></span></span>
+            <span class="v" style="color:${scoreColor(p.avg)}">${p.avg.toFixed(1)}</span>
+          </div>`).join('')}
+      </div>
+      <div class="gap-note">${gapNote}</div>
+    </div>`;
 }
 
 /* ============ TABS ============ */
@@ -1293,6 +1502,7 @@ $('#quickIn').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDef
 
 /* ============ RENDER ALL ============ */
 function renderAll(){
+  renderPeople();
   renderTabs();
   $('#nameList').innerHTML = names().map(n=>`<option value="${attr(n)}">`).join('');
   renderStats(); renderLine(); renderGauge();
