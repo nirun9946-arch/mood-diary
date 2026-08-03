@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="บันทึกเหตุการณ์ ความรู้สึก และคะแนนความสุขรายวัน พร้อมอินโฟกราฟิกสภาพจิตใจ">
+<!-- หน้านี้เป็นไดอารี่ส่วนตัว จึงสั่งไม่ให้ Google เก็บเข้าระบบค้นหา — ลบบรรทัดล่างนี้ถ้าอยากให้ค้นเจอ -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#f7f6fc" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f1020" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%92%97%3C%2Ftext%3E%3C%2Fsvg%3E">
+<style>*{-webkit-text-size-adjust:100%}</style>
+</head>
+<body>
+<title>ไดอารี่ความรู้สึก — Mood Diary</title>
+<style>
+:root{
+  /* ---- ground (light) ---- */
+  --bg:#f7f6fc;
+  --glow1:rgba(255,111,174,.16);
+  --glow2:rgba(155,123,255,.16);
+  --glow3:rgba(79,211,255,.12);
+  --card:rgba(255,255,255,.80);
+  --card-b:rgba(40,30,80,.12);
+  --soft:rgba(255,255,255,.66);
+  --hover:rgba(255,255,255,1);
+  --grid:rgba(40,30,80,.11);
+  --txt:#1e2038;
+  --txt-dim:#5b5f80;
+  --txt-faint:#8b8fae;
+  --input-bg:#ffffff;
+  --dot-fill:#ffffff;
+  --tip-bg:#ffffff;
+  --shadow:0 14px 40px rgba(40,30,80,.10);
+  /* ---- accents ---- */
+  --pink:#e0468c;
+  --violet:#7551e6;
+  --cyan:#0a93c9;
+  --mint:#0f9d6d;
+  --amber:#c98700;
+  --red:#dc4545;
+  /* ---- happiness scale ---- */
+  --sc-1:#dc4545; --sc-2:#dd7a2e; --sc-3:#c98700; --sc-4:#0a93c9; --sc-5:#0f9d6d;
+  /* ---- mood hues ---- */
+  --m-acquaintance:#6f74a0;
+  --m-friendly:#0a93c9;
+  --m-crush:#e0468c;
+  --m-confused:#c98700;
+  --m-attached:#0f9d6d;
+  --m-inlove:#7551e6;
+  --m-hurt:#dc4545;
+  --m-undefined:#8b8fae;
+  /* ---- person lines ---- */
+  --p1:#e0468c; --p2:#0a93c9; --p3:#0f9d6d; --p4:#c98700; --p5:#7551e6;
+  --r:20px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0f1020;
+    --glow1:rgba(255,111,174,.20);
+    --glow2:rgba(155,123,255,.22);
+    --glow3:rgba(79,211,255,.13);
+    --card:rgba(255,255,255,.055);
+    --card-b:rgba(255,255,255,.10);
+    --soft:rgba(255,255,255,.045);
+    --hover:rgba(255,255,255,.13);
+    --grid:rgba(255,255,255,.08);
+    --txt:#eef0ff;
+    --txt-dim:#a4a8c9;
+    --txt-faint:#6f7396;
+    --input-bg:rgba(0,0,0,.28);
+    --dot-fill:#12142a;
+    --tip-bg:#20223d;
+    --shadow:0 18px 50px rgba(0,0,0,.42);
+    --pink:#ff6fae; --violet:#9b7bff; --cyan:#4fd3ff; --mint:#48e3ac; --amber:#ffc65c; --red:#ff6b6b;
+    --sc-1:#ff6b6b; --sc-2:#ff9d6b; --sc-3:#ffc65c; --sc-4:#4fd3ff; --sc-5:#48e3ac;
+    --m-acquaintance:#8a90b8;
+    --m-friendly:#4fd3ff;
+    --m-crush:#ff6fae;
+    --m-confused:#ffc65c;
+    --m-attached:#48e3ac;
+    --m-inlove:#9b7bff;
+    --m-hurt:#ff6b6b;
+    --m-undefined:#7c81a6;
+    --p1:#ff6fae; --p2:#4fd3ff; --p3:#48e3ac; --p4:#ffc65c; --p5:#9b7bff;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f7f6fc;
+  --glow1:rgba(255,111,174,.16); --glow2:rgba(155,123,255,.16); --glow3:rgba(79,211,255,.12);
+  --card:rgba(255,255,255,.80); --card-b:rgba(40,30,80,.12); --soft:rgba(255,255,255,.66);
+  --hover:rgba(255,255,255,1); --grid:rgba(40,30,80,.11);
+  --txt:#1e2038; --txt-dim:#5b5f80; --txt-faint:#8b8fae;
+  --input-bg:#ffffff; --dot-fill:#ffffff; --tip-bg:#ffffff;
+  --shadow:0 14px 40px rgba(40,30,80,.10);
+  --pink:#e0468c; --violet:#7551e6; --cyan:#0a93c9; --mint:#0f9d6d; --amber:#c98700; --red:#dc4545;
+  --sc-1:#dc4545; --sc-2:#dd7a2e; --sc-3:#c98700; --sc-4:#0a93c9; --sc-5:#0f9d6d;
+  --m-acquaintance:#6f74a0; --m-friendly:#0a93c9; --m-crush:#e0468c; --m-confused:#c98700;
+  --m-attached:#0f9d6d; --m-inlove:#7551e6; --m-hurt:#dc4545; --m-undefined:#8b8fae;
+  --p1:#e0468c; --p2:#0a93c9; --p3:#0f9d6d; --p4:#c98700; --p5:#7551e6;
+}
+:root[data-theme="dark"]{
+  --bg:#0f1020;
+  --glow1:rgba(255,111,174,.20); --glow2:rgba(155,123,255,.22); --glow3:rgba(79,211,255,.13);
+  --card:rgba(255,255,255,.055); --card-b:rgba(255,255,255,.10); --soft:rgba(255,255,255,.045);
+  --hover:rgba(255,255,255,.13); --grid:rgba(255,255,255,.08);
+  --txt:#eef0ff; --txt-dim:#a4a8c9; --txt-faint:#6f7396;
+  --input-bg:rgba(0,0,0,.28); --dot-fill:#12142a; --tip-bg:#20223d;
+  --shadow:0 18px 50px rgba(0,0,0,.42);
+  --pink:#ff6fae; --violet:#9b7bff; --cyan:#4fd3ff; --mint:#48e3ac; --amber:#ffc65c; --red:#ff6b6b;
+  --sc-1:#ff6b6b; --sc-2:#ff9d6b; --sc-3:#ffc65c; --sc-4:#4fd3ff; --sc-5:#48e3ac;
+  --m-acquaintance:#8a90b8; --m-friendly:#4fd3ff; --m-crush:#ff6fae; --m-confused:#ffc65c;
+  --m-attached:#48e3ac; --m-inlove:#9b7bff; --m-hurt:#ff6b6b; --m-undefined:#7c81a6;
+  --p1:#ff6fae; --p2:#4fd3ff; --p3:#48e3ac; --p4:#ffc65c; --p5:#9b7bff;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"Sarabun","Noto Sans Thai","Segoe UI",system-ui,-apple-system,sans-serif;
+  background:
+    radial-gradient(1100px 620px at 12% -8%, var(--glow1), transparent 60%),
+    radial-gradient(900px 560px at 92% 4%, var(--glow2), transparent 62%),
+    radial-gradient(800px 500px at 50% 105%, var(--glow3), transparent 60%),
+    var(--bg);
+  background-attachment:fixed;
+  color:var(--txt);
+  min-height:100vh;
+  padding:26px 16px 70px;
+  line-height:1.6;
+}
+.wrap{max-width:1180px;margin:0 auto}
+:focus-visible{outline:2px solid var(--violet);outline-offset:2px;border-radius:8px}
+
+/* ---------- header ---------- */
+header.top{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;margin-bottom:24px}
+.brand{display:flex;align-items:center;gap:14px}
+.brand .orb{
+  width:56px;height:56px;border-radius:18px;flex:none;
+  background:linear-gradient(140deg,var(--pink),var(--violet) 55%,var(--cyan));
+  display:grid;place-items:center;font-size:27px;
+  box-shadow:0 10px 30px color-mix(in srgb,var(--pink) 34%,transparent);
+}
+h1{font-size:26px;font-weight:800;letter-spacing:-.4px;line-height:1.25;text-wrap:balance}
+.sub{color:var(--txt-dim);font-size:13.5px}
+.tools{display:flex;gap:9px;flex-wrap:wrap}
+.btn{
+  background:var(--card);border:1px solid var(--card-b);color:var(--txt);
+  padding:9px 15px;border-radius:12px;font-size:13.5px;cursor:pointer;
+  font-family:inherit;transition:.18s;display:inline-flex;align-items:center;gap:7px;
+}
+.btn:hover{background:var(--hover);transform:translateY(-1px)}
+.btn.primary{
+  background:linear-gradient(135deg,var(--pink),var(--violet));border:none;font-weight:700;color:#fff;
+  box-shadow:0 8px 22px color-mix(in srgb,var(--violet) 36%,transparent);
+}
+.btn.ghost{background:transparent}
+
+/* ---------- people tabs ---------- */
+.tabs{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:22px}
+.tab{
+  padding:9px 18px;border-radius:999px;cursor:pointer;font-size:14px;
+  background:var(--card);border:1px solid var(--card-b);transition:.18s;
+  display:flex;align-items:center;gap:8px;
+}
+.tab:hover{background:var(--hover)}
+.tab.on{background:linear-gradient(135deg,var(--pink),var(--violet));border-color:transparent;font-weight:700;color:#fff}
+.tab .n{opacity:.7;font-size:12px}
+
+/* ---------- cards ---------- */
+.card{
+  background:var(--card);border:1px solid var(--card-b);border-radius:var(--r);
+  padding:20px;backdrop-filter:blur(14px);box-shadow:var(--shadow);
+}
+.card h3{
+  font-size:14px;font-weight:700;color:var(--txt-dim);letter-spacing:.4px;
+  margin-bottom:16px;display:flex;align-items:center;gap:8px;text-transform:uppercase;
+}
+.card h3 .dot{width:8px;height:8px;border-radius:50%;background:var(--pink)}
+
+/* ---------- stats ---------- */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:18px}
+.stat{
+  background:var(--card);border:1px solid var(--card-b);border-radius:18px;padding:17px 18px;
+  position:relative;overflow:hidden;backdrop-filter:blur(14px);
+}
+.stat::after{
+  content:"";position:absolute;inset:auto -20px -34px auto;width:110px;height:110px;border-radius:50%;
+  background:var(--c,var(--pink));opacity:.16;filter:blur(12px);
+}
+.stat .lbl{font-size:12px;color:var(--txt-dim);margin-bottom:6px}
+.stat .val{font-size:30px;font-weight:800;letter-spacing:-1px;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat .val small{font-size:14px;font-weight:600;color:var(--txt-faint)}
+.stat .foot{font-size:11.5px;color:var(--txt-faint);margin-top:5px}
+.up{color:var(--mint)}.down{color:var(--red)}.flat{color:var(--txt-faint)}
+
+/* ---------- grid ---------- */
+.grid{display:grid;gap:16px;margin-bottom:18px}
+.g-2{grid-template-columns:1.55fr 1fr}
+.g-2b{grid-template-columns:1fr 1.2fr}
+@media(max-width:900px){.g-2,.g-2b{grid-template-columns:1fr}}
+
+/* ---------- gauge ---------- */
+.gauge-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
+.gauge-val{font-size:44px;font-weight:800;letter-spacing:-1.5px;margin-top:-42px;font-variant-numeric:tabular-nums}
+.gauge-state{font-size:16px;font-weight:700;margin-top:2px}
+.gauge-note{font-size:12.5px;color:var(--txt-dim);text-align:center;margin-top:8px;max-width:270px}
+
+/* ---------- chart ---------- */
+svg{display:block;width:100%;overflow:visible}
+.chart-empty{color:var(--txt-faint);font-size:13.5px;text-align:center;padding:38px 10px;border:1px dashed var(--card-b);border-radius:14px}
+.chart-scroll{overflow-x:auto}
+
+/* ---------- legend ---------- */
+.legend{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.lg{display:flex;align-items:center;gap:10px;font-size:13px}
+.lg .sw{width:11px;height:11px;border-radius:4px;flex:none}
+.lg .nm{flex:1;color:var(--txt-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lg .pc{font-weight:700;font-variant-numeric:tabular-nums}
+
+/* ---------- level bars ---------- */
+.lvbar{margin-bottom:13px}
+.lvbar .r1{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px;gap:10px}
+.lvbar .r1 .t{color:var(--txt-dim)}
+.lvbar .track{height:9px;border-radius:99px;background:var(--grid);overflow:hidden}
+.lvbar .fill{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.4,1.2,.4,1)}
+
+/* ---------- heatmap ---------- */
+.hm-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px;flex-wrap:wrap}
+.hm{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.hm .dow{text-align:center;font-size:11px;color:var(--txt-faint);padding-bottom:2px}
+.hm .cell{
+  aspect-ratio:1;border-radius:9px;background:var(--soft);border:1px solid var(--card-b);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:11px;color:var(--txt-faint);position:relative;transition:.15s;
+  font-variant-numeric:tabular-nums;
+}
+.hm .cell.has{color:#0e1020;font-weight:800;border-color:transparent}
+.hm .cell.has:hover{transform:scale(1.09);z-index:3}
+.hm .cell .em{font-size:12px;line-height:1}
+.hm .cell.blank{background:transparent;border:none}
+.hm-scale{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--txt-faint);margin-top:12px;flex-wrap:wrap}
+.hm-scale i{width:16px;height:10px;border-radius:3px;display:inline-block}
+
+/* ---------- insights ---------- */
+.ins{display:flex;flex-direction:column;gap:11px}
+.ins .i{
+  display:flex;gap:11px;align-items:flex-start;font-size:13.5px;
+  background:var(--soft);border:1px solid var(--card-b);border-radius:14px;padding:12px 14px;
+}
+.ins .i .ic{font-size:17px;line-height:1.35;flex:none}
+.ins .i b{color:var(--txt)}
+
+/* ---------- form ---------- */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.fld{display:flex;flex-direction:column;gap:6px}
+.fld.full{grid-column:1/-1}
+label{font-size:12.5px;color:var(--txt-dim);font-weight:600}
+input,select,textarea{
+  background:var(--input-bg);border:1px solid var(--card-b);border-radius:12px;
+  padding:11px 13px;color:var(--txt);font-family:inherit;font-size:14px;width:100%;transition:.16s;
+}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--violet);box-shadow:0 0 0 3px color-mix(in srgb,var(--violet) 20%,transparent)}
+textarea{resize:vertical;min-height:74px}
+select option{background:var(--input-bg);color:var(--txt)}
+input[type=range]{padding:0;background:transparent;border:none;accent-color:var(--pink);height:26px}
+.score-row{display:flex;align-items:center;gap:14px}
+.score-badge{min-width:56px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:20px;font-weight:800;flex:none;font-variant-numeric:tabular-nums}
+.emoji-row{display:flex;flex-wrap:wrap;gap:6px}
+.emoji-row button{
+  background:var(--soft);border:1px solid var(--card-b);border-radius:11px;
+  width:40px;height:40px;font-size:19px;cursor:pointer;transition:.15s;color:var(--txt);
+}
+.emoji-row button:hover{background:var(--hover);transform:translateY(-2px)}
+.emoji-row button.on{background:linear-gradient(135deg,var(--pink),var(--violet));border-color:transparent}
+.form-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;align-items:center}
+.hint{font-size:12px;color:var(--txt-faint)}
+
+/* ---------- timeline ---------- */
+.tl{display:flex;flex-direction:column;gap:12px}
+.entry{
+  display:grid;grid-template-columns:74px 1fr auto;gap:16px;align-items:flex-start;
+  background:var(--card);border:1px solid var(--card-b);border-radius:16px;
+  padding:15px 16px;position:relative;overflow:hidden;transition:.18s;
+}
+.entry:hover{background:var(--hover)}
+.entry::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--ec,var(--violet))}
+.entry .date{text-align:center}
+.entry .date .d{font-size:23px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.entry .date .m{font-size:11px;color:var(--txt-faint);margin-top:2px}
+.entry .date .y{font-size:10px;color:var(--txt-faint)}
+.entry .body .l1{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:7px}
+.chip{font-size:11.5px;padding:3px 10px;border-radius:99px;font-weight:700;background:var(--soft);border:1px solid var(--card-b)}
+.chip.name{background:linear-gradient(135deg,color-mix(in srgb,var(--pink) 26%,transparent),color-mix(in srgb,var(--violet) 26%,transparent))}
+.entry .ev{font-size:14.5px;margin-bottom:6px}
+.entry .say{font-size:13px;color:var(--txt-dim);font-style:italic;border-left:2px solid var(--card-b);padding-left:10px}
+.entry .right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.entry .sc{font-size:26px;font-weight:800;line-height:1;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+.entry .sc small{font-size:12px;color:var(--txt-faint);font-weight:600}
+.entry .em{font-size:20px}
+.entry .acts{display:flex;gap:6px}
+.entry .acts button{
+  background:var(--soft);border:1px solid var(--card-b);border-radius:9px;
+  width:30px;height:30px;cursor:pointer;font-size:13px;color:var(--txt-dim);transition:.15s;
+}
+.entry .acts button:hover{background:var(--hover);color:var(--txt)}
+.entry .acts button.del:hover{background:color-mix(in srgb,var(--red) 22%,transparent);border-color:var(--red);color:var(--txt)}
+@media(max-width:640px){
+  .entry{grid-template-columns:56px 1fr}
+  .entry .right{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:space-between}
+}
+
+.sec-title{font-size:18px;font-weight:800;margin:26px 0 14px;display:flex;align-items:center;gap:10px}
+.sec-title .bar{width:4px;height:20px;border-radius:9px;background:linear-gradient(var(--pink),var(--violet))}
+.empty{color:var(--txt-faint);font-size:14px;text-align:center;padding:36px}
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translate(-50%,90px);
+  background:linear-gradient(135deg,var(--pink),var(--violet));color:#fff;font-weight:700;
+  padding:12px 24px;border-radius:14px;box-shadow:0 14px 36px rgba(0,0,0,.35);
+  transition:transform .32s cubic-bezier(.3,1.4,.5,1);z-index:99;font-size:14px;
+}
+.toast.on{transform:translate(-50%,0)}
+.tip{
+  position:fixed;background:var(--tip-bg);color:var(--txt);border:1px solid var(--card-b);border-radius:10px;
+  padding:8px 12px;font-size:12.5px;pointer-events:none;opacity:0;transition:opacity .14s;
+  z-index:98;box-shadow:0 8px 24px rgba(0,0,0,.28);max-width:230px;
+}
+.tip.on{opacity:1}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+}
+</style>
+
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <div class="orb">💗</div>
+      <div>
+        <h1>ไดอารี่ความรู้สึก</h1>
+        <div class="sub">บันทึกเหตุการณ์ ความสุข และสภาพจิตใจในแต่ละวัน</div>
+      </div>
+    </div>
+    <div class="tools">
+      <button class="btn" id="btnJump">✍️ เขียนบันทึก</button>
+      <button class="btn ghost" id="btnExport">⬇️ ส่งออก</button>
+      <button class="btn ghost" id="btnImport">⬆️ นำเข้า</button>
+      <input type="file" id="fileIn" accept="application/json" hidden>
+    </div>
+  </header>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="grid g-2">
+    <div class="card">
+      <h3><span class="dot"></span>กราฟความสุขรายวัน</h3>
+      <div id="lineChart"></div>
+    </div>
+    <div class="card">
+      <h3><span class="dot" style="background:var(--cyan)"></span>สภาพจิตใจตอนนี้</h3>
+      <div id="gauge"></div>
+    </div>
+  </div>
+
+  <div class="grid g-2b">
+    <div class="card">
+      <h3><span class="dot" style="background:var(--violet)"></span>สัดส่วนสถานะความรู้สึก</h3>
+      <div id="donut"></div>
+    </div>
+    <div class="card">
+      <h3><span class="dot" style="background:var(--mint)"></span>ระดับความรู้สึก (Level)</h3>
+      <div id="levels"></div>
+    </div>
+  </div>
+
+  <div class="grid g-2b">
+    <div class="card">
+      <div class="hm-head">
+        <h3 style="margin:0"><span class="dot" style="background:var(--amber)"></span>ปฏิทินความสุข</h3>
+        <select id="monthSel" style="width:auto;padding:7px 11px;font-size:13px" aria-label="เลือกเดือน"></select>
+      </div>
+      <div id="heatmap"></div>
+    </div>
+    <div class="card">
+      <h3><span class="dot" style="background:var(--pink)"></span>สรุปสิ่งที่เห็นจากข้อมูล</h3>
+      <div class="ins" id="insights"></div>
+    </div>
+  </div>
+
+  <div class="sec-title" id="formCard"><span class="bar"></span>เพิ่ม / แก้ไขบันทึก</div>
+  <div class="card">
+    <form id="form">
+      <div class="form-grid">
+        <div class="fld">
+          <label for="fDate">วันที่</label>
+          <input type="date" id="fDate" required>
+        </div>
+        <div class="fld">
+          <label for="fName">ชื่อ</label>
+          <input type="text" id="fName" list="nameList" placeholder="เช่น ฝน" required>
+          <datalist id="nameList"></datalist>
+        </div>
+        <div class="fld">
+          <label for="fMood">สถานะความรู้สึก</label>
+          <select id="fMood"></select>
+        </div>
+        <div class="fld">
+          <label for="fScore">คะแนนความสุข <span id="scoreTxt" class="hint"></span></label>
+          <div class="score-row">
+            <div class="score-badge" id="scoreBadge">5</div>
+            <input type="range" id="fScore" min="0" max="10" step="1" value="5">
+          </div>
+        </div>
+        <div class="fld full">
+          <label for="fEvent">เหตุการณ์สำคัญ / สิ่งที่ได้คุยกัน</label>
+          <textarea id="fEvent" placeholder="วันนี้เกิดอะไรขึ้นบ้าง..."></textarea>
+        </div>
+        <div class="fld full">
+          <label for="fSay">สิ่งที่อยากจะบอก</label>
+          <input type="text" id="fSay" placeholder="ประโยคเดียวที่อยากบอกวันนี้">
+        </div>
+        <div class="fld full">
+          <label>สัญลักษณ์พิเศษ</label>
+          <div class="emoji-row" id="emojiRow"></div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn primary" id="btnSave">💾 บันทึก</button>
+        <button type="button" class="btn ghost" id="btnCancel" hidden>ยกเลิกการแก้ไข</button>
+        <span class="hint">ข้อมูลเก็บไว้ในเบราว์เซอร์ของคุณเอง ไม่ถูกส่งไปที่ไหน</span>
+      </div>
+    </form>
+  </div>
+
+  <div class="sec-title"><span class="bar"></span>ไทม์ไลน์บันทึก <span class="hint" id="tlCount"></span></div>
+  <div class="tl" id="timeline"></div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="tip" id="tip"></div>
+
+<script>
+/* ============ ค่าคงที่ ============ */
+const MOODS = [
+  {k:'acquaintance', lv:1, en:'Acquaintance',            th:'แค่คนรู้จัก ทักทายตามมารยาท',                     c:'var(--m-acquaintance)', em:'🙂'},
+  {k:'friendly',     lv:2, en:'Curious / Friendly',      th:'เริ่มรู้สึกว่าน่าสนใจ คุยด้วยแล้วสบายใจ เป็นมิตร', c:'var(--m-friendly)',     em:'😊'},
+  {k:'crush',        lv:3, en:'Attracted / Crush',       th:'เริ่มมีใจ คิดถึงบ่อย ใจเต้นเวลาคุย',              c:'var(--m-crush)',        em:'😍'},
+  {k:'confused',     lv:4, en:'Confused / Overthinking', th:'สับสน ไม่แน่ใจในความสัมพันธ์ คิดมาก',            c:'var(--m-confused)',     em:'😵‍💫'},
+  {k:'attached',     lv:5, en:'Caring / Attached',       th:'ผูกพัน ห่วงใย อยากดูแล',                        c:'var(--m-attached)',     em:'🤗'},
+  {k:'inlove',       lv:6, en:'In Love',                 th:'รักและมั่นใจในความรู้สึกที่มี',                   c:'var(--m-inlove)',       em:'❤️'},
+  {k:'hurt',         lv:7, en:'Hurt / Healing',          th:'เจ็บ เสียใจ กำลังเยียวยาตัวเอง',                 c:'var(--m-hurt)',         em:'💔'},
+  {k:'undefined',    lv:0, en:'Lv.X — ยังไม่นิยาม',       th:'ยังไม่รู้ว่าตัวเองรู้สึกยังไง',                     c:'var(--m-undefined)',    em:'🌫️'},
+];
+const M = k => MOODS.find(m=>m.k===k) || MOODS[MOODS.length-1];
+const EMOJIS = ['💗','❤️','💔','🥺','😊','😍','😵‍💫','😢','🎉','🌧️','☀️','🌙','🔥','🫶','🌸','⭐'];
+const TH_MON = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const DOW = ['อา','จ','อ','พ','พฤ','ศ','ส'];
+const KEY = 'moodDiary.v1';
+const LINE_COLORS = ['var(--p1)','var(--p2)','var(--p3)','var(--p4)','var(--p5)'];
+
+/* ============ ข้อมูลตั้งต้น (จาก Google Sheet) ============ */
+const SEED = [
+  {id:'s1', date:'2026-08-01', name:'ฝน', mood:'confused',  score:2, event:'ฝนไปปาร์ตี้ที่บ้านพี่ตั้ม', say:'คิดถึง', emoji:'🥺'},
+  {id:'s2', date:'2026-08-02', name:'ฝน', mood:'undefined', score:0, event:'สับสนเพราะเป็ดไม่รับโทรศัพท์เลย', say:'ไม่เข้าใจ', emoji:'💔'},
+  {id:'s3', date:'2026-08-03', name:'ฝน', mood:'confused',  score:5, event:'เป็ดทักข้อความมาถาม ได้คุยรับรู้ความรู้สึกกันมากขึ้น', say:'ขอบคุณที่แชร์ความรู้สึกกัน', emoji:'🫶'},
+  {id:'s4', date:'2026-08-01', name:'เป็ด', mood:'acquaintance', score:5, event:'', say:'', emoji:'🙂'},
+  {id:'s5', date:'2026-08-02', name:'เป็ด', mood:'undefined',    score:4, event:'', say:'', emoji:'🌫️'},
+  {id:'s6', date:'2026-08-03', name:'เป็ด', mood:'undefined',    score:5, event:'', say:'', emoji:'🌫️'},
+];
+
+/* ============ สถานะแอป ============ */
+let data = load();
+let filter = 'ALL';
+let editId = null;
+let pickedEmoji = '💗';
+let monthKey = null;
+
+function load(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(raw){ const d = JSON.parse(raw); if(Array.isArray(d) && d.length) return d; }
+  }catch(e){}
+  return SEED.slice();
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(data)); }catch(e){} }
+
+/* ============ helper ============ */
+const $ = s => document.querySelector(s);
+const scoreColor = s => s>=8 ? 'var(--sc-5)' : s>=6 ? 'var(--sc-4)' : s>=4 ? 'var(--sc-3)' : s>=2 ? 'var(--sc-2)' : 'var(--sc-1)';
+const fmtDate = iso => { const [y,m,d] = iso.split('-').map(Number); return `${d} ${TH_MON[m-1]} ${y+543}`; };
+const rows = () => data.filter(e => filter==='ALL' || e.name===filter)
+  .sort((a,b)=> a.date.localeCompare(b.date) || a.name.localeCompare(b.name));
+const names = () => [...new Set(data.map(e=>e.name))].filter(Boolean);
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const attr = s => String(s).replace(/"/g,'&quot;');
+
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(t._t); t._t = setTimeout(()=>t.classList.remove('on'), 2100);
+}
+
+/* tooltip */
+const tip = $('#tip');
+function bindTip(el, html){
+  el.addEventListener('mouseenter', ev=>{ tip.innerHTML=html; tip.classList.add('on'); moveTip(ev); });
+  el.addEventListener('mousemove', moveTip);
+  el.addEventListener('mouseleave', ()=> tip.classList.remove('on'));
+}
+function moveTip(ev){
+  const p = 14;
+  let x = ev.clientX + p, y = ev.clientY + p;
+  const r = tip.getBoundingClientRect();
+  if(x + r.width > innerWidth - 8) x = ev.clientX - r.width - p;
+  if(y + r.height > innerHeight - 8) y = ev.clientY - r.height - p;
+  tip.style.left = x+'px'; tip.style.top = y+'px';
+}
+
+/* ============ TABS ============ */
+function renderTabs(){
+  const t = $('#tabs');
+  const list = [{k:'ALL',label:'ทั้งหมด',n:data.length}]
+    .concat(names().map(n=>({k:n,label:n,n:data.filter(e=>e.name===n).length})));
+  t.innerHTML = list.map(x=>
+    `<button class="tab ${filter===x.k?'on':''}" data-k="${attr(x.k)}">${esc(x.label)}<span class="n">${x.n}</span></button>`
+  ).join('');
+  t.querySelectorAll('.tab').forEach(el=>el.onclick=()=>{ filter = el.dataset.k; renderAll(); });
+}
+
+/* ============ STATS ============ */
+function renderStats(){
+  const r = rows(), el = $('#stats');
+  if(!r.length){ el.innerHTML=''; return; }
+
+  const avg = r.reduce((s,e)=>s+e.score,0)/r.length;
+  const best = r.reduce((a,b)=> b.score>a.score?b:a);
+  const last3 = r.slice(-3), prev3 = r.slice(-6,-3);
+  const a1 = last3.reduce((s,e)=>s+e.score,0)/(last3.length||1);
+  const a0 = prev3.length ? prev3.reduce((s,e)=>s+e.score,0)/prev3.length : a1;
+  const diff = a1 - a0;
+  const trendCls = diff>0.3?'up':diff<-0.3?'down':'flat';
+  const trendTxt = diff>0.3?`▲ ดีขึ้น ${diff.toFixed(1)}`:diff<-0.3?`▼ ลดลง ${Math.abs(diff).toFixed(1)}`:'● ทรงตัว';
+
+  const cnt = {}; r.forEach(e=> cnt[e.mood] = (cnt[e.mood]||0)+1);
+  const topMood = Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];
+  const tm = M(topMood[0]);
+  const days = new Set(r.map(e=>e.date)).size;
+
+  el.innerHTML = `
+    <div class="stat" style="--c:${scoreColor(avg)}">
+      <div class="lbl">คะแนนความสุขเฉลี่ย</div>
+      <div class="val" style="color:${scoreColor(avg)}">${avg.toFixed(1)}<small> / 10</small></div>
+      <div class="foot ${trendCls}">${trendTxt} จากช่วงก่อนหน้า</div>
+    </div>
+    <div class="stat" style="--c:var(--violet)">
+      <div class="lbl">บันทึกทั้งหมด</div>
+      <div class="val">${r.length}<small> ครั้ง</small></div>
+      <div class="foot">ครอบคลุม ${days} วัน</div>
+    </div>
+    <div class="stat" style="--c:${scoreColor(best.score)}">
+      <div class="lbl">วันที่มีความสุขที่สุด</div>
+      <div class="val" style="font-size:20px">${fmtDate(best.date)}</div>
+      <div class="foot">${best.emoji||''} ${best.score}/10 — ${esc(best.name)}</div>
+    </div>
+    <div class="stat" style="--c:${tm.c}">
+      <div class="lbl">สถานะที่พบบ่อยที่สุด</div>
+      <div class="val" style="font-size:19px;color:${tm.c}">${tm.em} ${tm.en}</div>
+      <div class="foot">${topMood[1]} จาก ${r.length} บันทึก</div>
+    </div>`;
+}
+
+/* ============ LINE CHART ============ */
+function renderLine(){
+  const r = rows(), box = $('#lineChart');
+  if(!r.length){ box.innerHTML = `<div class="chart-empty">ยังไม่มีข้อมูล — ลองเพิ่มบันทึกแรกดูสิ 🌱</div>`; return; }
+
+  const byName = {};
+  r.forEach(e=> (byName[e.name] ||= []).push(e));
+  const dates = [...new Set(r.map(e=>e.date))].sort();
+
+  const W=700, H=260, P={l:34,r:16,t:14,b:30};
+  const iw = W-P.l-P.r, ih = H-P.t-P.b;
+  const X = i => P.l + (dates.length===1 ? iw/2 : iw*i/(dates.length-1));
+  const Y = v => P.t + ih - (v/10)*ih;
+
+  let g = '';
+  for(let v=0; v<=10; v+=2){
+    g += `<line x1="${P.l}" y1="${Y(v)}" x2="${W-P.r}" y2="${Y(v)}" style="stroke:var(--grid)"/>
+          <text x="${P.l-9}" y="${Y(v)+4}" style="fill:var(--txt-faint)" font-size="10" text-anchor="end">${v}</text>`;
+  }
+  dates.forEach((d,i)=>{
+    if(dates.length>10 && i % Math.ceil(dates.length/8)) return;
+    const [,m,dd]=d.split('-');
+    g += `<text x="${X(i)}" y="${H-P.b+18}" style="fill:var(--txt-faint)" font-size="10" text-anchor="middle">${+dd}/${+m}</text>`;
+  });
+
+  let dots = '';
+  Object.keys(byName).forEach((nm, ni)=>{
+    const col = LINE_COLORS[ni % LINE_COLORS.length];
+    const pts = byName[nm].map(e=>({x:X(dates.indexOf(e.date)), y:Y(e.score), e}));
+    if(!pts.length) return;
+    const path = pts.map((p,i)=> (i?'L':'M')+p.x.toFixed(1)+' '+p.y.toFixed(1)).join(' ');
+    if(pts.length>1){
+      g += `<path d="${path} L${pts[pts.length-1].x} ${P.t+ih} L${pts[0].x} ${P.t+ih} Z" fill="url(#grad${ni})" opacity=".28"/>`;
+    }
+    g += `<path d="${path}" fill="none" style="stroke:${col}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>`;
+    pts.forEach(p=>{
+      dots += `<circle class="pt" cx="${p.x}" cy="${p.y}" r="5" style="fill:var(--dot-fill);stroke:${col}" stroke-width="2.6"
+        data-tip="${attr(`<b>${esc(p.e.name)}</b> · ${fmtDate(p.e.date)}<br>คะแนน <b>${p.e.score}/10</b><br>${M(p.e.mood).em} ${M(p.e.mood).en}${p.e.event?'<br>'+esc(p.e.event):''}`)}"/>`;
+    });
+  });
+
+  const defs = Object.keys(byName).map((nm,ni)=>{
+    const col = LINE_COLORS[ni%LINE_COLORS.length];
+    return `<linearGradient id="grad${ni}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" style="stop-color:${col};stop-opacity:.8"/>
+      <stop offset="100%" style="stop-color:${col};stop-opacity:0"/></linearGradient>`;
+  }).join('');
+
+  box.innerHTML = `<div class="chart-scroll"><svg viewBox="0 0 ${W} ${H}" style="min-width:420px"><defs>${defs}</defs>${g}${dots}</svg></div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:12.5px">
+      ${Object.keys(byName).map((n,i)=>`<span style="display:flex;align-items:center;gap:7px">
+        <i style="width:12px;height:3px;border-radius:9px;background:${LINE_COLORS[i%LINE_COLORS.length]};display:inline-block"></i>
+        <span style="color:var(--txt-dim)">${esc(n)}</span></span>`).join('')}
+    </div>`;
+  box.querySelectorAll('.pt').forEach(c=> bindTip(c, c.dataset.tip));
+}
+
+/* ============ GAUGE ============ */
+function renderGauge(){
+  const r = rows(), box = $('#gauge');
+  if(!r.length){ box.innerHTML = `<div class="chart-empty">ยังไม่มีข้อมูล</div>`; return; }
+
+  const recent = r.slice(-5);
+  const v = recent.reduce((s,e)=>s+e.score,0)/recent.length;
+  const state = v>=8 ? {t:'สดใสมาก',    d:'ช่วงนี้ใจดีมาก เก็บความรู้สึกนี้ไว้นาน ๆ',   c:'var(--sc-5)'}
+              : v>=6 ? {t:'ค่อนข้างดี',  d:'โดยรวมโอเค มีเรื่องดี ๆ เข้ามาเรื่อย ๆ',      c:'var(--sc-4)'}
+              : v>=4 ? {t:'กลาง ๆ',     d:'ยังกล้ำกึ่ง มีทั้งวันที่ดีและวันที่ไม่ค่อยดี',   c:'var(--sc-3)'}
+              : v>=2 ? {t:'เหนื่อยใจ',   d:'ช่วงนี้ใจหนัก ลองพักและคุยกับคนที่ไว้ใจดูนะ', c:'var(--sc-2)'}
+                     : {t:'ต้องดูแลใจ', d:'ใจกำลังบอบช้ำมาก ให้เวลาตัวเองได้พักจริง ๆ', c:'var(--sc-1)'};
+
+  const W=280,H=170,cx=140,cy=140,R=104;
+  const pol=(a,rad)=>[cx+rad*Math.cos(a), cy+rad*Math.sin(a)];
+  const arc=(f,t,rad,w,col)=>{
+    const a0=Math.PI+Math.PI*f, a1=Math.PI+Math.PI*t;
+    const [x0,y0]=pol(a0,rad), [x1,y1]=pol(a1,rad);
+    return `<path d="M${x0} ${y0} A${rad} ${rad} 0 0 1 ${x1} ${y1}" fill="none" style="stroke:${col}" stroke-width="${w}" stroke-linecap="round"/>`;
+  };
+  const [nx,ny] = pol(Math.PI + Math.PI*(v/10), R-24);
+
+  box.innerHTML = `
+  <div class="gauge-wrap">
+    <svg viewBox="0 0 ${W} ${H}" style="max-width:290px">
+      ${arc(0,1,R,15,'var(--grid)')}
+      ${arc(0,.2,R,15,'var(--sc-1)')}
+      ${arc(.2,.4,R,15,'var(--sc-2)')}
+      ${arc(.4,.6,R,15,'var(--sc-3)')}
+      ${arc(.6,.8,R,15,'var(--sc-4)')}
+      ${arc(.8,1,R,15,'var(--sc-5)')}
+      <line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" style="stroke:${state.c}" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="${cx}" cy="${cy}" r="9" style="fill:var(--dot-fill);stroke:${state.c}" stroke-width="3.5"/>
+      <text x="26" y="162" style="fill:var(--txt-faint)" font-size="11">0</text>
+      <text x="252" y="162" style="fill:var(--txt-faint)" font-size="11">10</text>
+    </svg>
+    <div class="gauge-val" style="color:${state.c}">${v.toFixed(1)}</div>
+    <div class="gauge-state" style="color:${state.c}">${state.t}</div>
+    <div class="gauge-note">${state.d}<br><span style="color:var(--txt-faint)">คำนวณจาก ${recent.length} บันทึกล่าสุด</span></div>
+  </div>`;
+}
+
+/* ============ DONUT ============ */
+function renderDonut(){
+  const r = rows(), box = $('#donut');
+  if(!r.length){ box.innerHTML = `<div class="chart-empty">ยังไม่มีข้อมูล</div>`; return; }
+
+  const cnt = {}; r.forEach(e=> cnt[e.mood]=(cnt[e.mood]||0)+1);
+  const items = Object.entries(cnt).map(([k,n])=>({m:M(k),n})).sort((a,b)=>b.n-a.n);
+  const total = r.length;
+
+  const S=190, c=S/2, R=72, sw=26;
+  let a0 = -Math.PI/2, segs='';
+  items.forEach(it=>{
+    const a1 = a0 + 2*Math.PI*(it.n/total);
+    const big = (a1-a0) > Math.PI ? 1 : 0;
+    const x0=c+R*Math.cos(a0), y0=c+R*Math.sin(a0);
+    const x1=c+R*Math.cos(a1), y1=c+R*Math.sin(a1);
+    const d = (it.n===total)
+      ? `M${c} ${c-R} A${R} ${R} 0 1 1 ${c-0.01} ${c-R}`
+      : `M${x0} ${y0} A${R} ${R} 0 ${big} 1 ${x1} ${y1}`;
+    segs += `<path class="seg" d="${d}" fill="none" style="stroke:${it.m.c}" stroke-width="${sw}"
+      data-tip="${attr(`${it.m.em} <b>${it.m.en}</b><br>${it.m.th}<br><b>${it.n}</b> ครั้ง (${Math.round(it.n/total*100)}%)`)}"/>`;
+    a0 = a1;
+  });
+
+  box.innerHTML = `
+    <div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">
+      <svg viewBox="0 0 ${S} ${S}" style="width:190px;flex:none">
+        ${segs}
+        <text x="${c}" y="${c-3}" text-anchor="middle" style="fill:var(--txt)" font-size="30" font-weight="800">${total}</text>
+        <text x="${c}" y="${c+16}" text-anchor="middle" style="fill:var(--txt-faint)" font-size="11">บันทึก</text>
+      </svg>
+      <div class="legend" style="flex:1;min-width:190px">
+        ${items.map(it=>`<div class="lg">
+          <i class="sw" style="background:${it.m.c}"></i>
+          <span class="nm" title="${attr(it.m.th)}">${it.m.em} ${it.m.en}</span>
+          <span class="pc" style="color:${it.m.c}">${Math.round(it.n/total*100)}%</span>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  box.querySelectorAll('.seg').forEach(s=> bindTip(s, s.dataset.tip));
+}
+
+/* ============ LEVEL BARS ============ */
+function renderLevels(){
+  const r = rows(), box = $('#levels');
+  if(!r.length){ box.innerHTML = `<div class="chart-empty">ยังไม่มีข้อมูล</div>`; return; }
+  const cnt = {}; r.forEach(e=> cnt[e.mood]=(cnt[e.mood]||0)+1);
+  const max = Math.max(...Object.values(cnt));
+  box.innerHTML = MOODS.map(m=>{
+    const n = cnt[m.k]||0;
+    const w = max ? n/max*100 : 0;
+    return `<div class="lvbar" style="opacity:${n?1:.42}">
+      <div class="r1">
+        <span class="t">${m.em} ${m.lv?('Lv.'+m.lv):'Lv.X'} · ${m.en}</span>
+        <span style="color:${m.c};font-weight:700">${n}</span>
+      </div>
+      <div class="track"><div class="fill" style="width:${w}%;background:linear-gradient(90deg,color-mix(in srgb,${m.c} 62%,transparent),${m.c})"></div></div>
+    </div>`;
+  }).join('');
+}
+
+/* ============ HEATMAP ============ */
+function renderHeatmap(){
+  const r = rows(), sel = $('#monthSel'), box = $('#heatmap');
+  const months = [...new Set(data.map(e=>e.date.slice(0,7)))].sort();
+  if(!months.length){ sel.innerHTML=''; box.innerHTML=`<div class="chart-empty">ยังไม่มีข้อมูล</div>`; return; }
+  if(!months.includes(monthKey)) monthKey = months[months.length-1];
+  sel.innerHTML = months.map(m=>{
+    const [y,mm]=m.split('-');
+    return `<option value="${m}" ${m===monthKey?'selected':''}>${TH_MON[+mm-1]} ${+y+543}</option>`;
+  }).join('');
+  sel.onchange = ()=>{ monthKey = sel.value; renderHeatmap(); };
+
+  const [y,mm] = monthKey.split('-').map(Number);
+  const first = new Date(y, mm-1, 1).getDay();
+  const days = new Date(y, mm, 0).getDate();
+
+  const byDate = {};
+  r.filter(e=>e.date.startsWith(monthKey)).forEach(e=> (byDate[e.date] ||= []).push(e));
+
+  let cells = DOW.map(d=>`<div class="dow">${d}</div>`).join('');
+  for(let i=0;i<first;i++) cells += `<div class="cell blank"></div>`;
+  for(let d=1; d<=days; d++){
+    const iso = `${y}-${String(mm).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const es = byDate[iso];
+    if(!es){ cells += `<div class="cell">${d}</div>`; continue; }
+    const avg = es.reduce((s,e)=>s+e.score,0)/es.length;
+    const tipHtml = es.map(e=>`<b>${esc(e.name)}</b> ${e.score}/10 ${M(e.mood).em}${e.event?'<br>'+esc(e.event):''}`)
+      .join('<hr style="border:none;border-top:1px solid var(--card-b);margin:5px 0">');
+    cells += `<div class="cell has hmc" style="background:${scoreColor(avg)}" data-tip="${attr(`${fmtDate(iso)}<br>${tipHtml}`)}">
+        <span>${d}</span><span class="em">${es[0].emoji||''}</span></div>`;
+  }
+  box.innerHTML = `<div class="hm">${cells}</div>
+    <div class="hm-scale">
+      <span>ต่ำ</span>
+      <i style="background:var(--sc-1)"></i><i style="background:var(--sc-2)"></i><i style="background:var(--sc-3)"></i><i style="background:var(--sc-4)"></i><i style="background:var(--sc-5)"></i>
+      <span>สูง</span>
+      <span style="margin-left:auto">ช่องจาง = ยังไม่ได้บันทึก</span>
+    </div>`;
+  box.querySelectorAll('.hmc').forEach(c=> bindTip(c, c.dataset.tip));
+}
+
+/* ============ INSIGHTS ============ */
+function renderInsights(){
+  const r = rows(), box = $('#insights');
+  if(!r.length){ box.innerHTML=`<div class="chart-empty">เขียนบันทึกสัก 2-3 วัน แล้วระบบจะสรุปให้อัตโนมัติ</div>`; return; }
+  const out = [];
+
+  const avg = r.reduce((s,e)=>s+e.score,0)/r.length;
+  out.push(['📊', `คะแนนความสุขเฉลี่ยอยู่ที่ <b>${avg.toFixed(1)}/10</b> ${avg>=6?'ถือว่าอยู่ในเกณฑ์ดี':avg>=4?'อยู่ในเกณฑ์กลาง ๆ ยังมีเรื่องค้างใจ':'อยู่ในเกณฑ์ที่ควรดูแลใจตัวเองเป็นพิเศษ'}`]);
+
+  if(r.length>=2){
+    const f=r[0], l=r[r.length-1], d=l.score-f.score;
+    out.push([d>0?'📈':d<0?'📉':'➖',
+      d>0 ? `จากบันทึกแรกถึงล่าสุด ความสุข <b class="up">เพิ่มขึ้น ${d} คะแนน</b> (${f.score} → ${l.score})`
+      : d<0 ? `จากบันทึกแรกถึงล่าสุด ความสุข <b class="down">ลดลง ${Math.abs(d)} คะแนน</b> (${f.score} → ${l.score})`
+      : `ความสุขค่อนข้างคงที่ที่ <b>${l.score}/10</b> ตลอดช่วงที่บันทึก`]);
+  }
+
+  const low = r.filter(e=>e.score<=3);
+  if(low.length) out.push(['🌧️', `มี <b>${low.length}</b> วันที่คะแนนต่ำกว่า 4 — วันที่หนักที่สุดคือ <b>${fmtDate(low.reduce((a,b)=>b.score<a.score?b:a).date)}</b>`]);
+
+  const high = r.filter(e=>e.score>=7);
+  if(high.length) out.push(['☀️', `มี <b>${high.length}</b> วันที่รู้สึกดีมาก (7 ขึ้นไป) ลองย้อนดูว่าวันเหล่านั้นทำอะไร แล้วทำซ้ำ`]);
+
+  const cnt={}; r.forEach(e=>cnt[e.mood]=(cnt[e.mood]||0)+1);
+  const top=M(Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0][0]);
+  out.push([top.em, `สถานะที่เกิดบ่อยที่สุดคือ <b>${top.en}</b> — ${top.th}`]);
+
+  if(filter==='ALL' && names().length>1){
+    const per = names().map(n=>{
+      const x = data.filter(e=>e.name===n);
+      return {n, a:x.reduce((s,e)=>s+e.score,0)/x.length};
+    }).sort((a,b)=>b.a-a.a);
+    out.push(['👥', `เทียบกัน: ${per.map(p=>`<b>${esc(p.n)}</b> ${p.a.toFixed(1)}`).join(' · ')} — ${esc(per[0].n)} มีค่าเฉลี่ยความสุขสูงกว่า`]);
+  }
+
+  const noEvent = r.filter(e=>!e.event || !e.event.trim()).length;
+  if(noEvent) out.push(['✍️', `มี <b>${noEvent}</b> บันทึกที่ยังไม่ได้เขียนเหตุการณ์ — เติมให้ครบจะเห็นภาพชัดขึ้น`]);
+
+  box.innerHTML = out.map(([ic,t])=>`<div class="i"><span class="ic">${ic}</span><span>${t}</span></div>`).join('');
+}
+
+/* ============ TIMELINE ============ */
+function renderTimeline(){
+  const r = rows().slice().reverse(), box = $('#timeline');
+  $('#tlCount').textContent = r.length ? `(${r.length} รายการ)` : '';
+  if(!r.length){ box.innerHTML = `<div class="card empty">ยังไม่มีบันทึก — เริ่มเขียนวันแรกกันเลย ✍️</div>`; return; }
+  box.innerHTML = r.map(e=>{
+    const m = M(e.mood);
+    const [y,mm,dd] = e.date.split('-');
+    return `<div class="entry" style="--ec:${m.c}">
+      <div class="date">
+        <div class="d">${+dd}</div><div class="m">${TH_MON[+mm-1]}</div><div class="y">${+y+543}</div>
+      </div>
+      <div class="body">
+        <div class="l1">
+          <span class="chip name">${esc(e.name)}</span>
+          <span class="chip" style="color:${m.c}">${m.em} ${m.lv?'Lv.'+m.lv:'Lv.X'} · ${m.en}</span>
+        </div>
+        ${e.event? `<div class="ev">${esc(e.event)}</div>`:`<div class="ev" style="color:var(--txt-faint)">— ไม่ได้บันทึกเหตุการณ์ —</div>`}
+        ${e.say? `<div class="say">“${esc(e.say)}”</div>`:''}
+      </div>
+      <div class="right">
+        <div class="sc" style="color:${scoreColor(e.score)}">${e.score}<small>/10</small></div>
+        <div class="em">${e.emoji||''}</div>
+        <div class="acts">
+          <button title="แก้ไข" aria-label="แก้ไขบันทึก" data-edit="${attr(e.id)}">✏️</button>
+          <button class="del" title="ลบ" aria-label="ลบบันทึก" data-del="${attr(e.id)}">🗑️</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  box.querySelectorAll('[data-edit]').forEach(b=> b.onclick=()=>startEdit(b.dataset.edit));
+  box.querySelectorAll('[data-del]').forEach(b=> b.onclick=()=>{
+    const e = data.find(x=>x.id===b.dataset.del);
+    if(confirm(`ลบบันทึกของ ${e.name} วันที่ ${fmtDate(e.date)} ?`)){
+      data = data.filter(x=>x.id!==b.dataset.del);
+      save(); renderAll(); toast('ลบบันทึกแล้ว');
+    }
+  });
+}
+
+/* ============ FORM ============ */
+function initForm(){
+  $('#fMood').innerHTML = MOODS.map(m=>
+    `<option value="${m.k}">${m.em} ${m.lv?'Lv.'+m.lv:'Lv.X'} — ${m.en} (${m.th})</option>`).join('');
+  $('#fMood').value = 'friendly';
+  $('#fDate').value = new Date().toISOString().slice(0,10);
+
+  $('#emojiRow').innerHTML = EMOJIS.map(e=>`<button type="button" data-e="${e}" aria-label="เลือก ${e}">${e}</button>`).join('');
+  $('#emojiRow').querySelectorAll('button').forEach(b=> b.onclick=()=>{ pickedEmoji = b.dataset.e; syncEmoji(); });
+  syncEmoji();
+
+  const sc = $('#fScore');
+  const upd = ()=>{
+    const v = +sc.value, b = $('#scoreBadge'), col = scoreColor(v);
+    b.textContent = v;
+    b.style.background = `color-mix(in srgb, ${col} 18%, transparent)`;
+    b.style.color = col;
+    $('#scoreTxt').textContent = v>=8?'— สุขมาก':v>=6?'— ค่อนข้างดี':v>=4?'— กลาง ๆ':v>=2?'— ไม่ค่อยดี':'— แย่มาก';
+  };
+  sc.oninput = upd; upd();
+
+  $('#form').onsubmit = ev=>{
+    ev.preventDefault();
+    const rec = {
+      id: editId || 'e'+Date.now(),
+      date: $('#fDate').value,
+      name: $('#fName').value.trim(),
+      mood: $('#fMood').value,
+      score: +$('#fScore').value,
+      event: $('#fEvent').value.trim(),
+      say: $('#fSay').value.trim(),
+      emoji: pickedEmoji,
+    };
+    if(editId){ data = data.map(x=> x.id===editId ? rec : x); toast('แก้ไขบันทึกแล้ว ✨'); }
+    else { data.push(rec); toast('บันทึกเรียบร้อย 💾'); }
+    save(); resetForm(); renderAll();
+  };
+  $('#btnCancel').onclick = resetForm;
+  $('#btnJump').onclick = ()=> $('#formCard').scrollIntoView({behavior:'smooth'});
+}
+function syncEmoji(){
+  $('#emojiRow').querySelectorAll('button').forEach(b=> b.classList.toggle('on', b.dataset.e===pickedEmoji));
+}
+function startEdit(id){
+  const e = data.find(x=>x.id===id); if(!e) return;
+  editId = id;
+  $('#fDate').value = e.date;
+  $('#fName').value = e.name;
+  $('#fMood').value = e.mood;
+  $('#fScore').value = e.score;
+  $('#fScore').dispatchEvent(new Event('input'));
+  $('#fEvent').value = e.event||'';
+  $('#fSay').value = e.say||'';
+  pickedEmoji = e.emoji||'💗'; syncEmoji();
+  $('#btnSave').innerHTML = '✅ บันทึกการแก้ไข';
+  $('#btnCancel').hidden = false;
+  $('#formCard').scrollIntoView({behavior:'smooth', block:'start'});
+}
+function resetForm(){
+  editId = null;
+  $('#form').reset();
+  $('#fDate').value = new Date().toISOString().slice(0,10);
+  $('#fScore').value = 5; $('#fScore').dispatchEvent(new Event('input'));
+  $('#fMood').value = 'friendly';
+  pickedEmoji = '💗'; syncEmoji();
+  $('#btnSave').innerHTML = '💾 บันทึก';
+  $('#btnCancel').hidden = true;
+}
+
+/* ============ EXPORT / IMPORT ============ */
+$('#btnExport').onclick = ()=>{
+  const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'mood-diary.json';
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('ส่งออกไฟล์แล้ว ⬇️');
+};
+$('#btnImport').onclick = ()=> $('#fileIn').click();
+$('#fileIn').onchange = ev=>{
+  const f = ev.target.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = ()=>{
+    try{
+      const d = JSON.parse(rd.result);
+      if(!Array.isArray(d)) throw new Error('bad');
+      data = d.map(x=>({...x, id: x.id || 'e'+Math.random().toString(36).slice(2)}));
+      save(); filter='ALL'; renderAll(); toast('นำเข้าข้อมูลแล้ว ⬆️');
+    }catch(e){ toast('ไฟล์ไม่ถูกต้อง — ต้องเป็นไฟล์ที่ส่งออกจากหน้านี้'); }
+  };
+  rd.readAsText(f);
+  ev.target.value = '';
+};
+
+/* ============ RENDER ALL ============ */
+function renderAll(){
+  renderTabs();
+  $('#nameList').innerHTML = names().map(n=>`<option value="${attr(n)}">`).join('');
+  renderStats(); renderLine(); renderGauge();
+  renderDonut(); renderLevels(); renderHeatmap();
+  renderInsights(); renderTimeline();
+}
+initForm();
+renderAll();
+</script>
+
+<script>
+(function(){
+  var KEY='moodDiary.theme';
+  var btn=document.createElement('button');
+  btn.className='btn ghost';
+  btn.type='button';
+  btn.setAttribute('aria-label','สลับธีมสว่าง/มืด');
+  function cur(){
+    return document.documentElement.getAttribute('data-theme')
+      || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  }
+  function paint(){ btn.textContent = cur()==='dark' ? '☀️ ธีมสว่าง' : '🌙 ธีมมืด'; }
+  try{ var saved=localStorage.getItem(KEY); if(saved) document.documentElement.setAttribute('data-theme',saved); }catch(e){}
+  btn.onclick=function(){
+    var next = cur()==='dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    try{ localStorage.setItem(KEY,next); }catch(e){}
+    paint();
+  };
+  paint();
+  document.querySelector('.tools').prepend(btn);
+})();
+</script>
+
+</body>
+</html>
