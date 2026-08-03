@@ -575,8 +575,9 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
 <section class="band">
   <div class="shell">
     <div class="band-frame reveal rv-lg">
-      <video muted autoplay loop playsinline preload="auto"
-             src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260402_054547_9875cfc5-155a-4229-8ec8-b7ba7125cbf8.mp4"></video>
+      <!-- โหลดเมื่อเลื่อนมาถึงเท่านั้น ไม่ให้แย่งแบนด์วิดท์กับวิดีโอ hero -->
+      <video id="bandVideo" muted autoplay loop playsinline preload="none"
+             data-src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260402_054547_9875cfc5-155a-4229-8ec8-b7ba7125cbf8.mp4"></video>
       <div class="band-shade"></div>
       <div class="band-overlay">
         <div class="band-card liquid-glass">
@@ -795,6 +796,21 @@ function toast(msg){
     }, 100);
   });
   v.addEventListener('error', ()=>{ v.style.display = 'none'; });
+})();
+
+/* ============ LAZY VIDEO — โหลดตอนเลื่อนมาถึง ============ */
+(function lazyVideo(){
+  const v = $('#bandVideo');
+  if(!v) return;
+  const lazy = new IntersectionObserver(en=>{
+    if(en[0].isIntersecting){
+      v.src = v.dataset.src;
+      v.load();
+      v.play().catch(()=>{});
+      lazy.disconnect();
+    }
+  }, {rootMargin:'300px 0px'});
+  lazy.observe(v);
 })();
 
 /* ============ SCROLL REVEAL ============ */
