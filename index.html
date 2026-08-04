@@ -972,6 +972,39 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
 
 <input type="file" id="fileIn" accept="application/json" hidden>
 
+<!-- ============================ ล็อกอิน ============================ -->
+<div class="sheet" id="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+  <div class="sheet-card liquid-glass" style="max-width:27rem;margin-top:8vh">
+    <div class="sheet-head" style="margin-bottom:4px">
+      <h2 id="gateTitle">ไดอารี่ความรู้สึก</h2>
+    </div>
+    <p class="sheet-sub" style="margin-bottom:22px">
+      ไดอารี่นี้เป็นของส่วนตัว ต้องล็อกอินก่อนจึงจะเห็นบันทึกที่แชร์กัน
+      ล็อกอินครั้งเดียวเครื่องจะจำไว้ให้
+    </p>
+    <div class="fields">
+      <div class="fld">
+        <label for="gateEmail">อีเมล</label>
+        <input type="email" id="gateEmail" autocomplete="username" spellcheck="false" placeholder="you@example.com">
+      </div>
+      <div class="fld">
+        <label for="gatePw">รหัสผ่าน</label>
+        <input type="password" id="gatePw" autocomplete="current-password" placeholder="อย่างน้อย 6 ตัวอักษร">
+      </div>
+      <div class="form-actions" style="margin-top:6px">
+        <button type="button" class="btn solid" id="gateIn">เข้าสู่ระบบ</button>
+        <button type="button" class="btn liquid-glass" id="gateUp">สมัครใหม่</button>
+      </div>
+      <div class="status" id="gateStatus"></div>
+      <div style="margin-top:8px">
+        <button type="button" class="btn liquid-glass" id="gateSkip" style="font-size:.85rem">
+          ใช้แบบไม่ล็อกอิน — เก็บในเครื่องนี้เท่านั้น
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ============================ ตั้งค่า ============================ -->
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
   <div class="sheet-card liquid-glass">
@@ -1006,6 +1039,7 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
           <button type="button" class="btn solid" id="syncTest">เชื่อมต่อและซิงก์</button>
           <button type="button" class="btn liquid-glass" id="syncHelp">วิธีตั้งค่า</button>
           <button type="button" class="btn liquid-glass" id="syncOff">เลิกใช้</button>
+          <button type="button" class="btn liquid-glass" id="signOutBtn" hidden>ออกจากระบบ</button>
         </div>
         <div class="status" id="syncStatus"></div>
         <div id="syncGuide" hidden></div>
@@ -1582,11 +1616,12 @@ function renderAnalysis(){
         <div class="ai-head">
           <span class="ai-title">✨ AI อ่านบันทึกทั้งหมดแล้ววิเคราะห์</span>
           <span style="display:flex;gap:8px;flex-wrap:wrap">
-            ${hasAI() ? `<button class="btn solid" id="aiRun">วิเคราะห์ด้วย AI</button>
-                         <button class="btn liquid-glass" id="aiEdit">เปลี่ยนคีย์</button>` : ''}
+            ${hasAI() ? `<button class="btn solid" id="aiRun">วิเคราะห์ด้วย AI</button>` : ''}
+            ${hasAI() && !hasProxy() ? `<button class="btn liquid-glass" id="aiEdit">เปลี่ยนคีย์</button>` : ''}
           </span>
         </div>
 
+        ${hasProxy() ? '' : `
         <div class="ai-setup" id="aiSetup" ${hasAI() ? 'hidden' : ''}>
           <div class="lead">
             วางคีย์ของคุณเองตรงนี้ครั้งเดียว ระบบจะจำไว้ในเบราว์เซอร์เครื่องนี้ถาวร
@@ -1620,10 +1655,11 @@ function renderAnalysis(){
             อย่าส่งคีย์ให้ใครทางแชตหรือข้อความ ถ้าเคยส่งไปแล้วให้ถือว่ารั่ว ควรลบทิ้งแล้วสร้างใหม่ ·
             คีย์เก็บอยู่ในเครื่องนี้เท่านั้น คนอื่นที่เปิดลิงก์เดียวกันจะไม่เห็น
           </div>
-        </div>
+        </div>`}
 
         <div class="ai-out" id="aiOut">${
           CFG.aiResult ? esc(CFG.aiResult.text)
+          : hasProxy() ? 'กดปุ่มวิเคราะห์ได้เลย — เว็บนี้เตรียม AI ไว้ให้แล้ว ไม่ต้องมีคีย์ของตัวเอง'
           : hasAI() ? 'กดปุ่มวิเคราะห์เพื่อให้โมเดลภาษาอ่านบันทึกทั้งหมดแล้วสรุปให้'
           : 'ตัวเลขด้านบนคำนวณด้วยกฎที่เขียนไว้ ใส่คีย์ด้านบนเพื่อให้โมเดลภาษาอ่านบันทึกจริงแล้วตีความให้ละเอียดกว่านี้'
         }</div>
@@ -1646,9 +1682,9 @@ function renderAnalysis(){
 function wireAiSetup(){
   const run = $('#aiRun'), edit = $('#aiEdit'), panel = $('#aiSetup');
   if(run) run.onclick = runAI;
+  if(!panel) return;                    /* ใช้ตัวกลางของเว็บ ไม่มีช่องให้กรอก */
   if(edit) edit.onclick = ()=>{ panel.hidden = !panel.hidden; if(!panel.hidden) $('#inAiKey').focus(); };
   const cancel = $('#inAiCancel'); if(cancel) cancel.onclick = ()=> panel.hidden = true;
-  if(!panel) return;
 
   const key = $('#inAiKey'), prov = $('#inAiProvider'), model = $('#inAiModel');
 
@@ -1702,26 +1738,99 @@ async function testAI(s){
   }
 }
 
+/* ============================================================
+   ตั้งค่าที่ฝังมากับเว็บ — ใครเปิดลิงก์นี้ก็ได้ค่านี้ทันที ไม่ต้องตั้งเอง
+   ------------------------------------------------------------
+   sbUrl / sbKey : ที่เก็บข้อมูลกลาง ทำให้ทุกคนเห็นไทม์ไลน์เดียวกัน
+                   anon key ของ Supabase ออกแบบมาให้อยู่ในโค้ดฝั่งผู้ใช้ได้
+                   ความปลอดภัยอยู่ที่ Row Level Security ในโปรเจกต์
+   aiProxy       : URL ของตัวกลางที่ถือคีย์ AI ไว้ให้ฝั่งเซิร์ฟเวอร์
+                   ตั้งค่านี้แล้วทุกคนใช้ AI ได้โดยไม่ต้องมีคีย์ของตัวเอง
+                   ห้ามใส่คีย์ AI ตรง ๆ ตรงนี้ เพราะหน้าเว็บเปิดสาธารณะ
+   ============================================================ */
+const SITE = {
+  sbUrl: 'https://xttzkubyzhtwnsfcupvz.supabase.co',
+  sbKey: 'sb_publishable_oXTEFqEpaHUjriVEzI_6Kw_7-5h510P',
+  aiProxy: '',
+};
+
 /* ============ ตั้งค่า (เก็บถาวรในเครื่อง) ============ */
 const CFG_KEY = 'moodDiary.cfg';
 let CFG = (()=>{ try{ return JSON.parse(localStorage.getItem(CFG_KEY)) || {}; }catch(e){ return {}; } })();
 function saveCfg(){ try{ localStorage.setItem(CFG_KEY, JSON.stringify(CFG)); return true; }catch(e){ return false; } }
-const hasSync = () => !!(CFG.sbUrl && CFG.sbKey);
-const hasAI   = () => !!CFG.aiKey;
-const nowISO  = () => new Date().toISOString();
+
+/* ค่าที่ตั้งเองในเครื่องมาก่อน ถ้าไม่มีจึงใช้ค่าที่ฝังมากับเว็บ */
+const sbUrlNow = () => (CFG.sbUrl || SITE.sbUrl || '').trim();
+const sbKeyNow = () => (CFG.sbKey || SITE.sbKey || '').trim();
+const hasSync  = () => !!(sbUrlNow() && sbKeyNow());
+const syncIsShared = () => !CFG.sbUrl && !!SITE.sbUrl;
+
+const hasProxy = () => !!SITE.aiProxy;
+const hasAI    = () => hasProxy() || !!CFG.aiKey;
+const nowISO   = () => new Date().toISOString();
+
+/* ============ ล็อกอิน (Supabase Auth) ============ */
+const SESS_KEY = 'moodDiary.session';
+let SESS = (()=>{ try{ return JSON.parse(localStorage.getItem(SESS_KEY)) || null; }catch(e){ return null; } })();
+function saveSess(){
+  try{
+    if(SESS) localStorage.setItem(SESS_KEY, JSON.stringify(SESS));
+    else localStorage.removeItem(SESS_KEY);
+  }catch(e){}
+}
+const signedIn = () => !!(SESS && SESS.access_token);
+const myEmail  = () => SESS?.user?.email || '';
+/* โหมดเปิดให้ใช้ในเครื่องอย่างเดียว ผู้ใช้เลือกข้ามการล็อกอิน */
+const localOnly = () => localStorage.getItem('moodDiary.localOnly') === '1';
+
+async function authPost(path, body){
+  const res = await fetch(sbUrlNow().replace(/\/+$/, '') + '/auth/v1/' + path, {
+    method: 'POST',
+    headers: {apikey: sbKeyNow(), 'content-type': 'application/json'},
+    body: JSON.stringify(body),
+  });
+  const j = await res.json().catch(()=>({}));
+  if(!res.ok) throw new Error(j.error_description || j.msg || j.message || ('HTTP ' + res.status));
+  return j;
+}
+async function doSignIn(email, password){
+  SESS = await authPost('token?grant_type=password', {email, password});
+  saveSess();
+}
+async function doSignUp(email, password){
+  const j = await authPost('signup', {email, password});
+  if(j.access_token){ SESS = j; saveSess(); return 'in'; }
+  return 'confirm';   /* โปรเจกต์ตั้งให้ยืนยันอีเมลก่อน */
+}
+async function refreshSession(){
+  if(!SESS?.refresh_token) return false;
+  try{
+    SESS = await authPost('token?grant_type=refresh_token', {refresh_token: SESS.refresh_token});
+    saveSess();
+    return true;
+  }catch(e){ SESS = null; saveSess(); return false; }
+}
+function signOut(){
+  SESS = null; saveSess();
+  localStorage.removeItem('moodDiary.localOnly');
+  location.reload();
+}
 
 /* ============ ซิงก์ข้อมูลผ่าน Supabase ============ */
 async function sbFetch(path, opts = {}){
-  const url = CFG.sbUrl.replace(/\/+$/, '') + '/rest/v1/' + path;
-  const res = await fetch(url, {
+  const url = sbUrlNow().replace(/\/+$/, '') + '/rest/v1/' + path;
+  const go = () => fetch(url, {
     ...opts,
     headers: {
-      apikey: CFG.sbKey,
-      Authorization: 'Bearer ' + CFG.sbKey,
+      apikey: sbKeyNow(),
+      Authorization: 'Bearer ' + (SESS?.access_token || sbKeyNow()),
       'Content-Type': 'application/json',
       ...(opts.headers || {}),
     },
   });
+  let res = await go();
+  /* โทเคนหมดอายุ — ต่ออายุแล้วลองใหม่หนึ่งครั้ง */
+  if(res.status === 401 && await refreshSession()) res = await go();
   if(!res.ok) throw new Error(res.status + ' — ' + (await res.text()).slice(0, 200));
   return res.status === 204 ? null : res.json().catch(()=>null);
 }
@@ -1819,12 +1928,24 @@ const AI_PROVIDERS = {
     read: j => (j?.content || []).map(c=>c.text || '').join(''),
   },
 };
+/* ตัวกลางที่ถือคีย์ไว้ฝั่งเซิร์ฟเวอร์ — ผู้ใช้ไม่ต้องมีคีย์ของตัวเอง
+   สัญญาที่ตกลงกับ backend: POST {prompt, max_tokens} -> {text} */
+AI_PROVIDERS.proxy = {
+  label: 'AI ของเว็บนี้',
+  model: '',
+  url: null,
+  headers: () => ({'content-type': 'application/json'}),
+  body: (m, prompt, max) => ({prompt, max_tokens: max}),
+  read: j => j?.text || j?.content || j?.choices?.[0]?.message?.content || '',
+};
+
 const providerOf = key => key.startsWith('gsk_') ? 'groq' : key.startsWith('sk-ant-') ? 'anthropic' : null;
-const aiProvider = () => AI_PROVIDERS[CFG.aiProvider] || AI_PROVIDERS.groq;
+const aiProvider = () => hasProxy() ? AI_PROVIDERS.proxy
+                       : (AI_PROVIDERS[CFG.aiProvider] || AI_PROVIDERS.groq);
 
 async function aiCall(prompt, maxTokens){
   const p = aiProvider();
-  const res = await fetch(p.url, {
+  const res = await fetch(p.url || SITE.aiProxy, {
     method: 'POST',
     headers: p.headers(CFG.aiKey),
     body: JSON.stringify(p.body(CFG.aiModel || p.model, prompt, maxTokens)),
@@ -2389,6 +2510,18 @@ function openSheet(){
   $('#cfgAiModel').value = CFG.aiModel || aiProvider().model;
   paintSyncDot(hasSync() ? 'on' : '');
   $('#aiDot').classList.toggle('on', hasAI());
+  const so = $('#signOutBtn');
+  so.hidden = !signedIn();
+  so.onclick = signOut;
+  if(signedIn()){
+    const s = $('#syncStatus');
+    s.className = 'status ok';
+    s.textContent = `ล็อกอินอยู่ในชื่อ ${myEmail()} · ใช้ที่เก็บข้อมูลกลางของเว็บนี้ ทุกคนที่ล็อกอินเห็นไทม์ไลน์เดียวกัน`;
+  }else if(localOnly()){
+    const s = $('#syncStatus');
+    s.className = 'status';
+    s.textContent = 'ตอนนี้ใช้แบบเก็บในเครื่องนี้เท่านั้น — โหลดหน้าใหม่แล้วล็อกอินเพื่อเห็นบันทึกที่แชร์กัน';
+  }
   $('#sheet').classList.add('on');
   document.body.style.overflow = 'hidden';
 }
@@ -2531,8 +2664,74 @@ function renderAll(){
 initForm();
 renderAll();
 
-/* ถ้าเปิดซิงก์ไว้ ดึงของอีกเครื่องเข้ามาตั้งแต่เปิดหน้า */
-if(hasSync()){
+/* ============ ประตูล็อกอิน ============ */
+function showGate(){ $('#gate').classList.add('on'); document.body.style.overflow = 'hidden'; }
+function hideGate(){ $('#gate').classList.remove('on'); document.body.style.overflow = ''; }
+
+async function afterSignIn(){
+  hideGate();
+  $('#gateStatus').textContent = '';
+  try{
+    await syncNow(); renderAll(); paintSyncDot('on');
+    toast(`ยินดีต้อนรับ ${myEmail()}`);
+  }catch(e){ paintSyncDot('bad'); toast('ซิงก์ไม่สำเร็จ — ' + e.message.slice(0, 60)); }
+}
+
+const gateBusy = msg => { const s = $('#gateStatus'); s.className = 'status busy'; s.innerHTML = `<span class="spin"></span> ${msg}`; };
+const gateBad  = msg => { const s = $('#gateStatus'); s.className = 'status bad'; s.textContent = msg; };
+
+$('#gateIn').onclick = async ()=>{
+  const em = $('#gateEmail').value.trim(), pw = $('#gatePw').value;
+  if(!em || !pw) return gateBad('กรอกอีเมลและรหัสผ่านให้ครบ');
+  gateBusy('กำลังเข้าสู่ระบบ...');
+  try{ await doSignIn(em, pw); await afterSignIn(); }
+  catch(e){
+    gateBad(/Invalid login/i.test(e.message)
+      ? 'อีเมลหรือรหัสผ่านไม่ถูกต้อง — ถ้ายังไม่เคยสมัคร กดปุ่มสมัครใหม่'
+      : /not confirmed/i.test(e.message)
+      ? 'ยังไม่ได้ยืนยันอีเมล — เปิดเมลที่ Supabase ส่งไปแล้วกดลิงก์ยืนยันก่อน'
+      : 'เข้าสู่ระบบไม่สำเร็จ — ' + e.message);
+  }
+};
+$('#gateUp').onclick = async ()=>{
+  const em = $('#gateEmail').value.trim(), pw = $('#gatePw').value;
+  if(!em || !pw) return gateBad('กรอกอีเมลและรหัสผ่านให้ครบ');
+  if(pw.length < 6) return gateBad('รหัสผ่านต้องยาวอย่างน้อย 6 ตัวอักษร');
+  gateBusy('กำลังสมัคร...');
+  try{
+    if(await doSignUp(em, pw) === 'in') await afterSignIn();
+    else{
+      const s = $('#gateStatus'); s.className = 'status ok';
+      s.textContent = 'สมัครแล้ว — เปิดอีเมลที่ Supabase ส่งไป กดลิงก์ยืนยัน แล้วกลับมากดเข้าสู่ระบบ';
+    }
+  }catch(e){
+    gateBad(/already registered|exists/i.test(e.message)
+      ? 'อีเมลนี้สมัครไว้แล้ว กดเข้าสู่ระบบแทน'
+      : 'สมัครไม่สำเร็จ — ' + e.message);
+  }
+};
+$('#gateSkip').onclick = ()=>{
+  localStorage.setItem('moodDiary.localOnly', '1');
+  hideGate();
+  toast('ใช้แบบเก็บในเครื่องนี้ — จะไม่เห็นบันทึกของอีกฝ่าย');
+};
+$('#gatePw').addEventListener('keydown', ev=>{ if(ev.key === 'Enter') $('#gateIn').click(); });
+
+/* ต้องล็อกอินเมื่อเว็บนี้ตั้งที่เก็บข้อมูลกลางไว้ให้ทุกคน */
+if(SITE.sbUrl && !CFG.sbUrl){
+  if(signedIn()){
+    syncNow()
+      .then(()=>{ renderAll(); paintSyncDot('on'); })
+      .catch(async ()=>{
+        if(await refreshSession()){
+          try{ await syncNow(); renderAll(); paintSyncDot('on'); return; }catch(e){}
+        }
+        paintSyncDot('bad'); showGate();
+      });
+  }else if(!localOnly()){
+    showGate();
+  }
+}else if(hasSync()){
   syncNow()
     .then(()=>{ renderAll(); paintSyncDot('on'); })
     .catch(()=> paintSyncDot('bad'));
