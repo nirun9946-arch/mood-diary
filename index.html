@@ -703,6 +703,18 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
 }
 .ai-out b,.ai-out strong{color:#fff;font-weight:600}
 .ai-when{font-size:.8rem;color:var(--txt-40);margin-top:10px}
+
+/* ช่องใส่คีย์ AI ที่ฝังอยู่ในการ์ดวิเคราะห์ถาวร */
+.ai-setup{
+  border-radius:1rem;padding:18px 20px;margin-bottom:16px;
+  background:rgba(255,255,255,.03);
+}
+.ai-setup .lead{font-size:.9rem;color:var(--txt-60);line-height:1.8;margin-bottom:16px}
+.ai-setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:end}
+.ai-setup-grid .wide{grid-column:1/-1}
+@media(max-width:680px){ .ai-setup-grid{grid-template-columns:1fr} }
+.ai-setup .fld label{font-size:.82rem}
+.ai-setup .warn{margin-top:14px}
 .spin{display:inline-block;width:13px;height:13px;border-radius:50%;
   border:2px solid rgba(255,255,255,.25);border-top-color:#fff;animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
@@ -1569,14 +1581,51 @@ function renderAnalysis(){
       <div class="ai-box">
         <div class="ai-head">
           <span class="ai-title">✨ AI อ่านบันทึกทั้งหมดแล้ววิเคราะห์</span>
-          ${hasAI()
-            ? `<button class="btn solid" id="aiRun">วิเคราะห์ด้วย AI</button>`
-            : `<button class="btn liquid-glass" id="aiSetup">ตั้งค่า AI</button>`}
+          <span style="display:flex;gap:8px;flex-wrap:wrap">
+            ${hasAI() ? `<button class="btn solid" id="aiRun">วิเคราะห์ด้วย AI</button>
+                         <button class="btn liquid-glass" id="aiEdit">เปลี่ยนคีย์</button>` : ''}
+          </span>
         </div>
+
+        <div class="ai-setup" id="aiSetup" ${hasAI() ? 'hidden' : ''}>
+          <div class="lead">
+            วางคีย์ของคุณเองตรงนี้ครั้งเดียว ระบบจะจำไว้ในเบราว์เซอร์เครื่องนี้ถาวร
+            ไม่ต้องใส่ใหม่ทุกครั้ง และไม่ถูกบันทึกลงในโค้ดของเว็บ
+          </div>
+          <div class="ai-setup-grid">
+            <div class="fld">
+              <label for="inAiProvider">ผู้ให้บริการ</label>
+              <select id="inAiProvider">
+                ${Object.entries(AI_PROVIDERS).map(([k,v])=>
+                  `<option value="${k}" ${(CFG.aiProvider||'groq')===k?'selected':''}>${v.label}</option>`).join('')}
+              </select>
+            </div>
+            <div class="fld">
+              <label for="inAiModel">โมเดล</label>
+              <input type="text" id="inAiModel" spellcheck="false" value="${attr(CFG.aiModel || aiProvider().model)}">
+            </div>
+            <div class="fld wide">
+              <label for="inAiKey">API key</label>
+              <input type="password" id="inAiKey" spellcheck="false" autocomplete="off"
+                     placeholder="วางคีย์ของคุณที่นี่ — Groq ขึ้นต้น gsk_ , Anthropic ขึ้นต้น sk-ant-"
+                     value="${attr(CFG.aiKey || '')}">
+            </div>
+            <div class="wide" style="display:flex;gap:10px;flex-wrap:wrap">
+              <button type="button" class="btn solid" id="inAiSave">บันทึกและทดสอบ</button>
+              ${hasAI() ? `<button type="button" class="btn liquid-glass" id="inAiCancel">ยกเลิก</button>` : ''}
+            </div>
+          </div>
+          <div class="status" id="inAiStatus"></div>
+          <div class="warn">
+            อย่าส่งคีย์ให้ใครทางแชตหรือข้อความ ถ้าเคยส่งไปแล้วให้ถือว่ารั่ว ควรลบทิ้งแล้วสร้างใหม่ ·
+            คีย์เก็บอยู่ในเครื่องนี้เท่านั้น คนอื่นที่เปิดลิงก์เดียวกันจะไม่เห็น
+          </div>
+        </div>
+
         <div class="ai-out" id="aiOut">${
           CFG.aiResult ? esc(CFG.aiResult.text)
           : hasAI() ? 'กดปุ่มวิเคราะห์เพื่อให้โมเดลภาษาอ่านบันทึกทั้งหมดแล้วสรุปให้'
-          : 'ยังไม่ได้ตั้งค่า AI — ตัวเลขด้านบนคำนวณด้วยกฎที่เขียนไว้ ถ้าอยากได้การตีความจากโมเดลภาษาจริง กดตั้งค่าแล้วใส่คีย์ของคุณเอง'
+          : 'ตัวเลขด้านบนคำนวณด้วยกฎที่เขียนไว้ ใส่คีย์ด้านบนเพื่อให้โมเดลภาษาอ่านบันทึกจริงแล้วตีความให้ละเอียดกว่านี้'
         }</div>
         <div class="ai-when" id="aiWhen">${
           CFG.aiResult ? `วิเคราะห์โดย ${esc(CFG.aiResult.by || 'AI')} เมื่อ ${new Date(CFG.aiResult.at).toLocaleString('th-TH')} · จาก ${CFG.aiResult.n} บันทึก` : ''
@@ -1590,8 +1639,67 @@ function renderAnalysis(){
       </div>
     </div>`;
 
-  const run = $('#aiRun');   if(run) run.onclick = runAI;
-  const setup = $('#aiSetup'); if(setup) setup.onclick = openSheet;
+  wireAiSetup();
+}
+
+/* ผูกปุ่มของช่องใส่คีย์ที่ฝังในการ์ด — ต้องผูกใหม่ทุกครั้งที่วาดการ์ดใหม่ */
+function wireAiSetup(){
+  const run = $('#aiRun'), edit = $('#aiEdit'), panel = $('#aiSetup');
+  if(run) run.onclick = runAI;
+  if(edit) edit.onclick = ()=>{ panel.hidden = !panel.hidden; if(!panel.hidden) $('#inAiKey').focus(); };
+  const cancel = $('#inAiCancel'); if(cancel) cancel.onclick = ()=> panel.hidden = true;
+  if(!panel) return;
+
+  const key = $('#inAiKey'), prov = $('#inAiProvider'), model = $('#inAiModel');
+
+  /* เดาผู้ให้บริการจากรูปแบบคีย์ที่วาง แล้วเติมชื่อโมเดลเริ่มต้นให้ */
+  key.addEventListener('input', ()=>{
+    const guess = providerOf(key.value.trim());
+    if(guess && guess !== prov.value){
+      const before = AI_PROVIDERS[prov.value].model;
+      prov.value = guess;
+      if(!model.value.trim() || model.value.trim() === before) model.value = AI_PROVIDERS[guess].model;
+    }
+  });
+  prov.onchange = ()=>{
+    const others = Object.values(AI_PROVIDERS).map(p=>p.model);
+    if(!model.value.trim() || others.includes(model.value.trim())) model.value = AI_PROVIDERS[prov.value].model;
+  };
+
+  $('#inAiSave').onclick = async ()=>{
+    const s = $('#inAiStatus');
+    const k = key.value.trim();
+    if(!k){ s.className = 'status bad'; s.textContent = 'ยังไม่ได้วางคีย์'; return; }
+    const guess = providerOf(k);
+    if(guess && guess !== prov.value){
+      s.className = 'status bad';
+      s.textContent = `คีย์นี้ดูเหมือนของ ${AI_PROVIDERS[guess].label} แต่เลือกไว้เป็น ${AI_PROVIDERS[prov.value].label} — เลือกให้ตรงกันก่อน`;
+      return;
+    }
+    CFG.aiProvider = prov.value;
+    CFG.aiKey = k;
+    CFG.aiModel = model.value.trim() || AI_PROVIDERS[prov.value].model;
+    if(!saveCfg()){ s.className = 'status bad'; s.textContent = 'เบราว์เซอร์ไม่ยอมให้บันทึกค่า — คีย์จะหายเมื่อปิดหน้านี้'; }
+    if(await testAI(s)) setTimeout(renderAll, 900);
+  };
+}
+
+/* ทดสอบเรียกจริงหนึ่งครั้ง ใช้ร่วมกันทั้งช่องในการ์ดและในหน้าตั้งค่า */
+async function testAI(s){
+  s.className = 'status busy';
+  s.innerHTML = '<span class="spin"></span> กำลังทดสอบการเชื่อมต่อ...';
+  try{
+    await aiCall('ตอบกลับสั้น ๆ ว่า ok', 16);
+    s.className = 'status ok';
+    s.textContent = `เชื่อมต่อ ${aiProvider().label} สำเร็จ · ปุ่ม "วิเคราะห์ด้วย AI" พร้อมใช้แล้ว`;
+    return true;
+  }catch(e){
+    s.className = 'status bad';
+    s.textContent = 'เชื่อมต่อไม่สำเร็จ — ' + e.message
+      + (/model|decommission/i.test(e.message) ? ' · ชื่อโมเดลอาจถูกยกเลิกแล้ว ลองเปลี่ยนเป็นรุ่นล่าสุดของผู้ให้บริการ' : '')
+      + (/fetch|CORS|NetworkError/i.test(e.message) ? ' · เบราว์เซอร์บล็อกการเรียกโดยตรง ต้องใช้ backend ช่วยส่งต่อ' : '');
+    return false;
+  }
 }
 
 /* ============ ตั้งค่า (เก็บถาวรในเครื่อง) ============ */
@@ -2376,19 +2484,7 @@ $('#aiTest').onclick = async ()=>{
     return;
   }
   saveCfg();
-  s.className = 'status busy'; s.innerHTML = '<span class="spin"></span> กำลังทดสอบ...';
-  try{
-    await aiCall('ตอบกลับสั้น ๆ ว่า ok', 16);
-    $('#aiDot').classList.add('on');
-    s.className = 'status ok';
-    s.textContent = `เชื่อมต่อ ${aiProvider().label} สำเร็จ · ปุ่ม "วิเคราะห์ด้วย AI" พร้อมใช้ในการ์ดวิเคราะห์แล้ว`;
-    renderAll();
-  }catch(e){
-    s.className = 'status bad';
-    s.textContent = 'เชื่อมต่อไม่สำเร็จ — ' + e.message
-      + (/model/i.test(e.message) ? ' · ชื่อโมเดลอาจถูกยกเลิกแล้ว ลองเปลี่ยนเป็นรุ่นล่าสุดของผู้ให้บริการ' : '')
-      + (/fetch|CORS/i.test(e.message) ? ' · เบราว์เซอร์อาจบล็อกการเรียกโดยตรง ต้องใช้ backend ช่วยส่งต่อ' : '');
-  }
+  if(await testAI(s)){ $('#aiDot').classList.add('on'); renderAll(); }
 };
 $('#aiOff').onclick = ()=>{
   delete CFG.aiKey; delete CFG.aiResult; saveCfg();
