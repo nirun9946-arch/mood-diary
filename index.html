@@ -6,12 +6,12 @@
 <meta name="description" content="บันทึกเหตุการณ์ ความรู้สึก และคะแนนความสุขรายวัน พร้อมอินโฟกราฟิกสภาพจิตใจ">
 <!-- หน้านี้เป็นไดอารี่ส่วนตัว จึงสั่งไม่ให้ Google เก็บเข้าระบบค้นหา — ลบบรรทัดล่างนี้ถ้าอยากให้ค้นเจอ -->
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#000000">
-<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#fbfbfd">
+<meta name="color-scheme" content="light">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%92%97%3C%2Ftext%3E%3C%2Fsvg%3E">
-<style>*{-webkit-text-size-adjust:100%}html{background:#000}</style>
+<style>*{-webkit-text-size-adjust:100%}html{background:#fbfbfd}</style>
 </head>
 <body>
 <title>ไดอารี่ความรู้สึก — Mood Diary</title>
@@ -22,26 +22,33 @@
    TOKENS — โลกสีดำใบเดียว (committed dark, ไม่มีธีมสว่าง)
    ============================================================ */
 :root{
-  --bg:#000;
-  --txt:#fff;
-  --txt-80:rgba(255,255,255,.80);
-  --txt-60:rgba(255,255,255,.74);
-  --txt-50:rgba(255,255,255,.64);
-  --txt-40:rgba(255,255,255,.56);
-  --line:rgba(255,255,255,.10);
-  --line-soft:rgba(255,255,255,.06);
+  --bg:#fbfbfd;
+  --txt:#15162a;
+  --txt-80:rgba(21,22,42,.86);
+  --txt-60:rgba(21,22,42,.72);
+  --txt-50:rgba(21,22,42,.62);
+  --txt-40:rgba(21,22,42,.52);
+  --line:rgba(21,22,42,.13);
+  --line-soft:rgba(21,22,42,.08);
+  --soft:rgba(21,22,42,.04);
+  --hover:rgba(21,22,42,.07);
+  --track:rgba(21,22,42,.10);
+  --input-bg:#ffffff;
+  --solid-bg:#15162a;
+  --solid-txt:#ffffff;
+  --card-bg:rgba(255,255,255,.66);
 
   /* สเกลคะแนนความสุข 0-10 — ไล่จากแดงอุ่นไปเขียวสด ให้อ่านอารมณ์ได้จากสี */
-  --sc-1:#ff4d6d;  /* ต้องดูแลใจ */
-  --sc-2:#ff8360;  /* เหนื่อยใจ  */
-  --sc-3:#ffc857;  /* กลาง ๆ    */
-  --sc-4:#5ad6c0;  /* ค่อนข้างดี */
-  --sc-5:#7ef0a8;  /* สดใสมาก   */
+  --sc-1:#e0334c;  /* ต้องดูแลใจ */
+  --sc-2:#d96520;  /* เหนื่อยใจ  */
+  --sc-3:#b8860b;  /* กลาง ๆ    */
+  --sc-4:#0d9488;  /* ค่อนข้างดี */
+  --sc-5:#15803d;  /* สดใสมาก   */
   /* สีประจำสถานะความรู้สึก */
-  --m-acquaintance:#8a90b8; --m-friendly:#4fd3ff; --m-crush:#ff6fae; --m-confused:#ffc65c;
-  --m-attached:#48e3ac;     --m-inlove:#9b7bff;   --m-hurt:#ff6b6b;  --m-undefined:#7c81a6;
+  --m-acquaintance:#5b6180; --m-friendly:#0b7fae; --m-crush:#c2367a; --m-confused:#a97806;
+  --m-attached:#0f8a5a;     --m-inlove:#6340cc;   --m-hurt:#c9333c;  --m-undefined:#6e7391;
   /* เส้นกราฟรายคน */
-  --p1:#ff6fae; --p2:#4fd3ff; --p3:#48e3ac; --p4:#ffc65c; --p5:#9b7bff;
+  --p1:#c2367a; --p2:#0b7fae; --p3:#0f8a5a; --p4:#a97806; --p5:#6340cc;
 
   --serif:'Instrument Serif','Noto Serif Thai',Georgia,serif;
   --hand:'Mali','Noto Serif Thai',cursive;   /* เสียงของเจ้าของบันทึก */
@@ -58,7 +65,7 @@ body{
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
 }
-:focus-visible{outline:1.5px solid rgba(255,255,255,.7);outline-offset:3px;border-radius:8px}
+:focus-visible{outline:2px solid var(--m-inlove);outline-offset:3px;border-radius:8px}
 svg{display:block}
 em{font-style:italic}
 
@@ -66,12 +73,11 @@ em{font-style:italic}
    LIQUID GLASS
    ============================================================ */
 .liquid-glass{
-  background:rgba(255,255,255,.01);
-  background-blend-mode:luminosity;
-  backdrop-filter:blur(4px);
-  -webkit-backdrop-filter:blur(4px);
+  background:var(--card-bg);
+  backdrop-filter:blur(14px) saturate(1.5);
+  -webkit-backdrop-filter:blur(14px) saturate(1.5);
   border:none;
-  box-shadow:inset 0 1px 1px rgba(255,255,255,.1);
+  box-shadow:0 1px 2px rgba(21,22,42,.05), 0 10px 30px rgba(21,22,42,.06);
   position:relative;
   overflow:hidden;
 }
@@ -82,12 +88,12 @@ em{font-style:italic}
   border-radius:inherit;
   padding:1.4px;
   background:linear-gradient(180deg,
-    rgba(255,255,255,.45) 0%,
-    rgba(255,255,255,.15) 20%,
-    rgba(255,255,255,0) 40%,
-    rgba(255,255,255,0) 60%,
-    rgba(255,255,255,.15) 80%,
-    rgba(255,255,255,.45) 100%);
+    rgba(21,22,42,.20) 0%,
+    rgba(21,22,42,.09) 20%,
+    rgba(21,22,42,.04) 40%,
+    rgba(21,22,42,.04) 60%,
+    rgba(21,22,42,.09) 80%,
+    rgba(21,22,42,.20) 100%);
   -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite:xor;
   mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -95,7 +101,23 @@ em{font-style:italic}
   pointer-events:none;
 }
 .lg-hover{transition:background-color .3s ease, transform .3s ease}
-.lg-hover:hover{background-color:rgba(255,255,255,.05)}
+.lg-hover:hover{background-color:var(--hover)}
+
+/* ฮีโร่ยังเป็นวิดีโอมืด กระจกในโซนนี้จึงใช้ขอบสว่างแบบเดิม */
+.hero .liquid-glass{
+  background:rgba(255,255,255,.01);
+  background-blend-mode:luminosity;
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.1);
+}
+.hero .liquid-glass::before{
+  background:linear-gradient(180deg,
+    rgba(255,255,255,.45) 0%, rgba(255,255,255,.15) 20%,
+    rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%,
+    rgba(255,255,255,.15) 80%, rgba(255,255,255,.45) 100%);
+}
+.hero .lg-hover:hover{background-color:rgba(255,255,255,.06)}
 
 /* ============================================================
    บรรยากาศตามอารมณ์ — สีพื้นหลังเปลี่ยนตามคะแนนเฉลี่ยรวม
@@ -156,7 +178,7 @@ em{font-style:italic}
 }
 .hero-veil{
   position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.15) 26%, rgba(0,0,0,.15) 58%, rgba(0,0,0,.92) 100%);
+  background:linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.15) 26%, rgba(0,0,0,.20) 62%, rgba(10,10,20,.75) 84%, var(--bg) 100%);
 }
 
 /* ---- navbar ---- */
@@ -210,7 +232,7 @@ em{font-style:italic}
 }
 .hero-pill input::placeholder{color:var(--txt-40)}
 .hero-go{
-  background:#fff;color:#000;border:none;border-radius:9999px;padding:12px;
+  background:#fff;color:#111;border:none;border-radius:9999px;padding:12px;
   cursor:pointer;display:grid;place-items:center;flex:none;transition:transform .2s ease;
 }
 .hero-go:hover{transform:scale(1.06)}
@@ -241,11 +263,11 @@ em{font-style:italic}
    SECTION 2 — เกริ่นนำ (About)
    ============================================================ */
 .about{
-  background:#000;padding:128px 24px 40px;overflow:hidden;position:relative;
+  background:var(--bg);padding:128px 24px 40px;overflow:hidden;position:relative;
 }
 .about::before{
   content:'';position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(ellipse at top, rgba(255,255,255,.03) 0%, transparent 70%);
+  background:radial-gradient(ellipse at top, rgba(21,22,42,.04) 0%, transparent 70%);
 }
 .shell{max-width:72rem;margin:0 auto;position:relative;z-index:1}
 .eyebrow{color:var(--txt-60);font-size:.95rem}
@@ -261,7 +283,7 @@ em{font-style:italic}
 /* ============================================================
    SECTION 3 — แบนเนอร์วิดีโอ
    ============================================================ */
-.band{background:#000;padding:24px 24px 80px;overflow:hidden}
+.band{background:var(--bg);padding:24px 24px 80px;overflow:hidden}
 @media(min-width:768px){ .band{padding:40px 24px 128px} }
 .band-frame{
   border-radius:1.5rem;overflow:hidden;position:relative;aspect-ratio:16/9;
@@ -294,7 +316,7 @@ em{font-style:italic}
 /* ============================================================
    SECTION 4 — หน้ารวมตัวการ์ตูน
    ============================================================ */
-.people{background:#000;padding:16px 24px 24px;overflow:hidden;position:relative}
+.people{background:var(--bg);padding:16px 24px 24px;overflow:hidden;position:relative}
 .people-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
 .person{
   border-radius:1.5rem;padding:32px 24px;display:flex;flex-direction:column;
@@ -311,7 +333,7 @@ em{font-style:italic}
 }
 .avatar{width:150px;height:150px;border-radius:50%;object-fit:cover;display:block;
   position:relative;animation:bob 5.5s ease-in-out infinite;
-  box-shadow:0 0 0 1px rgba(255,255,255,.10)}
+  box-shadow:0 0 0 1px rgba(21,22,42,.10)}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @media (prefers-reduced-motion:reduce){ .avatar{animation:none} }
 .person .who{font-size:1.15rem;font-weight:600;color:#fff}
@@ -322,7 +344,7 @@ em{font-style:italic}
 .person .avg small{font-family:var(--sans);font-size:.8rem;color:var(--txt-40)}
 .person .mood-chip{
   font-size:.72rem;padding:5px 14px;border-radius:9999px;font-weight:600;
-  background:rgba(255,255,255,.05);margin-top:6px;
+  background:var(--soft);margin-top:6px;
 }
 .person .meta{font-size:.84rem;color:var(--txt-40);margin-top:10px;line-height:1.8}
 .person .bubble{
@@ -338,7 +360,7 @@ em{font-style:italic}
 .cmp{display:flex;flex-direction:column;gap:14px}
 .cmp .row{display:grid;grid-template-columns:64px 1fr 44px;align-items:center;gap:14px;font-size:.8rem}
 .cmp .row .nm{color:var(--txt-60);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.cmp .row .track{display:block;height:6px;border-radius:9999px;background:rgba(255,255,255,.07);overflow:hidden}
+.cmp .row .track{display:block;height:6px;border-radius:9999px;background:var(--track);overflow:hidden}
 .cmp .row .fill{display:block;height:100%;border-radius:9999px;transition:width .9s cubic-bezier(.16,1,.3,1)}
 .cmp .row .v{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
 .gap-note{
@@ -359,7 +381,7 @@ em{font-style:italic}
 .bridge .side .nm{font-size:.95rem;font-weight:600;color:#fff}
 .bridge .side .k{font-size:.85rem;color:var(--txt-60)}
 .bridge .side .pct{font-family:var(--serif);font-size:2.3rem;line-height:1;font-variant-numeric:tabular-nums}
-.bridge .side .bar{width:100%;height:6px;border-radius:9999px;background:rgba(255,255,255,.07);overflow:hidden}
+.bridge .side .bar{width:100%;height:6px;border-radius:9999px;background:var(--track);overflow:hidden}
 .bridge .side .bar i{display:block;height:100%;border-radius:9999px;transition:width .9s cubic-bezier(.16,1,.3,1)}
 .bridge .side.r .bar i{margin-left:auto}
 .bridge .core{
@@ -381,7 +403,7 @@ em{font-style:italic}
 .read .r .ic{flex:none;font-size:1rem;opacity:.9}
 .read .r b{color:#fff;font-weight:600}
 .caveat{
-  margin-top:20px;padding:12px 14px;border-radius:.8rem;background:rgba(255,255,255,.03);
+  margin-top:20px;padding:12px 14px;border-radius:.8rem;background:var(--soft);
   font-size:.84rem;color:var(--txt-40);line-height:1.8;
 }
 
@@ -391,7 +413,9 @@ em{font-style:italic}
   color:var(--txt-60);font-family:inherit;display:grid;place-items:center;
   transition:color .25s,background-color .25s;
 }
-.mic:hover{color:#fff;background-color:rgba(255,255,255,.07)}
+.mic:hover{color:var(--txt);background-color:var(--hover)}
+.hero .mic{color:rgba(255,255,255,.8)}
+.hero .mic:hover{color:#fff;background-color:rgba(255,255,255,.10)}
 .mic.rec{color:#fff;background:var(--m-hurt);animation:pulse 1.3s ease-in-out infinite}
 .mic.rec::before{display:none}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,107,107,.55)}50%{box-shadow:0 0 0 9px rgba(255,107,107,0)}}
@@ -404,10 +428,10 @@ em{font-style:italic}
 /* ============================================================
    DASHBOARD
    ============================================================ */
-.board{background:#000;padding:0 24px 120px;position:relative;overflow:hidden}
+.board{background:var(--bg);padding:0 24px 120px;position:relative;overflow:hidden}
 .board::before{
   content:'';position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(ellipse at center, rgba(255,255,255,.02) 0%, transparent 60%);
+  background:radial-gradient(ellipse at center, rgba(21,22,42,.03) 0%, transparent 60%);
 }
 
 .head-row{
@@ -429,8 +453,8 @@ em{font-style:italic}
   color:var(--txt-60);font-family:inherit;transition:color .25s,background-color .25s;
   display:flex;align-items:center;gap:9px;
 }
-.tab:hover{color:#fff;background-color:rgba(255,255,255,.05)}
-.tab.on{color:#000;background:#fff;box-shadow:none}
+.tab:hover{color:var(--txt);background-color:var(--hover)}
+.tab.on{color:var(--solid-txt);background:var(--solid-bg);box-shadow:none}
 .tab.on::before{display:none}
 .tab .n{opacity:.55;font-size:.72rem;font-variant-numeric:tabular-nums}
 
@@ -447,7 +471,7 @@ em{font-style:italic}
 .stat{border-radius:1.25rem;padding:22px}
 .stat .glow{
   position:absolute;inset:auto -24px -40px auto;width:120px;height:120px;border-radius:50%;
-  background:var(--c,var(--m-crush));opacity:.16;filter:blur(16px);pointer-events:none;
+  background:var(--c,var(--m-crush));opacity:.22;filter:blur(18px);pointer-events:none;
 }
 .stat .lbl{font-size:.88rem;color:var(--txt-60);margin-bottom:8px}
 .stat .val{
@@ -486,18 +510,18 @@ em{font-style:italic}
 .lvbar{margin-bottom:14px}
 .lvbar .r1{display:flex;justify-content:space-between;font-size:.88rem;margin-bottom:6px;gap:12px}
 .lvbar .r1 .t{color:var(--txt-60)}
-.lvbar .track{height:6px;border-radius:9999px;background:rgba(255,255,255,.07);overflow:hidden}
+.lvbar .track{height:6px;border-radius:9999px;background:var(--track);overflow:hidden}
 .lvbar .fill{height:100%;border-radius:9999px;transition:width .9s cubic-bezier(.16,1,.3,1)}
 
 .hm-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:12px;flex-wrap:wrap}
 .hm{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
 .hm .dow{text-align:center;font-size:.8rem;color:var(--txt-60);padding-bottom:4px}
 .hm .cell{
-  aspect-ratio:1;border-radius:.6rem;background:rgba(255,255,255,.035);
+  aspect-ratio:1;border-radius:.6rem;background:var(--soft);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   font-size:.7rem;color:var(--txt-40);transition:transform .2s ease;font-variant-numeric:tabular-nums;
 }
-.hm .cell.has{color:#07070c;font-weight:800}
+.hm .cell.has{color:#fff;font-weight:800}
 .hm .cell.has:hover{transform:scale(1.1);z-index:3}
 .hm .cell .em{font-size:.72rem;line-height:1}
 .hm .cell.blank{background:transparent}
@@ -516,15 +540,15 @@ em{font-style:italic}
 .fld.full{grid-column:1/-1}
 label{font-size:.88rem;color:var(--txt-60);font-weight:500}
 input,select,textarea{
-  background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:.85rem;
-  padding:13px 15px;color:#fff;font-family:inherit;font-size:1rem;width:100%;
+  background:var(--input-bg);border:1px solid var(--line);border-radius:.85rem;
+  padding:13px 15px;color:var(--txt);font-family:inherit;font-size:1rem;width:100%;
   transition:border-color .2s,background-color .2s;
 }
-input:focus,select:focus,textarea:focus{outline:none;border-color:rgba(255,255,255,.45);background:rgba(255,255,255,.04)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--m-inlove);box-shadow:0 0 0 3px color-mix(in srgb,var(--m-inlove) 16%,transparent)}
 input::placeholder,textarea::placeholder{color:var(--txt-40)}
 textarea{resize:vertical;min-height:82px;line-height:1.7}
-select option{background:#0b0b12;color:#fff}
-input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff;height:26px}
+select option{background:#fff;color:var(--txt)}
+input[type=range]{padding:0;background:transparent;border:none;accent-color:var(--solid-bg);height:26px}
 .score-row{display:flex;align-items:center;gap:16px}
 .score-badge{
   min-width:62px;height:48px;border-radius:.85rem;display:grid;place-items:center;
@@ -533,35 +557,35 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
 .emoji-row{display:flex;flex-wrap:wrap;gap:8px}
 .emoji-row button{
   border-radius:9999px;width:42px;height:42px;font-size:1.15rem;cursor:pointer;
-  color:#fff;font-family:inherit;transition:background-color .25s,transform .25s;
+  color:var(--txt);font-family:inherit;transition:background-color .25s,transform .25s;
 }
-.emoji-row button:hover{background-color:rgba(255,255,255,.06);transform:translateY(-2px)}
-.emoji-row button.on{background:#fff}
+.emoji-row button:hover{background-color:var(--hover);transform:translateY(-2px)}
+.emoji-row button.on{background:var(--solid-bg)}
 .emoji-row button.on::before{display:none}
 .form-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;align-items:center}
 .hint{font-size:.82rem;color:var(--txt-40)}
 
 .btn{
-  border-radius:9999px;padding:13px 30px;color:#fff;font-size:.95rem;font-weight:500;
+  border-radius:9999px;padding:13px 30px;color:var(--txt);font-size:.95rem;font-weight:500;
   font-family:inherit;cursor:pointer;transition:background-color .25s,transform .2s;
 }
-.btn:hover{background-color:rgba(255,255,255,.05)}
+.btn:hover{background-color:var(--hover)}
 .btn:active{transform:scale(.97)}
-.btn.solid{background:#fff;color:#000;box-shadow:none}
+.btn.solid{background:var(--solid-bg);color:var(--solid-txt);box-shadow:none}
 .btn.solid::before{display:none}
-.btn.solid:hover{background:#e9e9ef}
+.btn.solid:hover{background:#2a2b45}
 
 /* timeline */
 .tl{display:flex;flex-direction:column;gap:14px}
 .entry{
   display:grid;grid-template-columns:76px 1fr auto;gap:18px;align-items:flex-start;
   border-radius:1.15rem;padding:20px;
-  box-shadow:inset 0 1px 1px rgba(255,255,255,.1), inset 3px 0 0 var(--ec,var(--m-inlove));
+  box-shadow:0 1px 2px rgba(21,22,42,.05), 0 10px 30px rgba(21,22,42,.06), inset 3px 0 0 var(--ec,var(--m-inlove));
   /* ไล่สีตามอารมณ์ของบันทึกนั้น ให้กวาดตาแล้วรู้ทันทีว่าวันไหนเป็นยังไง */
-  background-image:linear-gradient(104deg, color-mix(in srgb, var(--ec) 14%, transparent) 0%, transparent 48%);
+  background-image:linear-gradient(104deg, color-mix(in srgb, var(--ec) 11%, transparent) 0%, transparent 48%);
   transition:background-color .3s ease;
 }
-.entry:hover{background-color:rgba(255,255,255,.03)}
+.entry:hover{background-color:var(--soft)}
 .entry .date{text-align:center;padding-left:4px}
 .entry .date .d{font-family:var(--serif);font-size:1.9rem;line-height:1;font-variant-numeric:tabular-nums}
 .entry .date .m{font-size:.68rem;color:var(--txt-40);margin-top:3px}
@@ -569,9 +593,9 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
 .entry .l1{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
 .chip{
   font-size:.8rem;padding:4px 12px;border-radius:9999px;font-weight:600;
-  color:var(--txt-60);background:rgba(255,255,255,.04);
+  color:var(--txt-60);background:var(--soft);
 }
-.chip.name{background:rgba(255,255,255,.10);color:#fff}
+.chip.name{background:var(--solid-bg);color:var(--solid-txt)}
 .entry .ev{font-size:1.02rem;margin-bottom:8px;line-height:1.8}
 .entry .say{
   font-family:var(--hand);font-size:1rem;color:var(--txt-60);
@@ -583,7 +607,7 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
 .react-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
 .react{
   display:flex;align-items:center;gap:8px;padding:7px 13px;border-radius:9999px;
-  background:rgba(255,255,255,.05);font-size:.86rem;max-width:100%;
+  background:var(--soft);font-size:.86rem;max-width:100%;
 }
 .react .em{font-size:1.05rem;line-height:1;flex:none}
 .react .by{color:#fff;font-weight:600;flex:none}
@@ -598,22 +622,22 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
   font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
   transition:color .25s,background-color .25s;
 }
-.react-open:hover{color:#fff;background-color:rgba(255,255,255,.06)}
+.react-open:hover{color:var(--txt);background-color:var(--hover)}
 .react-form{display:flex;flex-direction:column;gap:10px;margin-top:10px}
 .react-form .row1{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .react-form .who-pick{
   padding:7px 14px;border-radius:9999px;font-size:.84rem;cursor:pointer;
   color:var(--txt-60);font-family:inherit;transition:.2s;
 }
-.react-form .who-pick.on{background:#fff;color:#000;font-weight:600}
+.react-form .who-pick.on{background:var(--solid-bg);color:var(--solid-txt);font-weight:600}
 .react-form .who-pick.on::before{display:none}
 .react-form .ems{display:flex;flex-wrap:wrap;gap:6px}
 .react-form .ems button{
   width:38px;height:38px;border-radius:9999px;font-size:1.05rem;cursor:pointer;
-  color:#fff;font-family:inherit;transition:.2s;
+  color:var(--txt);font-family:inherit;transition:.2s;
 }
-.react-form .ems button:hover{background-color:rgba(255,255,255,.08);transform:translateY(-2px)}
-.react-form .ems button.on{background:#fff}
+.react-form .ems button:hover{background-color:var(--hover);transform:translateY(-2px)}
+.react-form .ems button.on{background:var(--solid-bg)}
 .react-form .ems button.on::before{display:none}
 .react-form .row2{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .react-form input[type=text]{flex:1;min-width:180px;font-family:var(--hand)}
@@ -626,7 +650,7 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
   border-radius:9999px;width:32px;height:32px;cursor:pointer;font-size:.78rem;
   color:var(--txt-60);font-family:inherit;transition:color .25s,background-color .25s;
 }
-.entry .acts button:hover{color:#fff;background-color:rgba(255,255,255,.08)}
+.entry .acts button:hover{color:var(--txt);background-color:var(--hover)}
 .entry .acts button.del:hover{background-color:rgba(255,107,107,.22)}
 @media(max-width:640px){
   .entry{grid-template-columns:56px 1fr;padding:18px}
@@ -634,12 +658,11 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
 }
 
 .entry.just-saved{
-  box-shadow:inset 0 1px 1px rgba(255,255,255,.1), inset 3px 0 0 var(--ec,var(--m-inlove)),
-             0 0 0 2px var(--sc-5);
+  box-shadow:0 0 0 2px var(--sc-5), inset 3px 0 0 var(--ec,var(--m-inlove));
   animation:landed 2.6s ease-out;
 }
 @keyframes landed{
-  0%{background-color:rgba(72,227,172,.20)}
+  0%{background-color:rgba(21,128,61,.14)}
   100%{background-color:transparent}
 }
 @media (prefers-reduced-motion:reduce){ .entry.just-saved{animation:none} }
@@ -663,13 +686,13 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
 /* ---------- แผงตั้งค่า ---------- */
 .sheet{
   position:fixed;inset:0;z-index:120;display:none;
-  background:rgba(0,0,0,.72);backdrop-filter:blur(8px);
+  background:rgba(21,22,42,.34);backdrop-filter:blur(8px);
   padding:24px 16px;overflow-y:auto;
 }
 .sheet.on{display:block}
 .sheet-card{
   max-width:44rem;margin:4vh auto;border-radius:1.5rem;padding:28px 26px;
-  background:#0a0a10;
+  background:#ffffff;
 }
 .sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:8px}
 .sheet-head h2{font-family:var(--serif);font-size:1.9rem;letter-spacing:-.02em;line-height:1.2}
@@ -677,7 +700,7 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
   border-radius:9999px;width:38px;height:38px;flex:none;cursor:pointer;color:var(--txt-60);
   font-family:inherit;font-size:1.1rem;transition:.2s;
 }
-.sheet-close:hover{color:#fff;background-color:rgba(255,255,255,.08)}
+.sheet-close:hover{color:var(--txt);background-color:var(--hover)}
 .sheet-sub{font-size:.9rem;color:var(--txt-60);margin-bottom:26px;line-height:1.8}
 .sblock{padding-top:24px;margin-top:24px;border-top:1px solid var(--line-soft)}
 .sblock:first-of-type{border-top:none;margin-top:0;padding-top:0}
@@ -686,11 +709,11 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
 .sblock .fields{display:flex;flex-direction:column;gap:14px}
 .warn{
   border-radius:.8rem;padding:12px 14px;font-size:.84rem;line-height:1.8;
-  background:rgba(255,200,87,.09);color:#ffdd9e;border:1px solid rgba(255,200,87,.22);
+  background:#fff8e6;color:#7a5600;border:1px solid #f0d492;
 }
 .status{font-size:.86rem;line-height:1.8;margin-top:12px;min-height:1.4em}
 .status.ok{color:var(--sc-5)} .status.bad{color:var(--sc-1)} .status.busy{color:var(--txt-60)}
-.dot-live{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--txt-40);flex:none}
+.dot-live{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--line);flex:none}
 .dot-live.on{background:var(--sc-5)}
 
 /* ---------- ผลวิเคราะห์จาก AI ---------- */
@@ -699,15 +722,15 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
 .ai-title{font-size:.95rem;font-weight:600;display:flex;align-items:center;gap:9px}
 .ai-out{
   font-size:.95rem;line-height:1.9;color:var(--txt-60);white-space:pre-wrap;
-  background:rgba(255,255,255,.03);border-radius:1rem;padding:18px 20px;
+  background:var(--soft);border-radius:1rem;padding:18px 20px;
 }
-.ai-out b,.ai-out strong{color:#fff;font-weight:600}
+.ai-out b,.ai-out strong{color:var(--txt);font-weight:600}
 .ai-when{font-size:.8rem;color:var(--txt-40);margin-top:10px}
 
 /* ช่องใส่คีย์ AI ที่ฝังอยู่ในการ์ดวิเคราะห์ถาวร */
 .ai-setup{
   border-radius:1rem;padding:18px 20px;margin-bottom:16px;
-  background:rgba(255,255,255,.03);
+  background:var(--soft);
 }
 .ai-setup .lead{font-size:.9rem;color:var(--txt-60);line-height:1.8;margin-bottom:16px}
 .ai-setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:end}
@@ -716,21 +739,22 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
 .ai-setup .fld label{font-size:.82rem}
 .ai-setup .warn{margin-top:14px}
 .spin{display:inline-block;width:13px;height:13px;border-radius:50%;
-  border:2px solid rgba(255,255,255,.25);border-top-color:#fff;animation:sp .7s linear infinite}
+  border:2px solid rgba(21,22,42,.22);border-top-color:var(--txt);animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 
 /* toast + tooltip */
 .toast{
   position:fixed;left:50%;bottom:28px;transform:translate(-50%,120px);
-  background:#fff;color:#000;font-weight:600;padding:14px 30px;border-radius:9999px;
+  background:var(--solid-bg);color:var(--solid-txt);font-weight:600;padding:14px 30px;border-radius:9999px;
   transition:transform .4s cubic-bezier(.16,1,.3,1);z-index:99;font-size:.95rem;
   box-shadow:0 12px 40px rgba(0,0,0,.6);max-width:calc(100vw - 32px);text-align:center;
 }
 .toast.on{transform:translate(-50%,0)}
 .tip{
-  position:fixed;background:rgba(10,10,16,.92);backdrop-filter:blur(10px);color:#fff;
+  position:fixed;background:#ffffff;backdrop-filter:blur(10px);color:var(--txt);
   border:1px solid var(--line);border-radius:.7rem;padding:9px 13px;font-size:.75rem;
   pointer-events:none;opacity:0;transition:opacity .18s;z-index:98;max-width:15rem;line-height:1.6;
+  box-shadow:0 8px 28px rgba(21,22,42,.14);
 }
 .tip.on{opacity:1}
 </style>
@@ -2060,7 +2084,7 @@ function setAmbient(){
   if(!data.length) return;
   const avg = data.reduce((s,e)=>s + e.score, 0) / data.length;
   document.documentElement.style.setProperty(
-    '--ambient', `color-mix(in srgb, ${scoreColor(avg)} 13%, transparent)`);
+    '--ambient', `color-mix(in srgb, ${scoreColor(avg)} 9%, transparent)`);
 }
 
 /* ============ TABS ============ */
@@ -2132,13 +2156,13 @@ function renderLine(){
 
   let g = '';
   for(let v=0; v<=10; v+=2){
-    g += `<line x1="${P.l}" y1="${Y(v)}" x2="${W-P.r}" y2="${Y(v)}" style="stroke:rgba(255,255,255,.07)"/>
-          <text x="${P.l-9}" y="${Y(v)+4}" style="fill:rgba(255,255,255,.35)" font-size="10" text-anchor="end">${v}</text>`;
+    g += `<line x1="${P.l}" y1="${Y(v)}" x2="${W-P.r}" y2="${Y(v)}" style="stroke:var(--track)"/>
+          <text x="${P.l-9}" y="${Y(v)+4}" style="fill:var(--txt-40)" font-size="10" text-anchor="end">${v}</text>`;
   }
   dates.forEach((d,i)=>{
     if(dates.length>10 && i % Math.ceil(dates.length/8)) return;
     const [,m,dd]=d.split('-');
-    g += `<text x="${X(i)}" y="${H-P.b+18}" style="fill:rgba(255,255,255,.35)" font-size="10" text-anchor="middle">${+dd}/${+m}</text>`;
+    g += `<text x="${X(i)}" y="${H-P.b+18}" style="fill:var(--txt-40)" font-size="10" text-anchor="middle">${+dd}/${+m}</text>`;
   });
 
   let dots = '';
@@ -2152,7 +2176,7 @@ function renderLine(){
     }
     g += `<path d="${path}" fill="none" style="stroke:${col}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`;
     pts.forEach(p=>{
-      dots += `<circle class="pt" cx="${p.x}" cy="${p.y}" r="4.5" style="fill:#000;stroke:${col}" stroke-width="2.2"
+      dots += `<circle class="pt" cx="${p.x}" cy="${p.y}" r="4.5" style="fill:var(--bg);stroke:${col}" stroke-width="2.2"
         data-tip="${attr(`<b>${esc(p.e.name)}</b> · ${fmtDate(p.e.date)}<br>คะแนน <b>${p.e.score}/10</b><br>${M(p.e.mood).em} ${M(p.e.mood).en}${p.e.event?'<br>'+esc(p.e.event):''}`)}"/>`;
     });
   });
@@ -2198,16 +2222,16 @@ function renderGauge(){
   box.innerHTML = `
   <div class="gauge-wrap">
     <svg class="chart-svg" viewBox="0 0 ${W} ${H}" style="max-width:290px">
-      ${arc(0,1,R,10,'rgba(255,255,255,.07)')}
+      ${arc(0,1,R,10,'var(--track)')}
       ${arc(0,.2,R,10,'var(--sc-1)')}
       ${arc(.2,.4,R,10,'var(--sc-2)')}
       ${arc(.4,.6,R,10,'var(--sc-3)')}
       ${arc(.6,.8,R,10,'var(--sc-4)')}
       ${arc(.8,1,R,10,'var(--sc-5)')}
       <line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" style="stroke:${state.c}" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="${cx}" cy="${cy}" r="7" style="fill:#000;stroke:${state.c}" stroke-width="3"/>
-      <text x="26" y="162" style="fill:rgba(255,255,255,.32)" font-size="11">0</text>
-      <text x="252" y="162" style="fill:rgba(255,255,255,.32)" font-size="11">10</text>
+      <circle cx="${cx}" cy="${cy}" r="7" style="fill:var(--bg);stroke:${state.c}" stroke-width="3"/>
+      <text x="26" y="162" style="fill:var(--txt-40)" font-size="11">0</text>
+      <text x="252" y="162" style="fill:var(--txt-40)" font-size="11">10</text>
     </svg>
     <div class="gauge-val" style="color:${state.c}">${v.toFixed(1)}</div>
     <div class="gauge-state" style="color:${state.c}">${state.t}</div>
@@ -2243,8 +2267,8 @@ function renderDonut(){
     <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
       <svg class="chart-svg" viewBox="0 0 ${S} ${S}" style="width:180px;flex:none">
         ${segs}
-        <text x="${c}" y="${c-2}" text-anchor="middle" style="fill:#fff;font-family:var(--serif)" font-size="34">${total}</text>
-        <text x="${c}" y="${c+18}" text-anchor="middle" style="fill:rgba(255,255,255,.35)" font-size="10">บันทึก</text>
+        <text x="${c}" y="${c-2}" text-anchor="middle" style="fill:var(--txt);font-family:var(--serif)" font-size="34">${total}</text>
+        <text x="${c}" y="${c+18}" text-anchor="middle" style="fill:var(--txt-40)" font-size="10">บันทึก</text>
       </svg>
       <div class="legend" style="flex:1;min-width:190px">
         ${items.map(it=>`<div class="lg">
@@ -2303,7 +2327,7 @@ function renderHeatmap(){
     if(!es){ cells += `<div class="cell">${d}</div>`; continue; }
     const avg = es.reduce((s,e)=>s+e.score,0)/es.length;
     const tipHtml = es.map(e=>`<b>${esc(e.name)}</b> ${e.score}/10 ${M(e.mood).em}${e.event?'<br>'+esc(e.event):''}`)
-      .join('<hr style="border:none;border-top:1px solid rgba(255,255,255,.14);margin:6px 0">');
+      .join('<hr style="border:none;border-top:1px solid var(--line);margin:6px 0">');
     cells += `<div class="cell has hmc" style="background:${scoreColor(avg)}" data-tip="${attr(`${fmtDate(iso)}<br>${tipHtml}`)}">
         <span>${d}</span><span class="em">${es[0].emoji||''}</span></div>`;
   }
