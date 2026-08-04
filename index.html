@@ -196,6 +196,19 @@ em{font-style:italic}
 .nav-links a{color:var(--txt-80);font-size:.875rem;font-weight:500;text-decoration:none;transition:color .2s}
 .nav-links a:hover{color:#fff}
 .nav-r{gap:12px}
+/* ป้ายบอกว่าใครกำลังเปิดอยู่ตอนนี้ */
+.live{
+  display:none;align-items:center;gap:8px;padding:7px 14px;border-radius:9999px;
+  font-size:.8rem;color:rgba(255,255,255,.85);white-space:nowrap;
+}
+.live.on{display:flex}
+.live .pulse{
+  width:8px;height:8px;border-radius:50%;background:#41d17f;flex:none;
+  box-shadow:0 0 0 0 rgba(65,209,127,.7);animation:live 2s ease-out infinite;
+}
+@keyframes live{70%{box-shadow:0 0 0 7px rgba(65,209,127,0)}100%{box-shadow:0 0 0 0 rgba(65,209,127,0)}}
+@media (prefers-reduced-motion:reduce){ .live .pulse{animation:none} }
+@media(max-width:860px){ .live{display:none!important} }
 .nav-ghost{
   background:none;border:none;color:#fff;font-size:.875rem;font-weight:500;
   font-family:inherit;cursor:pointer;padding:8px 4px;
@@ -786,6 +799,7 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:var(
         </div>
       </div>
       <div class="nav-r">
+        <span class="live liquid-glass" id="liveChip"><span class="pulse"></span><span id="liveTxt"></span></span>
         <button class="nav-ghost" id="navSettings">ตั้งค่า</button>
         <button class="nav-cta liquid-glass lg-hover" id="navWrite">เขียนบันทึก</button>
       </div>
@@ -1901,7 +1915,10 @@ function syncSoon(){
   if(!hasSync()) return;
   clearTimeout(syncTimer);
   syncTimer = setTimeout(async ()=>{
-    try{ await syncNow(); renderAll(); paintSyncDot('on'); }
+    try{
+      await syncNow(); renderAll(); paintSyncDot('on');
+      announceChange();          /* บอกอีกฝั่งให้ดึงของใหม่ทันที */
+    }
     catch(e){ paintSyncDot('bad'); toast('ซิงก์ไม่สำเร็จ — ' + e.message.slice(0, 60)); }
   }, 900);
 }
@@ -1909,6 +1926,141 @@ function paintSyncDot(state){
   const d = $('#syncDot'); if(!d) return;
   d.classList.toggle('on', state === 'on');
   d.style.background = state === 'bad' ? 'var(--sc-1)' : '';
+}
+
+/* ============================================================
+   เห็นพร้อมกันแบบสด — Realtime ของ Supabase
+   ใช้ broadcast กับ presence ซึ่งไม่ต้องตั้งค่าอะไรที่ฐานข้อมูล
+   มีตาข่ายรองรับสามชั้น: ซ็อกเก็ตสด → กลับมาที่แท็บแล้วดึง → ดึงตามเวลา
+   ============================================================ */
+const LIVE = {ws: null, ref: 0, tries: 0, hb: null, poll: null, others: new Map(), topic: 'realtime:diary'};
+
+function liveSend(event, payload){
+  if(LIVE.ws?.readyState !== 1) return false;
+  LIVE.ws.send(JSON.stringify({topic: LIVE.topic, event, payload, ref: String(++LIVE.ref)}));
+  return true;
+}
+function paintLive(){
+  const chip = $('#liveChip'), txt = $('#liveTxt');
+  if(!chip) return;
+  const who = [...LIVE.others.values()].filter(Boolean);
+  if(LIVE.ws?.readyState === 1 && who.length){
+    txt.textContent = who.length === 1 ? `${who[0]} กำลังดูอยู่` : `${who.length} คนกำลังดูอยู่`;
+    chip.classList.add('on');
+  }else{
+    chip.classList.remove('on');
+  }
+}
+/* อ่านอย่างเดียว ไม่เขียนกลับ ใช้ตอนดึงเป็นระยะเพื่อไม่ให้เปลืองโควตาเขียน */
+async function pullOnly(){
+  const remote = await sbFetch('entries?select=*') || [];
+  const byId = {};
+  remote.forEach(r=> byId[r.id] = r);
+  let changed = false;
+  data.forEach(e=>{
+    const local = clean(e), r = byId[e.id];
+    if(!r || (local.updated_at || '') > (r.updated_at || '')){ byId[e.id] = local; }
+  });
+  const merged = Object.values(byId).map(clean)
+    .sort((a,b)=> a.date.localeCompare(b.date) || a.name.localeCompare(b.name));
+  const sig = d => JSON.stringify(d.map(e=>[e.id, e.updated_at]).sort());
+  changed = sig(merged) !== sig(data);
+  if(changed){
+    data = merged;
+    try{ localStorage.setItem(KEY, JSON.stringify(data)); }catch(e){}
+  }
+  return changed;
+}
+
+/* ดึงข้อมูลใหม่แบบไม่ให้ถี่เกินไป */
+let pullTimer = null, pullBusy = false;
+function pullSoon(why){
+  clearTimeout(pullTimer);
+  pullTimer = setTimeout(async ()=>{
+    if(pullBusy) return;
+    pullBusy = true;
+    try{
+      if(await pullOnly()){
+        renderAll();
+        toast('มีบันทึกใหม่จากอีกฝ่าย');
+      }
+      paintSyncDot('on');
+    }catch(e){ paintSyncDot('bad'); }
+    finally{ pullBusy = false; }
+  }, 400);
+}
+
+function liveConnect(){
+  if(!hasSync() || !signedIn()) return;
+  try{
+    const base = sbUrlNow().replace(/^http/, 'ws').replace(/\/+$/, '');
+    const ws = new WebSocket(`${base}/realtime/v1/websocket?apikey=${encodeURIComponent(sbKeyNow())}&vsn=1.0.0`);
+    LIVE.ws = ws;
+
+    ws.onopen = ()=>{
+      LIVE.tries = 0;
+      liveSend('phx_join', {config: {
+        broadcast: {self: false},
+        presence: {key: SESS?.user?.id || myEmail() || 'me'},
+      }});
+      liveSend('access_token', {access_token: SESS.access_token});
+      liveSend('presence', {type: 'presence', event: 'track',
+        payload: {email: myEmail(), at: nowISO()}});
+      clearInterval(LIVE.hb);
+      LIVE.hb = setInterval(()=>{
+        if(ws.readyState === 1) ws.send(JSON.stringify({topic: 'phoenix', event: 'heartbeat', payload: {}, ref: String(++LIVE.ref)}));
+      }, 25000);
+    };
+
+    ws.onmessage = ev=>{
+      let m; try{ m = JSON.parse(ev.data); }catch(e){ return; }
+      if(m.event === 'presence_state'){
+        LIVE.others.clear();
+        Object.entries(m.payload || {}).forEach(([k, v])=>{
+          const meta = v?.metas?.[0] || {};
+          if(meta.email && meta.email !== myEmail()) LIVE.others.set(k, meta.email);
+        });
+        paintLive();
+      }else if(m.event === 'presence_diff'){
+        Object.entries(m.payload?.joins || {}).forEach(([k, v])=>{
+          const meta = v?.metas?.[0] || {};
+          if(meta.email && meta.email !== myEmail()) LIVE.others.set(k, meta.email);
+        });
+        Object.keys(m.payload?.leaves || {}).forEach(k=> LIVE.others.delete(k));
+        paintLive();
+      }else if(m.event === 'broadcast' && m.payload?.event === 'changed'){
+        pullSoon('live');
+      }
+    };
+
+    ws.onclose = ()=>{
+      clearInterval(LIVE.hb);
+      LIVE.others.clear();
+      paintLive();
+      /* ต่อใหม่โดยถอยห่างขึ้นเรื่อย ๆ ไม่เกินหนึ่งนาที */
+      const wait = Math.min(60000, 1500 * Math.pow(2, LIVE.tries++));
+      setTimeout(liveConnect, wait);
+    };
+    ws.onerror = ()=>{ try{ ws.close(); }catch(e){} };
+  }catch(e){ /* ต่อไม่ได้ก็ยังมีการดึงตามเวลาเป็นตัวสำรอง */ }
+}
+
+/* บอกอีกฝั่งว่ามีของใหม่ */
+function announceChange(){ liveSend('broadcast', {type: 'broadcast', event: 'changed', payload: {by: myEmail()}}); }
+
+/* ชั้นสำรอง: กลับมาที่แท็บเมื่อไหร่ให้ดึงทันที และดึงเผื่อไว้ทุกครึ่งนาทีถ้าซ็อกเก็ตหลุด */
+function liveFallbacks(){
+  document.addEventListener('visibilitychange', ()=>{
+    if(!document.hidden && hasSync() && signedIn()) pullSoon('focus');
+  });
+  window.addEventListener('online', ()=>{ if(hasSync() && signedIn()) pullSoon('online'); });
+  /* ดึงทุก 15 วินาทีระหว่างเปิดหน้าอยู่ — เป็นตัวรับประกันว่าเห็นตรงกันแน่นอน
+     แม้ซ็อกเก็ตสดจะต่อไม่ได้ หยุดเองเมื่อสลับแท็บไปทำอย่างอื่น */
+  clearInterval(LIVE.poll);
+  LIVE.poll = setInterval(()=>{
+    if(document.hidden || !hasSync() || !signedIn()) return;
+    pullSoon('poll');
+  }, 15000);
 }
 
 /* ============ AI ช่วยวิเคราะห์ ============ */
@@ -2706,6 +2858,7 @@ async function afterSignIn(){
   try{
     await syncNow(); renderAll(); paintSyncDot('on');
     toast(`ยินดีต้อนรับ ${myEmail()}`);
+    liveConnect(); liveFallbacks();
   }catch(e){ paintSyncDot('bad'); toast('ซิงก์ไม่สำเร็จ — ' + e.message.slice(0, 60)); }
 }
 
@@ -2753,10 +2906,10 @@ $('#gatePw').addEventListener('keydown', ev=>{ if(ev.key === 'Enter') $('#gateIn
 if(sharedMode()){
   if(signedIn()){
     syncNow()
-      .then(()=>{ renderAll(); paintSyncDot('on'); })
+      .then(()=>{ renderAll(); paintSyncDot('on'); liveConnect(); liveFallbacks(); })
       .catch(async ()=>{
         if(await refreshSession()){
-          try{ await syncNow(); renderAll(); paintSyncDot('on'); return; }catch(e){}
+          try{ await syncNow(); renderAll(); paintSyncDot('on'); liveConnect(); liveFallbacks(); return; }catch(e){}
         }
         paintSyncDot('bad'); showGate();
       });
