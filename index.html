@@ -275,7 +275,7 @@ em{font-style:italic}
 .about h2{
   font-family:var(--serif);font-weight:400;
   font-size:clamp(1.9rem,4.6vw,3.4rem);
-  line-height:1.3;letter-spacing:-.01em;color:#fff;margin-top:24px;
+  line-height:1.3;letter-spacing:-.01em;color:var(--txt);margin-top:24px;
 }
 .about h2 em{font-style:italic;color:var(--txt-60)}
 @media(min-width:768px){ .about{padding-top:176px;padding-bottom:56px} }
@@ -336,7 +336,7 @@ em{font-style:italic}
   box-shadow:0 0 0 1px rgba(21,22,42,.10)}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @media (prefers-reduced-motion:reduce){ .avatar{animation:none} }
-.person .who{font-size:1.15rem;font-weight:600;color:#fff}
+.person .who{font-size:1.15rem;font-weight:600;color:var(--txt)}
 .person .avg{
   font-family:var(--serif);font-size:3.2rem;line-height:1.1;letter-spacing:-.02em;
   font-variant-numeric:tabular-nums;
@@ -378,7 +378,7 @@ em{font-style:italic}
 .bridge .side{display:flex;flex-direction:column;gap:8px;min-width:0}
 .bridge .side.r{align-items:flex-end;text-align:right}
 @media(max-width:640px){ .bridge .side.r{align-items:center;text-align:center} }
-.bridge .side .nm{font-size:.95rem;font-weight:600;color:#fff}
+.bridge .side .nm{font-size:.95rem;font-weight:600;color:var(--txt)}
 .bridge .side .k{font-size:.85rem;color:var(--txt-60)}
 .bridge .side .pct{font-family:var(--serif);font-size:2.3rem;line-height:1;font-variant-numeric:tabular-nums}
 .bridge .side .bar{width:100%;height:6px;border-radius:9999px;background:var(--track);overflow:hidden}
@@ -401,7 +401,7 @@ em{font-style:italic}
 .read{display:flex;flex-direction:column;gap:12px;margin-top:22px;padding-top:20px;border-top:1px solid var(--line-soft)}
 .read .r{display:flex;gap:12px;align-items:flex-start;font-size:.95rem;line-height:1.85;color:var(--txt-60)}
 .read .r .ic{flex:none;font-size:1rem;opacity:.9}
-.read .r b{color:#fff;font-weight:600}
+.read .r b{color:var(--txt);font-weight:600}
 .caveat{
   margin-top:20px;padding:12px 14px;border-radius:.8rem;background:var(--soft);
   font-size:.84rem;color:var(--txt-40);line-height:1.8;
@@ -440,7 +440,7 @@ em{font-style:italic}
 }
 .head-row h2{
   font-family:var(--serif);font-weight:400;
-  font-size:clamp(2rem,5vw,3.25rem);letter-spacing:-.02em;color:#fff;line-height:1.1;
+  font-size:clamp(2rem,5vw,3.25rem);letter-spacing:-.02em;color:var(--txt);line-height:1.1;
 }
 .head-row h2 em{font-style:italic;color:var(--txt-40)}
 .head-row .k{color:var(--txt-40);font-size:.875rem;flex:none}
@@ -475,7 +475,7 @@ em{font-style:italic}
 }
 .stat .lbl{font-size:.88rem;color:var(--txt-60);margin-bottom:8px}
 .stat .val{
-  font-family:var(--serif);font-weight:400;font-size:2.6rem;line-height:1;
+  color:var(--txt);font-family:var(--serif);font-weight:400;font-size:2.6rem;line-height:1;
   letter-spacing:-.02em;font-variant-numeric:tabular-nums;
 }
 .stat .val small{font-size:.85rem;color:var(--txt-40);font-family:var(--sans)}
@@ -531,7 +531,7 @@ em{font-style:italic}
 .ins{display:flex;flex-direction:column;gap:10px}
 .ins .i{display:flex;gap:12px;align-items:flex-start;font-size:.95rem;line-height:1.85;color:var(--txt-60)}
 .ins .i .ic{font-size:1rem;line-height:1.5;flex:none;opacity:.9}
-.ins .i b{color:#fff;font-weight:600}
+.ins .i b{color:var(--txt);font-weight:600}
 .ins .i + .i{border-top:1px solid var(--line-soft);padding-top:10px}
 
 /* form */
@@ -610,7 +610,7 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:var(
   background:var(--soft);font-size:.86rem;max-width:100%;
 }
 .react .em{font-size:1.05rem;line-height:1;flex:none}
-.react .by{color:#fff;font-weight:600;flex:none}
+.react .by{color:var(--txt);font-weight:600;flex:none}
 .react .tx{font-family:var(--hand);color:var(--txt-60);overflow-wrap:anywhere}
 .react .rm{
   background:none;border:none;color:var(--txt-40);cursor:pointer;font-size:.9rem;
@@ -681,7 +681,7 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:var(
   font-size:.75rem;color:var(--txt-40);
 }
 .foot a{color:var(--txt-60);text-decoration:none}
-.foot a:hover{color:#fff}
+.foot a:hover{color:var(--txt)}
 
 /* ---------- แผงตั้งค่า ---------- */
 .sheet{
