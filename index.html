@@ -6,12 +6,12 @@
 <meta name="description" content="บันทึกเหตุการณ์ ความรู้สึก และคะแนนความสุขรายวัน พร้อมอินโฟกราฟิกสภาพจิตใจ">
 <!-- หน้านี้เป็นไดอารี่ส่วนตัว จึงสั่งไม่ให้ Google เก็บเข้าระบบค้นหา — ลบบรรทัดล่างนี้ถ้าอยากให้ค้นเจอ -->
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#fbfbfd">
+<meta name="theme-color" content="#e7e8ee">
 <meta name="color-scheme" content="light">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%92%97%3C%2Ftext%3E%3C%2Fsvg%3E">
-<style>*{-webkit-text-size-adjust:100%}html{background:#fbfbfd}</style>
+<style>*{-webkit-text-size-adjust:100%}html{background:#e7e8ee}</style>
 </head>
 <body>
 <title>ไดอารี่ความรู้สึก — Mood Diary</title>
@@ -22,21 +22,21 @@
    TOKENS — โลกสีดำใบเดียว (committed dark, ไม่มีธีมสว่าง)
    ============================================================ */
 :root{
-  --bg:#fbfbfd;
-  --txt:#15162a;
-  --txt-80:rgba(21,22,42,.86);
-  --txt-60:rgba(21,22,42,.72);
-  --txt-50:rgba(21,22,42,.62);
-  --txt-40:rgba(21,22,42,.52);
-  --line:rgba(21,22,42,.13);
-  --line-soft:rgba(21,22,42,.08);
-  --soft:rgba(21,22,42,.04);
-  --hover:rgba(21,22,42,.07);
-  --track:rgba(21,22,42,.10);
+  --bg:#e7e8ee;
+  --txt:#1b1d2e;
+  --txt-80:rgba(27,29,46,.86);
+  --txt-60:rgba(27,29,46,.74);
+  --txt-50:rgba(27,29,46,.64);
+  --txt-40:rgba(27,29,46,.55);
+  --line:rgba(27,29,46,.16);
+  --line-soft:rgba(27,29,46,.10);
+  --soft:rgba(27,29,46,.055);
+  --hover:rgba(27,29,46,.10);
+  --track:rgba(27,29,46,.14);
   --input-bg:#ffffff;
-  --solid-bg:#15162a;
+  --solid-bg:#1b1d2e;
   --solid-txt:#ffffff;
-  --card-bg:rgba(255,255,255,.66);
+  --card-bg:rgba(255,255,255,.78);
 
   /* สเกลคะแนนความสุข 0-10 — ไล่จากแดงอุ่นไปเขียวสด ให้อ่านอารมณ์ได้จากสี */
   --sc-1:#e0334c;  /* ต้องดูแลใจ */
@@ -57,6 +57,8 @@
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
+/* ขยายตัวอักษรทั้งหน้า 12.5% โดยไม่ต้องแก้ทีละจุด */
+html{font-size:112.5%}
 body{
   background:var(--bg);
   color:var(--txt);
@@ -77,7 +79,7 @@ em{font-style:italic}
   backdrop-filter:blur(14px) saturate(1.5);
   -webkit-backdrop-filter:blur(14px) saturate(1.5);
   border:none;
-  box-shadow:0 1px 2px rgba(21,22,42,.05), 0 10px 30px rgba(21,22,42,.06);
+  box-shadow:0 1px 2px rgba(27,29,46,.07), 0 12px 34px rgba(27,29,46,.10);
   position:relative;
   overflow:hidden;
 }
@@ -88,12 +90,12 @@ em{font-style:italic}
   border-radius:inherit;
   padding:1.4px;
   background:linear-gradient(180deg,
-    rgba(21,22,42,.20) 0%,
-    rgba(21,22,42,.09) 20%,
-    rgba(21,22,42,.04) 40%,
-    rgba(21,22,42,.04) 60%,
-    rgba(21,22,42,.09) 80%,
-    rgba(21,22,42,.20) 100%);
+    rgba(27,29,46,.22) 0%,
+    rgba(27,29,46,.10) 20%,
+    rgba(27,29,46,.05) 40%,
+    rgba(27,29,46,.05) 60%,
+    rgba(27,29,46,.10) 80%,
+    rgba(27,29,46,.22) 100%);
   -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite:xor;
   mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -184,7 +186,7 @@ em{font-style:italic}
 /* ---- navbar ---- */
 .nav{position:relative;z-index:20;padding:24px}
 .nav-pill{
-  max-width:64rem;margin:0 auto;border-radius:9999px;
+  max-width:1020px;margin:0 auto;border-radius:9999px;
   padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;
 }
 .nav-l,.nav-r{display:flex;align-items:center}
@@ -223,7 +225,7 @@ em{font-style:italic}
 .hero-h1 em{font-style:italic}
 
 .hero-pill{
-  max-width:36rem;width:100%;border-radius:9999px;
+  max-width:575px;width:100%;border-radius:9999px;
   padding:8px 8px 8px 24px;display:flex;align-items:center;gap:12px;
 }
 .hero-pill input{
@@ -239,7 +241,7 @@ em{font-style:italic}
 .hero-go:active{transform:scale(.94)}
 
 .hero-sub{
-  color:#fff;font-size:1rem;line-height:1.85;padding:0 16px;max-width:36rem;
+  color:#fff;font-size:1rem;line-height:1.85;padding:0 16px;max-width:575px;
   opacity:.82;
 }
 .hero-manifesto{
@@ -267,9 +269,9 @@ em{font-style:italic}
 }
 .about::before{
   content:'';position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(ellipse at top, rgba(21,22,42,.04) 0%, transparent 70%);
+  background:radial-gradient(ellipse at top, rgba(27,29,46,.05) 0%, transparent 70%);
 }
-.shell{max-width:72rem;margin:0 auto;position:relative;z-index:1}
+.shell{max-width:1150px;margin:0 auto;position:relative;z-index:1}
 .eyebrow{color:var(--txt-60);font-size:.95rem}
 /* ข้อความไทยกินพื้นที่กว้างกว่าอังกฤษมาก จึงคุมเพดานไว้ต่ำกว่าสเปกเดิม */
 .about h2{
@@ -301,7 +303,7 @@ em{font-style:italic}
 @media(min-width:768px){
   .band-overlay{padding:40px;flex-direction:row;align-items:flex-end;justify-content:space-between}
 }
-.band-card{border-radius:1rem;padding:24px;max-width:28rem}
+.band-card{border-radius:1rem;padding:24px;max-width:448px}
 @media(min-width:768px){ .band-card{padding:32px} }
 .band-card .k{color:var(--txt-50);font-size:.9rem;margin-bottom:12px}
 .band-card p{color:#fff;font-size:.875rem;line-height:1.75}
@@ -333,7 +335,7 @@ em{font-style:italic}
 }
 .avatar{width:150px;height:150px;border-radius:50%;object-fit:cover;display:block;
   position:relative;animation:bob 5.5s ease-in-out infinite;
-  box-shadow:0 0 0 1px rgba(21,22,42,.10)}
+  box-shadow:0 0 0 1px rgba(27,29,46,.14)}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @media (prefers-reduced-motion:reduce){ .avatar{animation:none} }
 .person .who{font-size:1.15rem;font-weight:600;color:var(--txt)}
@@ -431,7 +433,7 @@ em{font-style:italic}
 .board{background:var(--bg);padding:0 24px 120px;position:relative;overflow:hidden}
 .board::before{
   content:'';position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(ellipse at center, rgba(21,22,42,.03) 0%, transparent 60%);
+  background:radial-gradient(ellipse at center, rgba(27,29,46,.04) 0%, transparent 60%);
 }
 
 .head-row{
@@ -499,7 +501,7 @@ em{font-style:italic}
   letter-spacing:-.02em;font-variant-numeric:tabular-nums;
 }
 .gauge-state{font-size:1rem;font-weight:600;margin-top:8px}
-.gauge-note{font-size:.88rem;color:var(--txt-60);text-align:center;margin-top:10px;max-width:18rem;line-height:1.8}
+.gauge-note{font-size:.88rem;color:var(--txt-60);text-align:center;margin-top:10px;max-width:290px;line-height:1.8}
 
 .legend{display:flex;flex-direction:column;gap:11px;margin-top:4px}
 .lg{display:flex;align-items:center;gap:11px;font-size:.92rem}
@@ -580,7 +582,7 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:var(
 .entry{
   display:grid;grid-template-columns:76px 1fr auto;gap:18px;align-items:flex-start;
   border-radius:1.15rem;padding:20px;
-  box-shadow:0 1px 2px rgba(21,22,42,.05), 0 10px 30px rgba(21,22,42,.06), inset 3px 0 0 var(--ec,var(--m-inlove));
+  box-shadow:0 1px 2px rgba(27,29,46,.07), 0 12px 34px rgba(27,29,46,.10), inset 3px 0 0 var(--ec,var(--m-inlove));
   /* ไล่สีตามอารมณ์ของบันทึกนั้น ให้กวาดตาแล้วรู้ทันทีว่าวันไหนเป็นยังไง */
   background-image:linear-gradient(104deg, color-mix(in srgb, var(--ec) 11%, transparent) 0%, transparent 48%);
   transition:background-color .3s ease;
@@ -686,12 +688,12 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:var(
 /* ---------- แผงตั้งค่า ---------- */
 .sheet{
   position:fixed;inset:0;z-index:120;display:none;
-  background:rgba(21,22,42,.34);backdrop-filter:blur(8px);
+  background:rgba(27,29,46,.42);backdrop-filter:blur(8px);
   padding:24px 16px;overflow-y:auto;
 }
 .sheet.on{display:block}
 .sheet-card{
-  max-width:44rem;margin:4vh auto;border-radius:1.5rem;padding:28px 26px;
+  max-width:700px;margin:4vh auto;border-radius:1.5rem;padding:28px 26px;
   background:#ffffff;
 }
 .sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:8px}
@@ -739,7 +741,7 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:var(
 .ai-setup .fld label{font-size:.82rem}
 .ai-setup .warn{margin-top:14px}
 .spin{display:inline-block;width:13px;height:13px;border-radius:50%;
-  border:2px solid rgba(21,22,42,.22);border-top-color:var(--txt);animation:sp .7s linear infinite}
+  border:2px solid rgba(27,29,46,.24);border-top-color:var(--txt);animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 
 /* toast + tooltip */
@@ -753,8 +755,8 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:var(
 .tip{
   position:fixed;background:#ffffff;backdrop-filter:blur(10px);color:var(--txt);
   border:1px solid var(--line);border-radius:.7rem;padding:9px 13px;font-size:.75rem;
-  pointer-events:none;opacity:0;transition:opacity .18s;z-index:98;max-width:15rem;line-height:1.6;
-  box-shadow:0 8px 28px rgba(21,22,42,.14);
+  pointer-events:none;opacity:0;transition:opacity .18s;z-index:98;max-width:240px;line-height:1.6;
+  box-shadow:0 8px 28px rgba(27,29,46,.18);
 }
 .tip.on{opacity:1}
 </style>
@@ -998,7 +1000,7 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:var(
 
 <!-- ============================ ล็อกอิน ============================ -->
 <div class="sheet" id="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
-  <div class="sheet-card liquid-glass" style="max-width:27rem;margin-top:8vh">
+  <div class="sheet-card liquid-glass" style="max-width:430px;margin-top:8vh">
     <div class="sheet-head" style="margin-bottom:4px">
       <h2 id="gateTitle">ไดอารี่ความรู้สึก</h2>
     </div>
@@ -2157,12 +2159,12 @@ function renderLine(){
   let g = '';
   for(let v=0; v<=10; v+=2){
     g += `<line x1="${P.l}" y1="${Y(v)}" x2="${W-P.r}" y2="${Y(v)}" style="stroke:var(--track)"/>
-          <text x="${P.l-9}" y="${Y(v)+4}" style="fill:var(--txt-40)" font-size="10" text-anchor="end">${v}</text>`;
+          <text x="${P.l-9}" y="${Y(v)+4}" style="fill:var(--txt-40)" font-size="12" text-anchor="end">${v}</text>`;
   }
   dates.forEach((d,i)=>{
     if(dates.length>10 && i % Math.ceil(dates.length/8)) return;
     const [,m,dd]=d.split('-');
-    g += `<text x="${X(i)}" y="${H-P.b+18}" style="fill:var(--txt-40)" font-size="10" text-anchor="middle">${+dd}/${+m}</text>`;
+    g += `<text x="${X(i)}" y="${H-P.b+18}" style="fill:var(--txt-40)" font-size="12" text-anchor="middle">${+dd}/${+m}</text>`;
   });
 
   let dots = '';
@@ -2230,8 +2232,8 @@ function renderGauge(){
       ${arc(.8,1,R,10,'var(--sc-5)')}
       <line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" style="stroke:${state.c}" stroke-width="3" stroke-linecap="round"/>
       <circle cx="${cx}" cy="${cy}" r="7" style="fill:var(--bg);stroke:${state.c}" stroke-width="3"/>
-      <text x="26" y="162" style="fill:var(--txt-40)" font-size="11">0</text>
-      <text x="252" y="162" style="fill:var(--txt-40)" font-size="11">10</text>
+      <text x="26" y="162" style="fill:var(--txt-40)" font-size="13">0</text>
+      <text x="252" y="162" style="fill:var(--txt-40)" font-size="13">10</text>
     </svg>
     <div class="gauge-val" style="color:${state.c}">${v.toFixed(1)}</div>
     <div class="gauge-state" style="color:${state.c}">${state.t}</div>
@@ -2268,7 +2270,7 @@ function renderDonut(){
       <svg class="chart-svg" viewBox="0 0 ${S} ${S}" style="width:180px;flex:none">
         ${segs}
         <text x="${c}" y="${c-2}" text-anchor="middle" style="fill:var(--txt);font-family:var(--serif)" font-size="34">${total}</text>
-        <text x="${c}" y="${c+18}" text-anchor="middle" style="fill:var(--txt-40)" font-size="10">บันทึก</text>
+        <text x="${c}" y="${c+18}" text-anchor="middle" style="fill:var(--txt-40)" font-size="12">บันทึก</text>
       </svg>
       <div class="legend" style="flex:1;min-width:190px">
         ${items.map(it=>`<div class="lg">
