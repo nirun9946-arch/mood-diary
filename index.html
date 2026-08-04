@@ -16,7 +16,7 @@
 <body>
 <title>ไดอารี่ความรู้สึก — Mood Diary</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Noto+Serif+Thai:wght@400;600&family=Sarabun:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Noto+Serif+Thai:wght@400;600&display=swap');
 
 /* ============================================================
    TOKENS — โลกสีดำใบเดียว (committed dark, ไม่มีธีมสว่าง)
@@ -25,9 +25,9 @@
   --bg:#000;
   --txt:#fff;
   --txt-80:rgba(255,255,255,.80);
-  --txt-60:rgba(255,255,255,.60);
-  --txt-50:rgba(255,255,255,.50);
-  --txt-40:rgba(255,255,255,.40);
+  --txt-60:rgba(255,255,255,.74);
+  --txt-50:rgba(255,255,255,.64);
+  --txt-40:rgba(255,255,255,.56);
   --line:rgba(255,255,255,.10);
   --line-soft:rgba(255,255,255,.06);
 
@@ -40,7 +40,7 @@
   --p1:#ff6fae; --p2:#4fd3ff; --p3:#48e3ac; --p4:#ffc65c; --p5:#9b7bff;
 
   --serif:'Instrument Serif','Noto Serif Thai',Georgia,serif;
-  --sans:'Sarabun','Noto Sans Thai','Segoe UI',system-ui,-apple-system,sans-serif;
+  --sans:'IBM Plex Sans Thai','Noto Sans Thai','Segoe UI',system-ui,-apple-system,sans-serif;
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
@@ -48,7 +48,7 @@ body{
   background:var(--bg);
   color:var(--txt);
   font-family:var(--sans);
-  line-height:1.6;
+  line-height:1.75;
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
 }
@@ -198,7 +198,7 @@ em{font-style:italic}
 .hero-go:active{transform:scale(.94)}
 
 .hero-sub{
-  color:#fff;font-size:.875rem;line-height:1.75;padding:0 16px;max-width:36rem;
+  color:#fff;font-size:1rem;line-height:1.85;padding:0 16px;max-width:36rem;
   opacity:.82;
 }
 .hero-manifesto{
@@ -229,9 +229,7 @@ em{font-style:italic}
   background:radial-gradient(ellipse at top, rgba(255,255,255,.03) 0%, transparent 70%);
 }
 .shell{max-width:72rem;margin:0 auto;position:relative;z-index:1}
-.eyebrow{
-  color:var(--txt-40);font-size:.875rem;letter-spacing:.22em;text-transform:uppercase;
-}
+.eyebrow{color:var(--txt-60);font-size:.95rem}
 /* ข้อความไทยกินพื้นที่กว้างกว่าอังกฤษมาก จึงคุมเพดานไว้ต่ำกว่าสเปกเดิม */
 .about h2{
   font-family:var(--serif);font-weight:400;
@@ -264,7 +262,7 @@ em{font-style:italic}
 }
 .band-card{border-radius:1rem;padding:24px;max-width:28rem}
 @media(min-width:768px){ .band-card{padding:32px} }
-.band-card .k{color:var(--txt-50);font-size:.75rem;letter-spacing:.22em;text-transform:uppercase;margin-bottom:12px}
+.band-card .k{color:var(--txt-50);font-size:.9rem;margin-bottom:12px}
 .band-card p{color:#fff;font-size:.875rem;line-height:1.75}
 @media(min-width:768px){ .band-card p{font-size:1rem} }
 .band-btn{
@@ -307,7 +305,7 @@ em{font-style:italic}
   font-size:.72rem;padding:5px 14px;border-radius:9999px;font-weight:600;
   background:rgba(255,255,255,.05);margin-top:6px;
 }
-.person .meta{font-size:.72rem;color:var(--txt-40);margin-top:10px;line-height:1.7}
+.person .meta{font-size:.84rem;color:var(--txt-40);margin-top:10px;line-height:1.8}
 .person .bubble{
   font-family:var(--serif);font-style:italic;font-size:.95rem;color:var(--txt-60);
   margin-top:14px;padding-top:14px;border-top:1px solid var(--line-soft);width:100%;line-height:1.6;
@@ -315,7 +313,7 @@ em{font-style:italic}
 
 .together{border-radius:1.5rem;padding:28px 24px;margin-top:20px}
 .together .top{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 18px;margin-bottom:20px}
-.together .top .k{color:var(--txt-40);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase}
+.together .top .k{color:var(--txt-60);font-size:.9rem}
 .together .top .big{font-family:var(--serif);font-size:2.4rem;line-height:1;font-variant-numeric:tabular-nums}
 .together .top .verdict{font-size:.9rem;color:var(--txt-60);flex:1;min-width:200px}
 .cmp{display:flex;flex-direction:column;gap:14px}
@@ -326,7 +324,7 @@ em{font-style:italic}
 .cmp .row .v{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
 .gap-note{
   margin-top:18px;padding-top:16px;border-top:1px solid var(--line-soft);
-  font-size:.8rem;color:var(--txt-60);line-height:1.75;
+  font-size:.92rem;color:var(--txt-60);line-height:1.85;
 }
 
 /* ---------- วิเคราะห์ความรู้สึกที่มีต่อกัน ---------- */
@@ -340,7 +338,7 @@ em{font-style:italic}
 .bridge .side.r{align-items:flex-end;text-align:right}
 @media(max-width:640px){ .bridge .side.r{align-items:center;text-align:center} }
 .bridge .side .nm{font-size:.95rem;font-weight:600;color:#fff}
-.bridge .side .k{font-size:.68rem;color:var(--txt-40);letter-spacing:.16em;text-transform:uppercase}
+.bridge .side .k{font-size:.85rem;color:var(--txt-60)}
 .bridge .side .pct{font-family:var(--serif);font-size:2.3rem;line-height:1;font-variant-numeric:tabular-nums}
 .bridge .side .bar{width:100%;height:6px;border-radius:9999px;background:rgba(255,255,255,.07);overflow:hidden}
 .bridge .side .bar i{display:block;height:100%;border-radius:9999px;transition:width .9s cubic-bezier(.16,1,.3,1)}
@@ -351,21 +349,21 @@ em{font-style:italic}
 }
 .bridge .core .heart{font-size:1.6rem;line-height:1}
 .bridge .core .big{font-family:var(--serif);font-size:2.6rem;line-height:1;font-variant-numeric:tabular-nums}
-.bridge .core .lbl{font-size:.66rem;color:var(--txt-40);letter-spacing:.16em;text-transform:uppercase}
+.bridge .core .lbl{font-size:.82rem;color:var(--txt-60)}
 
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;
   padding-top:20px;border-top:1px solid var(--line-soft)}
-.metric .k{font-size:.66rem;color:var(--txt-40);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}
+.metric .k{font-size:.85rem;color:var(--txt-60);margin-bottom:6px}
 .metric .v{font-family:var(--serif);font-size:1.5rem;line-height:1.1;font-variant-numeric:tabular-nums}
-.metric .d{font-size:.7rem;color:var(--txt-40);margin-top:4px;line-height:1.6}
+.metric .d{font-size:.8rem;color:var(--txt-40);margin-top:5px;line-height:1.7}
 
 .read{display:flex;flex-direction:column;gap:12px;margin-top:22px;padding-top:20px;border-top:1px solid var(--line-soft)}
-.read .r{display:flex;gap:12px;align-items:flex-start;font-size:.85rem;line-height:1.75;color:var(--txt-60)}
+.read .r{display:flex;gap:12px;align-items:flex-start;font-size:.95rem;line-height:1.85;color:var(--txt-60)}
 .read .r .ic{flex:none;font-size:1rem;opacity:.9}
 .read .r b{color:#fff;font-weight:600}
 .caveat{
   margin-top:20px;padding:12px 14px;border-radius:.8rem;background:rgba(255,255,255,.03);
-  font-size:.72rem;color:var(--txt-40);line-height:1.7;
+  font-size:.84rem;color:var(--txt-40);line-height:1.8;
 }
 
 /* ---------- ปุ่มพูด ---------- */
@@ -381,7 +379,7 @@ em{font-style:italic}
 @media (prefers-reduced-motion:reduce){ .mic.rec{animation:none} }
 .field-mic{display:flex;gap:10px;align-items:flex-start}
 .field-mic > input,.field-mic > textarea{flex:1;min-width:0}
-.mic-note{font-size:.7rem;color:var(--txt-40);margin-top:6px;min-height:1em}
+.mic-note{font-size:.82rem;color:var(--txt-60);margin-top:6px;min-height:1em}
 .hero-pill .mic{width:34px;height:34px}
 
 /* ============================================================
@@ -408,7 +406,7 @@ em{font-style:italic}
 /* tabs */
 .tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px}
 .tab{
-  padding:9px 20px;border-radius:9999px;cursor:pointer;font-size:.875rem;
+  padding:10px 22px;border-radius:9999px;cursor:pointer;font-size:.95rem;
   color:var(--txt-60);font-family:inherit;transition:color .25s,background-color .25s;
   display:flex;align-items:center;gap:9px;
 }
@@ -420,8 +418,8 @@ em{font-style:italic}
 /* cards */
 .card{border-radius:1.25rem;padding:24px}
 .card h3{
-  font-size:.75rem;font-weight:600;color:var(--txt-40);letter-spacing:.2em;
-  text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:9px;
+  font-size:.92rem;font-weight:600;color:var(--txt-60);
+  margin-bottom:20px;display:flex;align-items:center;gap:9px;
 }
 .card h3 .dot{width:6px;height:6px;border-radius:50%;background:var(--m-crush);flex:none}
 
@@ -432,14 +430,14 @@ em{font-style:italic}
   position:absolute;inset:auto -24px -40px auto;width:120px;height:120px;border-radius:50%;
   background:var(--c,var(--m-crush));opacity:.16;filter:blur(16px);pointer-events:none;
 }
-.stat .lbl{font-size:.75rem;color:var(--txt-40);margin-bottom:8px;letter-spacing:.02em}
+.stat .lbl{font-size:.88rem;color:var(--txt-60);margin-bottom:8px}
 .stat .val{
   font-family:var(--serif);font-weight:400;font-size:2.6rem;line-height:1;
   letter-spacing:-.02em;font-variant-numeric:tabular-nums;
 }
 .stat .val small{font-size:.85rem;color:var(--txt-40);font-family:var(--sans)}
 .stat .val.sm{font-size:1.35rem;line-height:1.25}
-.stat .foot{font-size:.72rem;color:var(--txt-40);margin-top:8px}
+.stat .foot{font-size:.82rem;color:var(--txt-40);margin-top:8px}
 .up{color:var(--sc-5)}.down{color:var(--sc-1)}.flat{color:var(--txt-40)}
 
 /* grids */
@@ -458,23 +456,23 @@ em{font-style:italic}
   letter-spacing:-.02em;font-variant-numeric:tabular-nums;
 }
 .gauge-state{font-size:1rem;font-weight:600;margin-top:8px}
-.gauge-note{font-size:.78rem;color:var(--txt-50);text-align:center;margin-top:10px;max-width:17rem;line-height:1.7}
+.gauge-note{font-size:.88rem;color:var(--txt-60);text-align:center;margin-top:10px;max-width:18rem;line-height:1.8}
 
 .legend{display:flex;flex-direction:column;gap:11px;margin-top:4px}
-.lg{display:flex;align-items:center;gap:11px;font-size:.82rem}
+.lg{display:flex;align-items:center;gap:11px;font-size:.92rem}
 .lg .sw{width:9px;height:9px;border-radius:3px;flex:none}
 .lg .nm{flex:1;color:var(--txt-60);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lg .pc{font-weight:600;font-variant-numeric:tabular-nums}
 
 .lvbar{margin-bottom:14px}
-.lvbar .r1{display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:6px;gap:12px}
+.lvbar .r1{display:flex;justify-content:space-between;font-size:.88rem;margin-bottom:6px;gap:12px}
 .lvbar .r1 .t{color:var(--txt-60)}
 .lvbar .track{height:6px;border-radius:9999px;background:rgba(255,255,255,.07);overflow:hidden}
 .lvbar .fill{height:100%;border-radius:9999px;transition:width .9s cubic-bezier(.16,1,.3,1)}
 
 .hm-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:12px;flex-wrap:wrap}
 .hm{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
-.hm .dow{text-align:center;font-size:.66rem;color:var(--txt-40);padding-bottom:4px;letter-spacing:.06em}
+.hm .dow{text-align:center;font-size:.8rem;color:var(--txt-60);padding-bottom:4px}
 .hm .cell{
   aspect-ratio:1;border-radius:.6rem;background:rgba(255,255,255,.035);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -488,7 +486,7 @@ em{font-style:italic}
 .hm-scale i{width:16px;height:8px;border-radius:2px;display:inline-block}
 
 .ins{display:flex;flex-direction:column;gap:10px}
-.ins .i{display:flex;gap:12px;align-items:flex-start;font-size:.85rem;line-height:1.7;color:var(--txt-60)}
+.ins .i{display:flex;gap:12px;align-items:flex-start;font-size:.95rem;line-height:1.85;color:var(--txt-60)}
 .ins .i .ic{font-size:1rem;line-height:1.5;flex:none;opacity:.9}
 .ins .i b{color:#fff;font-weight:600}
 .ins .i + .i{border-top:1px solid var(--line-soft);padding-top:10px}
@@ -497,10 +495,10 @@ em{font-style:italic}
 .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
 .fld{display:flex;flex-direction:column;gap:8px}
 .fld.full{grid-column:1/-1}
-label{font-size:.72rem;color:var(--txt-40);letter-spacing:.14em;text-transform:uppercase}
+label{font-size:.88rem;color:var(--txt-60);font-weight:500}
 input,select,textarea{
   background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:.85rem;
-  padding:12px 14px;color:#fff;font-family:inherit;font-size:.92rem;width:100%;
+  padding:13px 15px;color:#fff;font-family:inherit;font-size:1rem;width:100%;
   transition:border-color .2s,background-color .2s;
 }
 input:focus,select:focus,textarea:focus{outline:none;border-color:rgba(255,255,255,.45);background:rgba(255,255,255,.04)}
@@ -522,10 +520,10 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
 .emoji-row button.on{background:#fff}
 .emoji-row button.on::before{display:none}
 .form-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;align-items:center}
-.hint{font-size:.72rem;color:var(--txt-40)}
+.hint{font-size:.82rem;color:var(--txt-40)}
 
 .btn{
-  border-radius:9999px;padding:12px 28px;color:#fff;font-size:.85rem;font-weight:500;
+  border-radius:9999px;padding:13px 30px;color:#fff;font-size:.95rem;font-weight:500;
   font-family:inherit;cursor:pointer;transition:background-color .25s,transform .2s;
 }
 .btn:hover{background-color:rgba(255,255,255,.05)}
@@ -549,11 +547,11 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
 .entry .date .y{font-size:.62rem;color:var(--txt-40)}
 .entry .l1{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
 .chip{
-  font-size:.7rem;padding:4px 12px;border-radius:9999px;font-weight:600;
+  font-size:.8rem;padding:4px 12px;border-radius:9999px;font-weight:600;
   color:var(--txt-60);background:rgba(255,255,255,.04);
 }
 .chip.name{background:rgba(255,255,255,.10);color:#fff}
-.entry .ev{font-size:.95rem;margin-bottom:8px;line-height:1.7}
+.entry .ev{font-size:1.02rem;margin-bottom:8px;line-height:1.8}
 .entry .say{
   font-family:var(--serif);font-style:italic;font-size:1rem;color:var(--txt-60);
   border-left:1px solid var(--line);padding-left:12px;line-height:1.6;
@@ -574,6 +572,17 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
   .entry .right{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:space-between}
 }
 
+.entry.just-saved{
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.1), inset 3px 0 0 var(--ec,var(--m-inlove)),
+             0 0 0 2px var(--sc-5);
+  animation:landed 2.6s ease-out;
+}
+@keyframes landed{
+  0%{background-color:rgba(72,227,172,.20)}
+  100%{background-color:transparent}
+}
+@media (prefers-reduced-motion:reduce){ .entry.just-saved{animation:none} }
+
 .sec-title{
   font-family:var(--serif);font-size:clamp(1.7rem,4vw,2.5rem);letter-spacing:-.02em;
   margin:72px 0 24px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;line-height:1.15;
@@ -593,8 +602,9 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
 /* toast + tooltip */
 .toast{
   position:fixed;left:50%;bottom:28px;transform:translate(-50%,120px);
-  background:#fff;color:#000;font-weight:600;padding:13px 28px;border-radius:9999px;
-  transition:transform .4s cubic-bezier(.16,1,.3,1);z-index:99;font-size:.85rem;
+  background:#fff;color:#000;font-weight:600;padding:14px 30px;border-radius:9999px;
+  transition:transform .4s cubic-bezier(.16,1,.3,1);z-index:99;font-size:.95rem;
+  box-shadow:0 12px 40px rgba(0,0,0,.6);max-width:calc(100vw - 32px);text-align:center;
 }
 .toast.on{transform:translate(-50%,0)}
 .tip{
@@ -895,7 +905,20 @@ function load(){
   }catch(e){}
   return SEED.slice();
 }
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(data)); }catch(e){} }
+/* คืน true เมื่อเขียนลงเครื่องได้จริง เพื่อไม่ให้ขึ้นว่าบันทึกแล้วทั้งที่ไม่ได้บันทึก */
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(data)); return true; }
+  catch(e){ return false; }
+}
+
+/* เลื่อนไปที่บันทึกที่เพิ่งเขียนแล้วไฮไลต์ ให้เห็นชัดว่าบันทึกติดแล้ว */
+function showSaved(id){
+  const el = document.querySelector(`#timeline .entry[data-id="${CSS.escape(id)}"]`);
+  if(!el) return;
+  el.scrollIntoView({behavior:'smooth', block:'center'});
+  el.classList.add('just-saved');
+  setTimeout(()=> el.classList.remove('just-saved'), 2600);
+}
 
 /* ============ helper ============ */
 const $ = s => document.querySelector(s);
@@ -1641,7 +1664,7 @@ function renderTimeline(){
   box.innerHTML = r.map(e=>{
     const m = M(e.mood);
     const [y,mm,dd] = e.date.split('-');
-    return `<div class="entry liquid-glass" style="--ec:${m.c}">
+    return `<div class="entry liquid-glass" data-id="${attr(e.id)}" style="--ec:${m.c}">
       <div class="date">
         <div class="d">${+dd}</div><div class="m">${TH_MON[+mm-1]}</div><div class="y">${+y+543}</div>
       </div>
@@ -1706,9 +1729,19 @@ function initForm(){
       say: $('#fSay').value.trim(),
       emoji: pickedEmoji,
     };
-    if(editId){ data = data.map(x=> x.id===editId ? rec : x); toast('แก้ไขบันทึกแล้ว'); }
-    else { data.push(rec); toast('บันทึกเรียบร้อย'); }
-    save(); resetForm(); renderAll();
+    const wasEdit = !!editId;
+    if(wasEdit){ data = data.map(x=> x.id===editId ? rec : x); }
+    else { data.push(rec); }
+
+    /* ถ้ากรองอยู่ที่คนอื่น บันทึกใหม่จะถูกซ่อน — สลับไปที่คนนั้นให้เลย */
+    if(filter !== 'ALL' && filter !== rec.name) filter = rec.name;
+
+    const ok = save();
+    resetForm();
+    renderAll();
+    toast(ok ? (wasEdit ? 'แก้ไขบันทึกแล้ว' : `บันทึกของ ${rec.name} วันที่ ${fmtDate(rec.date)} แล้ว`)
+             : 'บันทึกลงเครื่องไม่สำเร็จ — เบราว์เซอร์อาจปิดพื้นที่จัดเก็บไว้ ข้อมูลจะหายเมื่อปิดหน้านี้');
+    showSaved(rec.id);
   };
   $('#btnCancel').onclick = resetForm;
 }
