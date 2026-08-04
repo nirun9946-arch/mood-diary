@@ -1757,13 +1757,19 @@ const SITE = {
 /* ============ ตั้งค่า (เก็บถาวรในเครื่อง) ============ */
 const CFG_KEY = 'moodDiary.cfg';
 let CFG = (()=>{ try{ return JSON.parse(localStorage.getItem(CFG_KEY)) || {}; }catch(e){ return {}; } })();
+/* ค่าที่เคยกรอกเองซึ่งตรงกับของเว็บอยู่แล้ว ถือเป็นค่าซ้ำ ลบทิ้งเพื่อไม่ให้สับสนกับโหมดส่วนตัว */
+if(CFG.sbUrl && SITE.sbUrl && CFG.sbUrl.replace(/\/+$/, '') === SITE.sbUrl.replace(/\/+$/, '')){
+  delete CFG.sbUrl; delete CFG.sbKey;
+  try{ localStorage.setItem(CFG_KEY, JSON.stringify(CFG)); }catch(e){}
+}
 function saveCfg(){ try{ localStorage.setItem(CFG_KEY, JSON.stringify(CFG)); return true; }catch(e){ return false; } }
 
 /* ค่าที่ตั้งเองในเครื่องมาก่อน ถ้าไม่มีจึงใช้ค่าที่ฝังมากับเว็บ */
 const sbUrlNow = () => (CFG.sbUrl || SITE.sbUrl || '').trim();
 const sbKeyNow = () => (CFG.sbKey || SITE.sbKey || '').trim();
 const hasSync  = () => !!(sbUrlNow() && sbKeyNow());
-const syncIsShared = () => !CFG.sbUrl && !!SITE.sbUrl;
+/* ใช้ที่เก็บข้อมูลกลางของเว็บอยู่ — ต้องล็อกอินเสมอ ไม่ว่าจะมีค่าค้างในเครื่องหรือไม่ */
+const sharedMode = () => !!SITE.sbUrl && sbUrlNow().replace(/\/+$/, '') === SITE.sbUrl.replace(/\/+$/, '');
 
 const hasProxy = () => !!SITE.aiProxy;
 const hasAI    = () => hasProxy() || !!CFG.aiKey;
@@ -2718,7 +2724,7 @@ $('#gateSkip').onclick = ()=>{
 $('#gatePw').addEventListener('keydown', ev=>{ if(ev.key === 'Enter') $('#gateIn').click(); });
 
 /* ต้องล็อกอินเมื่อเว็บนี้ตั้งที่เก็บข้อมูลกลางไว้ให้ทุกคน */
-if(SITE.sbUrl && !CFG.sbUrl){
+if(sharedMode()){
   if(signedIn()){
     syncNow()
       .then(()=>{ renderAll(); paintSyncDot('on'); })
