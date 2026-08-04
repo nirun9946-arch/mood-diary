@@ -329,6 +329,61 @@ em{font-style:italic}
   font-size:.8rem;color:var(--txt-60);line-height:1.75;
 }
 
+/* ---------- วิเคราะห์ความรู้สึกที่มีต่อกัน ---------- */
+.analysis{border-radius:1.5rem;padding:28px 24px;margin-top:20px}
+.bridge{
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;
+  padding:8px 0 22px;
+}
+@media(max-width:640px){ .bridge{grid-template-columns:1fr;gap:22px;text-align:center} }
+.bridge .side{display:flex;flex-direction:column;gap:8px;min-width:0}
+.bridge .side.r{align-items:flex-end;text-align:right}
+@media(max-width:640px){ .bridge .side.r{align-items:center;text-align:center} }
+.bridge .side .nm{font-size:.95rem;font-weight:600;color:#fff}
+.bridge .side .k{font-size:.68rem;color:var(--txt-40);letter-spacing:.16em;text-transform:uppercase}
+.bridge .side .pct{font-family:var(--serif);font-size:2.3rem;line-height:1;font-variant-numeric:tabular-nums}
+.bridge .side .bar{width:100%;height:6px;border-radius:9999px;background:rgba(255,255,255,.07);overflow:hidden}
+.bridge .side .bar i{display:block;height:100%;border-radius:9999px;transition:width .9s cubic-bezier(.16,1,.3,1)}
+.bridge .side.r .bar i{margin-left:auto}
+.bridge .core{
+  display:flex;flex-direction:column;align-items:center;gap:2px;flex:none;
+  padding:0 6px;
+}
+.bridge .core .heart{font-size:1.6rem;line-height:1}
+.bridge .core .big{font-family:var(--serif);font-size:2.6rem;line-height:1;font-variant-numeric:tabular-nums}
+.bridge .core .lbl{font-size:.66rem;color:var(--txt-40);letter-spacing:.16em;text-transform:uppercase}
+
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;
+  padding-top:20px;border-top:1px solid var(--line-soft)}
+.metric .k{font-size:.66rem;color:var(--txt-40);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}
+.metric .v{font-family:var(--serif);font-size:1.5rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.metric .d{font-size:.7rem;color:var(--txt-40);margin-top:4px;line-height:1.6}
+
+.read{display:flex;flex-direction:column;gap:12px;margin-top:22px;padding-top:20px;border-top:1px solid var(--line-soft)}
+.read .r{display:flex;gap:12px;align-items:flex-start;font-size:.85rem;line-height:1.75;color:var(--txt-60)}
+.read .r .ic{flex:none;font-size:1rem;opacity:.9}
+.read .r b{color:#fff;font-weight:600}
+.caveat{
+  margin-top:20px;padding:12px 14px;border-radius:.8rem;background:rgba(255,255,255,.03);
+  font-size:.72rem;color:var(--txt-40);line-height:1.7;
+}
+
+/* ---------- ปุ่มพูด ---------- */
+.mic{
+  border-radius:9999px;width:38px;height:38px;flex:none;cursor:pointer;
+  color:var(--txt-60);font-family:inherit;display:grid;place-items:center;
+  transition:color .25s,background-color .25s;
+}
+.mic:hover{color:#fff;background-color:rgba(255,255,255,.07)}
+.mic.rec{color:#fff;background:var(--m-hurt);animation:pulse 1.3s ease-in-out infinite}
+.mic.rec::before{display:none}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,107,107,.55)}50%{box-shadow:0 0 0 9px rgba(255,107,107,0)}}
+@media (prefers-reduced-motion:reduce){ .mic.rec{animation:none} }
+.field-mic{display:flex;gap:10px;align-items:flex-start}
+.field-mic > input,.field-mic > textarea{flex:1;min-width:0}
+.mic-note{font-size:.7rem;color:var(--txt-40);margin-top:6px;min-height:1em}
+.hero-pill .mic{width:34px;height:34px}
+
 /* ============================================================
    DASHBOARD
    ============================================================ */
@@ -586,6 +641,11 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
 
     <div class="hero-pill liquid-glass">
       <input type="text" id="quickIn" placeholder="วันนี้เกิดอะไรขึ้นบ้าง..." aria-label="บันทึกเหตุการณ์วันนี้">
+      <button type="button" class="mic" data-mic="quickIn" aria-label="พูดเพื่อบันทึก" title="กดแล้วพูด">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 17v5"/>
+        </svg>
+      </button>
       <button class="hero-go" id="quickGo" aria-label="เขียนบันทึกนี้">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
@@ -656,6 +716,7 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
     </div>
     <div class="people-grid reveal" id="peopleGrid"></div>
     <div id="together"></div>
+    <div id="analysis"></div>
   </div>
 </section>
 
@@ -733,11 +794,27 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
           </div>
           <div class="fld full">
             <label for="fEvent">เหตุการณ์สำคัญ / สิ่งที่ได้คุยกัน</label>
-            <textarea id="fEvent" placeholder="วันนี้เกิดอะไรขึ้นบ้าง..."></textarea>
+            <div class="field-mic">
+              <textarea id="fEvent" placeholder="วันนี้เกิดอะไรขึ้นบ้าง... หรือกดไมค์แล้วพูดได้เลย"></textarea>
+              <button type="button" class="mic liquid-glass" data-mic="fEvent" aria-label="พูดเพื่อบันทึกเหตุการณ์" title="กดแล้วพูด">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 17v5"/>
+                </svg>
+              </button>
+            </div>
+            <div class="mic-note" id="micNote-fEvent"></div>
           </div>
           <div class="fld full">
             <label for="fSay">สิ่งที่อยากจะบอก</label>
-            <input type="text" id="fSay" placeholder="ประโยคเดียวที่อยากบอกวันนี้">
+            <div class="field-mic">
+              <input type="text" id="fSay" placeholder="ประโยคเดียวที่อยากบอกวันนี้">
+              <button type="button" class="mic liquid-glass" data-mic="fSay" aria-label="พูดเพื่อบันทึกสิ่งที่อยากบอก" title="กดแล้วพูด">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 17v5"/>
+                </svg>
+              </button>
+            </div>
+            <div class="mic-note" id="micNote-fSay"></div>
           </div>
           <div class="fld full">
             <label>สัญลักษณ์พิเศษ</label>
@@ -1007,6 +1084,256 @@ function renderPeople(){
           </div>`).join('')}
       </div>
       <div class="gap-note">${gapNote}</div>
+    </div>`;
+}
+
+/* ============ บันทึกด้วยเสียง ============ */
+(function voiceInput(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const btns = [...document.querySelectorAll('.mic')];
+  const noteOf = id => document.getElementById('micNote-' + id);
+  if(!SR){
+    btns.forEach(b=>{
+      b.disabled = true;
+      b.style.opacity = '.3';
+      b.style.cursor = 'not-allowed';
+      b.title = 'เบราว์เซอร์นี้ยังไม่รองรับการพูดเป็นข้อความ — ใช้ Chrome หรือ Edge ได้';
+    });
+    return;
+  }
+  let active = null, rec = null;
+  btns.forEach(btn=>{
+    btn.onclick = ()=>{
+      const id = btn.dataset.mic, field = document.getElementById(id), note = noteOf(id);
+      if(active === btn){ try{ rec.stop(); }catch(e){} return; }
+      if(rec){ try{ rec.stop(); }catch(e){} }
+
+      rec = new SR();
+      rec.lang = 'th-TH';
+      rec.continuous = true;
+      rec.interimResults = true;
+
+      const base = field.value.trim() ? field.value.trim() + ' ' : '';
+      let finalText = '';
+
+      rec.onstart = ()=>{
+        active = btn; btn.classList.add('rec');
+        if(note) note.textContent = 'กำลังฟัง... พูดได้เลย กดไมค์อีกครั้งเพื่อหยุด';
+      };
+      rec.onresult = ev=>{
+        let interim = '';
+        for(let i = ev.resultIndex; i < ev.results.length; i++){
+          const t = ev.results[i][0].transcript;
+          if(ev.results[i].isFinal) finalText += t; else interim += t;
+        }
+        field.value = base + finalText + interim;
+      };
+      rec.onerror = ev=>{
+        const msg = ev.error === 'not-allowed' ? 'ยังไม่ได้อนุญาตให้ใช้ไมโครโฟน — กดอนุญาตในเบราว์เซอร์แล้วลองใหม่'
+                  : ev.error === 'no-speech'   ? 'ไม่ได้ยินเสียงพูด ลองอีกครั้ง'
+                  : ev.error === 'network'     ? 'การแปลงเสียงต้องต่ออินเทอร์เน็ต'
+                  : 'ฟังไม่สำเร็จ (' + ev.error + ')';
+        if(note) note.textContent = msg; else toast(msg);
+      };
+      rec.onend = ()=>{
+        btn.classList.remove('rec');
+        active = null; rec = null;
+        if(note && note.textContent.startsWith('กำลังฟัง')){
+          note.textContent = field.value.trim() ? 'แปลงเสียงเป็นข้อความแล้ว' : '';
+        }
+      };
+      try{ rec.start(); }catch(e){ toast('เริ่มฟังไม่สำเร็จ ลองอีกครั้ง'); }
+    };
+  });
+})();
+
+/* ============ วิเคราะห์ความรู้สึก ============ */
+/* เรียงจากคำยาวไปสั้น เพื่อให้จับคำที่ยาวกว่าก่อน เช่น "ไม่เข้าใจ" ต้องมาก่อน "เข้าใจ" */
+const byLen = a => a.slice().sort((x,y)=> y.length - x.length);
+const LEX_NEG = byLen(['ไม่เข้าใจ','ไม่แน่ใจ','ไม่รับสาย','ห่างเหิน','ผิดหวัง','ปวดใจ','ร้องไห้','ทะเลาะ','อึดอัด','น้อยใจ','เสียใจ','กังวล','สับสน','เครียด','เหนื่อย','ไม่ดี','เศร้า','โกรธ','เบื่อ','กลัว','เงียบ','งอน','ท้อ','เจ็บ','แย่']);
+const LEX_POS = byLen(['มีความสุข','ประทับใจ','สบายใจ','กำลังใจ','ภูมิใจ','ขอบคุณ','ตื่นเต้น','คิดถึง','อบอุ่น','น่ารัก','อุ่นใจ','เข้าใจ','หัวเราะ','ดีใจ','ปลื้ม','ดูแล','สนุก','แคร์','ห่วง','ยิ้ม','โล่ง','หวาน','ชอบ','รัก']);
+
+/* นับคำบวก/ลบ โดยลบคำที่จับได้ออกจากข้อความ กันการนับซ้ำเมื่อคำซ้อนกัน */
+function sentiment(text){
+  if(!text || !text.trim()) return {score:0, pos:0, neg:0, hits:[]};
+  let t = text;
+  let pos = 0, neg = 0; const hits = [];
+  const sweep = (list, bump) => list.forEach(w=>{
+    let i;
+    while((i = t.indexOf(w)) !== -1){
+      bump(); hits.push(w);
+      t = t.slice(0, i) + ' '.repeat(w.length) + t.slice(i + w.length);
+    }
+  });
+  sweep(LEX_NEG, ()=>neg++);
+  sweep(LEX_POS, ()=>pos++);
+  const total = pos + neg;
+  return {score: total ? (pos - neg) / total : 0, pos, neg, hits};
+}
+
+/* ค่าความรู้สึกที่ "from" มีต่อ "to" (0-100) */
+function feelingToward(from, to){
+  const mine = data.filter(e=>e.name === from);
+  if(!mine.length) return null;
+
+  const lvOf = m => {
+    const x = M(m);
+    if(x.k === 'undefined') return .30;   // ยังไม่นิยาม = ยังไม่ผูกพัน
+    if(x.k === 'hurt')      return .45;   // เจ็บเพราะยังแคร์ จึงไม่ใช่ศูนย์
+    return x.lv / 7;
+  };
+  const lvNorm    = mine.reduce((s,e)=>s + lvOf(e.mood), 0) / mine.length;
+  const scoreNorm = mine.reduce((s,e)=>s + e.score, 0) / mine.length / 10;
+
+  const texts = mine.map(e=>[e.event, e.say].filter(Boolean).join(' ')).filter(t=>t.trim());
+  const about = texts.filter(t=>t.includes(to));
+  const mentionRate = texts.length ? about.length / texts.length : 0;
+  const sen = sentiment((about.length ? about : texts).join(' '));
+  const senNorm = (sen.score + 1) / 2;
+
+  const hasText = texts.length > 0;
+  /* ไม่มีข้อความเลยก็ยังคำนวณได้ แต่ใช้แค่ระดับความรู้สึกกับคะแนน และบอกว่าความมั่นใจต่ำ */
+  const value = hasText
+    ? .40*lvNorm + .18*mentionRate + .22*senNorm + .20*scoreNorm
+    : .62*lvNorm + .38*scoreNorm;
+
+  return {
+    pct: Math.round(Math.max(0, Math.min(1, value)) * 100),
+    lvNorm, scoreNorm, mentionRate, sen, hasText,
+    entries: mine.length, texts: texts.length, about: about.length,
+    confidence: !hasText ? 'ต่ำ' : (mine.length >= 10 && about.length >= 3) ? 'สูง'
+              : mine.length >= 5 ? 'ปานกลาง' : 'ต่ำ',
+  };
+}
+
+/* ความสอดคล้องของอารมณ์รายวัน — ค่าสหสัมพันธ์ของคะแนนในวันเดียวกัน */
+function syncOf(a, b){
+  const A = {}, B = {};
+  data.filter(e=>e.name === a).forEach(e=> A[e.date] = e.score);
+  data.filter(e=>e.name === b).forEach(e=> B[e.date] = e.score);
+  const days = Object.keys(A).filter(d=> d in B);
+  if(days.length < 3) return null;
+  const xs = days.map(d=>A[d]), ys = days.map(d=>B[d]);
+  const mx = xs.reduce((s,v)=>s+v,0)/xs.length, my = ys.reduce((s,v)=>s+v,0)/ys.length;
+  let num = 0, dx = 0, dy = 0;
+  xs.forEach((x,i)=>{ const p = x-mx, q = ys[i]-my; num += p*q; dx += p*p; dy += q*q; });
+  if(!dx || !dy) return null;
+  return {r: num / Math.sqrt(dx*dy), days: days.length};
+}
+
+function renderAnalysis(){
+  const box = $('#analysis'), all = names();
+  if(all.length < 2){ box.innerHTML = ''; return; }
+
+  const [a, b] = all;
+  const fa = feelingToward(a, b), fb = feelingToward(b, a);
+  if(!fa || !fb){ box.innerHTML = ''; return; }
+
+  const sync = syncOf(a, b);
+  const gap  = Math.abs(fa.pct - fb.pct);
+  const match = Math.round(Math.max(0, Math.min(100,
+    (fa.pct + fb.pct)/2 - gap*0.25 + (sync ? sync.r*8 : 0)
+  )));
+  const matchCol = match>=70 ? 'var(--sc-5)' : match>=50 ? 'var(--sc-4)' : match>=30 ? 'var(--sc-3)' : 'var(--sc-2)';
+  const heart = match>=70 ? '💞' : match>=50 ? '💗' : match>=30 ? '🩶' : '💔';
+
+  /* ---- ข้อสังเกต ---- */
+  const read = [];
+  const hi = fa.pct >= fb.pct ? {n:a, f:fa} : {n:b, f:fb};
+  const lo = fa.pct >= fb.pct ? {n:b, f:fb} : {n:a, f:fa};
+
+  read.push(['⚖️', gap <= 8
+    ? `ความรู้สึกสองฝั่ง <b>สมดุลกันมาก</b> (ต่างกันแค่ ${gap} จุด) — ต่างคนต่างให้พอ ๆ กัน`
+    : gap <= 20
+    ? `<b>${esc(hi.n)}</b> ให้ความรู้สึกมากกว่า <b>${esc(lo.n)}</b> อยู่ ${gap} จุด — ยังถือว่าอยู่ในระยะที่ปรับเข้าหากันได้`
+    : `<b>${esc(hi.n)}</b> ให้ความรู้สึกมากกว่า <b>${esc(lo.n)}</b> ถึง ${gap} จุด — ฝั่งหนึ่งลงแรงมากกว่าอีกฝั่งชัดเจน`]);
+
+  if(sync){
+    read.push([sync.r > 0 ? '🔗' : '↔️', sync.r >= .5
+      ? `อารมณ์ขึ้นลง <b>ไปทางเดียวกัน</b> (${sync.r.toFixed(2)} จาก ${sync.days} วันที่บันทึกตรงกัน) — วันที่คนหนึ่งดี อีกคนมักดีด้วย`
+      : sync.r <= -.5
+      ? `อารมณ์ <b>สวนทางกัน</b> (${sync.r.toFixed(2)} จาก ${sync.days} วัน) — วันที่คนหนึ่งดี อีกคนมักแย่`
+      : `อารมณ์ขึ้นลง <b>ไม่ค่อยสัมพันธ์กัน</b> (${sync.r.toFixed(2)} จาก ${sync.days} วัน) — ต่างคนต่างมีจังหวะของตัวเอง`]);
+  } else {
+    read.push(['📅', `ยังมีวันที่ทั้งคู่บันทึกตรงกัน <b>ไม่ถึง 3 วัน</b> — ยังดูความสอดคล้องของอารมณ์ไม่ได้`]);
+  }
+
+  [{n:a,f:fa},{n:b,f:fb}].forEach(p=>{
+    if(!p.f.hasText){
+      read.push(['📝', `<b>${esc(p.n)}</b> ยังไม่ได้เขียนข้อความเลยสักบันทึก — ค่าที่ได้จึงมาจากระดับความรู้สึกกับคะแนนเท่านั้น <b>ความแม่นยำต่ำ</b>`]);
+    } else if(p.f.about === 0){
+      read.push(['🔍', `<b>${esc(p.n)}</b> เขียนข้อความ ${p.f.texts} ครั้ง แต่ <b>ไม่เคยเอ่ยถึงอีกฝ่ายเลย</b> — คำนวณจากโทนโดยรวมแทน`]);
+    } else {
+      const s = p.f.sen;
+      read.push([s.score > .2 ? '🌤️' : s.score < -.2 ? '🌧️' : '☁️',
+        `<b>${esc(p.n)}</b> เอ่ยถึงอีกฝ่าย ${p.f.about} จาก ${p.f.texts} บันทึก โทนข้อความ${
+          s.score > .2 ? '<b>ออกไปทางบวก</b>' : s.score < -.2 ? '<b>ออกไปทางลบ</b>' : '<b>ก้ำกึ่ง</b>'
+        } (คำบวก ${s.pos} · คำลบ ${s.neg})`]);
+    }
+  });
+
+  const lowConf = [fa, fb].some(f=>f.confidence === 'ต่ำ');
+  read.push(['🧭', match>=70 ? `โดยรวม <b>ไปด้วยกันได้ดี</b> ทั้งคู่ให้ความรู้สึกในระดับใกล้เคียงกัน`
+           : match>=50 ? `โดยรวม <b>พอไปด้วยกันได้</b> แต่ยังมีจุดที่ต้องปรับเข้าหากัน`
+           : match>=30 ? `โดยรวม <b>ยังไม่ค่อยลงตัว</b> ความรู้สึกสองฝั่งห่างกันพอสมควร`
+                       : `โดยรวม <b>ยังห่างกันมาก</b> อาจถึงเวลาคุยกันตรง ๆ ว่าแต่ละฝ่ายรู้สึกยังไง`]);
+
+  const sideHTML = (name, other, f, right) => `
+    <div class="side ${right?'r':''}">
+      <span class="k">${esc(name)} → ${esc(other)}</span>
+      <span class="nm">ความรู้สึกที่มีต่ออีกฝ่าย</span>
+      <span class="pct" style="color:${f.pct>=60?'var(--sc-5)':f.pct>=40?'var(--sc-4)':f.pct>=25?'var(--sc-3)':'var(--sc-2)'}">${f.pct}<span style="font-size:.9rem;font-family:var(--sans);color:var(--txt-40)">%</span></span>
+      <span class="bar"><i style="width:${f.pct}%;background:${f.pct>=60?'var(--sc-5)':f.pct>=40?'var(--sc-4)':f.pct>=25?'var(--sc-3)':'var(--sc-2)'}"></i></span>
+      <span class="k" style="letter-spacing:.04em;text-transform:none">ความมั่นใจ ${f.confidence} · ${f.entries} บันทึก</span>
+    </div>`;
+
+  box.innerHTML = `
+    <div class="analysis liquid-glass reveal">
+      <h3 style="font-size:.72rem;font-weight:600;color:var(--txt-40);letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:9px">
+        <span style="width:6px;height:6px;border-radius:50%;background:var(--m-crush)"></span>วิเคราะห์ความรู้สึกที่มีต่อกัน
+      </h3>
+      <div class="bridge">
+        ${sideHTML(a, b, fa, false)}
+        <div class="core">
+          <span class="heart">${heart}</span>
+          <span class="big" style="color:${matchCol}">${match}</span>
+          <span class="lbl">ความเข้ากัน</span>
+        </div>
+        ${sideHTML(b, a, fb, true)}
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <div class="k">ช่องว่างสองฝั่ง</div>
+          <div class="v" style="color:${gap<=8?'var(--sc-5)':gap<=20?'var(--sc-3)':'var(--sc-2)'}">${gap}<span style="font-size:.8rem;font-family:var(--sans);color:var(--txt-40)"> จุด</span></div>
+          <div class="d">${gap<=8?'สมดุลกันดี':gap<=20?'ต่างกันเล็กน้อย':'ฝั่งหนึ่งให้มากกว่า'}</div>
+        </div>
+        <div class="metric">
+          <div class="k">อารมณ์สอดคล้อง</div>
+          <div class="v">${sync ? sync.r.toFixed(2) : '—'}</div>
+          <div class="d">${sync ? `จาก ${sync.days} วันที่บันทึกตรงกัน` : 'ต้องมีวันที่ตรงกัน 3 วันขึ้นไป'}</div>
+        </div>
+        <div class="metric">
+          <div class="k">เอ่ยถึงกัน</div>
+          <div class="v">${fa.about + fb.about}<span style="font-size:.8rem;font-family:var(--sans);color:var(--txt-40)"> ครั้ง</span></div>
+          <div class="d">จากข้อความทั้งหมด ${fa.texts + fb.texts} บันทึก</div>
+        </div>
+        <div class="metric">
+          <div class="k">โทนคำที่ใช้</div>
+          <div class="v"><span style="color:var(--sc-5)">${fa.sen.pos + fb.sen.pos}</span> <span style="color:var(--txt-40);font-size:1rem">/</span> <span style="color:var(--sc-1)">${fa.sen.neg + fb.sen.neg}</span></div>
+          <div class="d">คำบวก / คำลบ ที่ตรวจพบ</div>
+        </div>
+      </div>
+
+      <div class="read">
+        ${read.map(([ic,t])=>`<div class="r"><span class="ic">${ic}</span><span>${t}</span></div>`).join('')}
+      </div>
+
+      <div class="caveat">
+        คำนวณในเครื่องคุณจากข้อมูลที่บันทึกไว้ — ใช้ระดับความรู้สึก คะแนน ความถี่ที่เอ่ยถึงกัน และการนับคำบวกคำลบในข้อความ
+        ไม่ได้ส่งข้อมูลออกไปที่ไหน และ<b>ไม่ใช่คำตัดสิน</b> เป็นเพียงภาพสะท้อนจากสิ่งที่เขียนไว้
+        ${lowConf ? ' <b>ตอนนี้ข้อมูลยังน้อย ตัวเลขจึงยังแกว่งได้มาก</b> — เขียนต่อสัก 2-3 สัปดาห์จะแม่นขึ้นเยอะ' : ''}
+      </div>
     </div>`;
 }
 
@@ -1463,6 +1790,7 @@ $('#quickIn').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDef
 /* ============ RENDER ALL ============ */
 function renderAll(){
   renderPeople();
+  renderAnalysis();
   renderTabs();
   $('#nameList').innerHTML = names().map(n=>`<option value="${attr(n)}">`).join('');
   renderStats(); renderLine(); renderGauge();
