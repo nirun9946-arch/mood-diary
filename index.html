@@ -1999,7 +1999,10 @@ function liveConnect(){
 
     ws.onopen = ()=>{
       LIVE.tries = 0;
+      /* ฟังการเปลี่ยนแปลงของตารางโดยตรง เชื่อถือได้กว่าการให้อีกฝั่งส่งสัญญาณเอง
+         และยังเก็บ broadcast กับ presence ไว้เป็นตัวเสริม */
       liveSend('phx_join', {config: {
+        postgres_changes: [{event: '*', schema: 'public', table: 'entries'}],
         broadcast: {self: false},
         presence: {key: SESS?.user?.id || myEmail() || 'me'},
       }});
@@ -2028,8 +2031,12 @@ function liveConnect(){
         });
         Object.keys(m.payload?.leaves || {}).forEach(k=> LIVE.others.delete(k));
         paintLive();
+      }else if(m.event === 'postgres_changes'){
+        pullSoon('live');            /* ฐานข้อมูลเปลี่ยนจริง — ทางหลัก */
       }else if(m.event === 'broadcast' && m.payload?.event === 'changed'){
-        pullSoon('live');
+        pullSoon('live');            /* อีกฝั่งส่งสัญญาณมา — ทางเสริม */
+      }else if(m.event === 'phx_reply' && m.payload?.status === 'error'){
+        LIVE.lastErr = JSON.stringify(m.payload?.response || {}).slice(0, 120);
       }
     };
 
