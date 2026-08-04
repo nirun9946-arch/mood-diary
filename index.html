@@ -16,7 +16,7 @@
 <body>
 <title>ไดอารี่ความรู้สึก — Mood Diary</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Noto+Serif+Thai:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Noto+Serif+Thai:wght@400;600&family=Mali:ital,wght@0,400;0,600;1,400;1,600&display=swap');
 
 /* ============================================================
    TOKENS — โลกสีดำใบเดียว (committed dark, ไม่มีธีมสว่าง)
@@ -31,8 +31,12 @@
   --line:rgba(255,255,255,.10);
   --line-soft:rgba(255,255,255,.06);
 
-  /* สเกลคะแนนความสุข 0-10 */
-  --sc-1:#ff6b6b; --sc-2:#ff9d6b; --sc-3:#ffc65c; --sc-4:#4fd3ff; --sc-5:#48e3ac;
+  /* สเกลคะแนนความสุข 0-10 — ไล่จากแดงอุ่นไปเขียวสด ให้อ่านอารมณ์ได้จากสี */
+  --sc-1:#ff4d6d;  /* ต้องดูแลใจ */
+  --sc-2:#ff8360;  /* เหนื่อยใจ  */
+  --sc-3:#ffc857;  /* กลาง ๆ    */
+  --sc-4:#5ad6c0;  /* ค่อนข้างดี */
+  --sc-5:#7ef0a8;  /* สดใสมาก   */
   /* สีประจำสถานะความรู้สึก */
   --m-acquaintance:#8a90b8; --m-friendly:#4fd3ff; --m-crush:#ff6fae; --m-confused:#ffc65c;
   --m-attached:#48e3ac;     --m-inlove:#9b7bff;   --m-hurt:#ff6b6b;  --m-undefined:#7c81a6;
@@ -40,6 +44,8 @@
   --p1:#ff6fae; --p2:#4fd3ff; --p3:#48e3ac; --p4:#ffc65c; --p5:#9b7bff;
 
   --serif:'Instrument Serif','Noto Serif Thai',Georgia,serif;
+  --hand:'Mali','Noto Serif Thai',cursive;   /* เสียงของเจ้าของบันทึก */
+  --ambient:transparent;                      /* สีบรรยากาศตามอารมณ์รวม */
   --sans:'IBM Plex Sans Thai','Noto Sans Thai','Segoe UI',system-ui,-apple-system,sans-serif;
 }
 
@@ -90,6 +96,19 @@ em{font-style:italic}
 }
 .lg-hover{transition:background-color .3s ease, transform .3s ease}
 .lg-hover:hover{background-color:rgba(255,255,255,.05)}
+
+/* ============================================================
+   บรรยากาศตามอารมณ์ — สีพื้นหลังเปลี่ยนตามคะแนนเฉลี่ยรวม
+   ============================================================ */
+.board::after,.people::after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(1100px 700px at 50% 8%, var(--ambient), transparent 72%);
+  transition:background 1.4s ease;
+}
+.board > .shell,.people > .shell{position:relative;z-index:1}
+
+/* เสียงของเจ้าของบันทึก — ลายมือ */
+.hand{font-family:var(--hand)}
 
 /* ============================================================
    SCROLL REVEAL (แทน framer-motion useInView)
@@ -538,6 +557,8 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
   display:grid;grid-template-columns:76px 1fr auto;gap:18px;align-items:flex-start;
   border-radius:1.15rem;padding:20px;
   box-shadow:inset 0 1px 1px rgba(255,255,255,.1), inset 3px 0 0 var(--ec,var(--m-inlove));
+  /* ไล่สีตามอารมณ์ของบันทึกนั้น ให้กวาดตาแล้วรู้ทันทีว่าวันไหนเป็นยังไง */
+  background-image:linear-gradient(104deg, color-mix(in srgb, var(--ec) 14%, transparent) 0%, transparent 48%);
   transition:background-color .3s ease;
 }
 .entry:hover{background-color:rgba(255,255,255,.03)}
@@ -553,9 +574,49 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
 .chip.name{background:rgba(255,255,255,.10);color:#fff}
 .entry .ev{font-size:1.02rem;margin-bottom:8px;line-height:1.8}
 .entry .say{
-  font-family:var(--serif);font-style:italic;font-size:1rem;color:var(--txt-60);
-  border-left:1px solid var(--line);padding-left:12px;line-height:1.6;
+  font-family:var(--hand);font-size:1rem;color:var(--txt-60);
+  border-left:2px solid var(--ec,var(--line));padding-left:12px;line-height:1.75;
 }
+
+/* ---------- ปุ่มแสดงความรู้สึกต่อบันทึกของอีกฝ่าย ---------- */
+.reacts{grid-column:1/-1;margin-top:14px;padding-top:14px;border-top:1px solid var(--line-soft)}
+.react-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.react{
+  display:flex;align-items:center;gap:8px;padding:7px 13px;border-radius:9999px;
+  background:rgba(255,255,255,.05);font-size:.86rem;max-width:100%;
+}
+.react .em{font-size:1.05rem;line-height:1;flex:none}
+.react .by{color:#fff;font-weight:600;flex:none}
+.react .tx{font-family:var(--hand);color:var(--txt-60);overflow-wrap:anywhere}
+.react .rm{
+  background:none;border:none;color:var(--txt-40);cursor:pointer;font-size:.9rem;
+  padding:0 0 0 2px;line-height:1;flex:none;
+}
+.react .rm:hover{color:var(--sc-1)}
+.react-open{
+  border-radius:9999px;padding:8px 16px;font-size:.86rem;color:var(--txt-60);
+  font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+  transition:color .25s,background-color .25s;
+}
+.react-open:hover{color:#fff;background-color:rgba(255,255,255,.06)}
+.react-form{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.react-form .row1{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.react-form .who-pick{
+  padding:7px 14px;border-radius:9999px;font-size:.84rem;cursor:pointer;
+  color:var(--txt-60);font-family:inherit;transition:.2s;
+}
+.react-form .who-pick.on{background:#fff;color:#000;font-weight:600}
+.react-form .who-pick.on::before{display:none}
+.react-form .ems{display:flex;flex-wrap:wrap;gap:6px}
+.react-form .ems button{
+  width:38px;height:38px;border-radius:9999px;font-size:1.05rem;cursor:pointer;
+  color:#fff;font-family:inherit;transition:.2s;
+}
+.react-form .ems button:hover{background-color:rgba(255,255,255,.08);transform:translateY(-2px)}
+.react-form .ems button.on{background:#fff}
+.react-form .ems button.on::before{display:none}
+.react-form .row2{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.react-form input[type=text]{flex:1;min-width:180px;font-family:var(--hand)}
 .entry .right{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
 .entry .sc{font-family:var(--serif);font-size:1.85rem;line-height:1;font-variant-numeric:tabular-nums}
 .entry .sc small{font-size:.7rem;color:var(--txt-40);font-family:var(--sans)}
@@ -599,6 +660,53 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
 .foot a{color:var(--txt-60);text-decoration:none}
 .foot a:hover{color:#fff}
 
+/* ---------- แผงตั้งค่า ---------- */
+.sheet{
+  position:fixed;inset:0;z-index:120;display:none;
+  background:rgba(0,0,0,.72);backdrop-filter:blur(8px);
+  padding:24px 16px;overflow-y:auto;
+}
+.sheet.on{display:block}
+.sheet-card{
+  max-width:44rem;margin:4vh auto;border-radius:1.5rem;padding:28px 26px;
+  background:#0a0a10;
+}
+.sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:8px}
+.sheet-head h2{font-family:var(--serif);font-size:1.9rem;letter-spacing:-.02em;line-height:1.2}
+.sheet-close{
+  border-radius:9999px;width:38px;height:38px;flex:none;cursor:pointer;color:var(--txt-60);
+  font-family:inherit;font-size:1.1rem;transition:.2s;
+}
+.sheet-close:hover{color:#fff;background-color:rgba(255,255,255,.08)}
+.sheet-sub{font-size:.9rem;color:var(--txt-60);margin-bottom:26px;line-height:1.8}
+.sblock{padding-top:24px;margin-top:24px;border-top:1px solid var(--line-soft)}
+.sblock:first-of-type{border-top:none;margin-top:0;padding-top:0}
+.sblock h3{font-size:1.05rem;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.sblock .why{font-size:.86rem;color:var(--txt-60);line-height:1.8;margin-bottom:18px}
+.sblock .fields{display:flex;flex-direction:column;gap:14px}
+.warn{
+  border-radius:.8rem;padding:12px 14px;font-size:.84rem;line-height:1.8;
+  background:rgba(255,200,87,.09);color:#ffdd9e;border:1px solid rgba(255,200,87,.22);
+}
+.status{font-size:.86rem;line-height:1.8;margin-top:12px;min-height:1.4em}
+.status.ok{color:var(--sc-5)} .status.bad{color:var(--sc-1)} .status.busy{color:var(--txt-60)}
+.dot-live{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--txt-40);flex:none}
+.dot-live.on{background:var(--sc-5)}
+
+/* ---------- ผลวิเคราะห์จาก AI ---------- */
+.ai-box{margin-top:22px;padding-top:20px;border-top:1px solid var(--line-soft)}
+.ai-head{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:14px}
+.ai-title{font-size:.95rem;font-weight:600;display:flex;align-items:center;gap:9px}
+.ai-out{
+  font-size:.95rem;line-height:1.9;color:var(--txt-60);white-space:pre-wrap;
+  background:rgba(255,255,255,.03);border-radius:1rem;padding:18px 20px;
+}
+.ai-out b,.ai-out strong{color:#fff;font-weight:600}
+.ai-when{font-size:.8rem;color:var(--txt-40);margin-top:10px}
+.spin{display:inline-block;width:13px;height:13px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.25);border-top-color:#fff;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
 /* toast + tooltip */
 .toast{
   position:fixed;left:50%;bottom:28px;transform:translate(-50%,120px);
@@ -640,7 +748,7 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
         </div>
       </div>
       <div class="nav-r">
-        <button class="nav-ghost" id="navExport">ส่งออก</button>
+        <button class="nav-ghost" id="navSettings">ตั้งค่า</button>
         <button class="nav-cta liquid-glass lg-hover" id="navWrite">เขียนบันทึก</button>
       </div>
     </div>
@@ -851,6 +959,87 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
 </main>
 
 <input type="file" id="fileIn" accept="application/json" hidden>
+
+<!-- ============================ ตั้งค่า ============================ -->
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="sheet-card liquid-glass">
+    <div class="sheet-head">
+      <h2 id="sheetTitle">ตั้งค่า</h2>
+      <button class="sheet-close liquid-glass" id="sheetClose" aria-label="ปิด">✕</button>
+    </div>
+    <p class="sheet-sub">ค่าทั้งหมดเก็บไว้ในเบราว์เซอร์เครื่องนี้เท่านั้น ไม่ได้บันทึกลงโค้ดของเว็บ และไม่มีใครอื่นเห็น</p>
+
+    <!-- ---- ซิงก์ข้อมูล ---- -->
+    <div class="sblock">
+      <h3><span class="dot-live" id="syncDot"></span>ซิงก์ข้อมูลข้ามเครื่อง</h3>
+      <p class="why">
+        ตอนนี้บันทึกเก็บอยู่ในเบราว์เซอร์ของแต่ละเครื่องแยกกัน ฝนเขียนในเครื่องฝน เป็ดจึงไม่เห็น
+        ถ้าอยากให้เป็นไทม์ไลน์เดียวกัน ต้องมีที่เก็บข้อมูลกลาง — สมัคร Supabase ฟรี
+        แล้ววาง 2 ค่านี้ลงไป ระบบจะซิงก์ให้อัตโนมัติทุกครั้งที่บันทึก
+      </p>
+      <div class="fields">
+        <div class="fld">
+          <label for="cfgSbUrl">Supabase Project URL</label>
+          <input type="text" id="cfgSbUrl" placeholder="https://xxxxx.supabase.co" spellcheck="false">
+        </div>
+        <div class="fld">
+          <label for="cfgSbKey">Supabase anon key</label>
+          <input type="password" id="cfgSbKey" placeholder="eyJhbGciOi..." spellcheck="false">
+        </div>
+        <div class="warn">
+          คีย์ anon ของ Supabase ออกแบบมาให้เปิดเผยได้ แต่ต้องตั้ง Row Level Security ในโปรเจกต์ให้เรียบร้อย
+          ไม่งั้นใครที่รู้ค่านี้จะอ่านและเขียนข้อมูลได้ กด "วิธีตั้งค่า" เพื่อดูขั้นตอนและ SQL ที่ต้องรัน
+        </div>
+        <div class="form-actions" style="margin-top:4px">
+          <button type="button" class="btn solid" id="syncTest">เชื่อมต่อและซิงก์</button>
+          <button type="button" class="btn liquid-glass" id="syncHelp">วิธีตั้งค่า</button>
+          <button type="button" class="btn liquid-glass" id="syncOff">เลิกใช้</button>
+        </div>
+        <div class="status" id="syncStatus"></div>
+        <div id="syncGuide" hidden></div>
+      </div>
+    </div>
+
+    <!-- ---- AI ---- -->
+    <div class="sblock">
+      <h3><span class="dot-live" id="aiDot"></span>AI ช่วยวิเคราะห์</h3>
+      <p class="why">
+        ใส่คีย์ของคุณเองเพื่อให้โมเดลภาษาอ่านบันทึกทั้งหมดแล้ววิเคราะห์ความรู้สึกของทั้งสองคน
+        เมื่อตั้งค่าแล้วปุ่ม "วิเคราะห์ด้วย AI" จะขึ้นในการ์ดวิเคราะห์ และผลล่าสุดจะถูกเก็บไว้ให้ดูได้ตลอด
+      </p>
+      <div class="fields">
+        <div class="fld">
+          <label for="cfgAiKey">Anthropic API key</label>
+          <input type="password" id="cfgAiKey" placeholder="sk-ant-..." spellcheck="false">
+        </div>
+        <div class="fld">
+          <label for="cfgAiModel">โมเดล</label>
+          <input type="text" id="cfgAiModel" placeholder="claude-sonnet-5" spellcheck="false">
+        </div>
+        <div class="warn">
+          หน้าเว็บนี้เปิดสาธารณะ คีย์จะถูกเก็บใน localStorage ของเครื่องคุณเท่านั้นและไม่เข้าไปในโค้ด
+          แต่ถ้าใช้เครื่องร่วมกับคนอื่น อย่าใส่คีย์ไว้ และควรตั้งวงเงินใช้งานในหน้าบัญชี Anthropic ไว้ด้วย
+        </div>
+        <div class="form-actions" style="margin-top:4px">
+          <button type="button" class="btn solid" id="aiTest">ทดสอบการเชื่อมต่อ</button>
+          <button type="button" class="btn liquid-glass" id="aiOff">ลบคีย์ออก</button>
+        </div>
+        <div class="status" id="aiStatus"></div>
+      </div>
+    </div>
+
+    <!-- ---- ข้อมูล ---- -->
+    <div class="sblock">
+      <h3>ข้อมูลของคุณ</h3>
+      <p class="why">สำรองไฟล์ไว้เป็นระยะ เพราะถ้าล้างข้อมูลเบราว์เซอร์แล้วยังไม่ได้เปิดซิงก์ บันทึกจะหาย</p>
+      <div class="form-actions" style="margin-top:0">
+        <button type="button" class="btn liquid-glass" id="cfgExport">ส่งออกไฟล์</button>
+        <button type="button" class="btn liquid-glass" id="cfgImport">นำเข้าไฟล์</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 <div class="tip" id="tip"></div>
 
@@ -1215,18 +1404,31 @@ function feelingToward(from, to){
   const sen = sentiment((about.length ? about : texts).join(' '));
   const senNorm = (sen.score + 1) / 2;
 
+  /* การกดแสดงความรู้สึกบนบันทึกของอีกฝ่าย เป็นสัญญาณตรงที่สุดว่าเขาใส่ใจแค่ไหน */
+  const theirs = data.filter(e=>e.name === to);
+  const reacts = theirs.flatMap(e=>(e.reactions||[]).filter(r=>r.by === from));
+  const reactRate = theirs.length ? Math.min(1, reacts.length / theirs.length) : 0;
+  const reactSen = sentiment(reacts.map(r=>r.text).filter(Boolean).join(' '));
+  const reactNorm = reacts.length
+    ? reactRate * 0.6 + ((reactSen.score + 1) / 2) * 0.4
+    : 0;
+
   const hasText = texts.length > 0;
   /* ไม่มีข้อความเลยก็ยังคำนวณได้ แต่ใช้แค่ระดับความรู้สึกกับคะแนน และบอกว่าความมั่นใจต่ำ */
-  const value = hasText
-    ? .40*lvNorm + .18*mentionRate + .22*senNorm + .20*scoreNorm
-    : .62*lvNorm + .38*scoreNorm;
+  const value = reacts.length
+    ? (hasText ? .32*lvNorm + .14*mentionRate + .18*senNorm + .16*scoreNorm + .20*reactNorm
+               : .48*lvNorm + .30*scoreNorm + .22*reactNorm)
+    : (hasText ? .40*lvNorm + .18*mentionRate + .22*senNorm + .20*scoreNorm
+               : .62*lvNorm + .38*scoreNorm);
 
   return {
     pct: Math.round(Math.max(0, Math.min(1, value)) * 100),
     lvNorm, scoreNorm, mentionRate, sen, hasText,
+    reacts: reacts.length, reactRate, reactSen,
     entries: mine.length, texts: texts.length, about: about.length,
-    confidence: !hasText ? 'ต่ำ' : (mine.length >= 10 && about.length >= 3) ? 'สูง'
-              : mine.length >= 5 ? 'ปานกลาง' : 'ต่ำ',
+    confidence: (!hasText && !reacts.length) ? 'ต่ำ'
+              : (mine.length >= 10 && (about.length >= 3 || reacts.length >= 3)) ? 'สูง'
+              : (mine.length >= 5 || reacts.length >= 2) ? 'ปานกลาง' : 'ต่ำ',
   };
 }
 
@@ -1282,7 +1484,10 @@ function renderAnalysis(){
     read.push(['📅', `ยังมีวันที่ทั้งคู่บันทึกตรงกัน <b>ไม่ถึง 3 วัน</b> — ยังดูความสอดคล้องของอารมณ์ไม่ได้`]);
   }
 
-  [{n:a,f:fa},{n:b,f:fb}].forEach(p=>{
+  [{n:a,f:fa,o:b},{n:b,f:fb,o:a}].forEach(p=>{
+    if(p.f.reacts){
+      read.push(['💬', `<b>${esc(p.n)}</b> กดแสดงความรู้สึกบนบันทึกของ <b>${esc(p.o)}</b> ไป ${p.f.reacts} ครั้ง — เป็นสัญญาณตรงที่สุดว่ายังใส่ใจกันอยู่`]);
+    }
     if(!p.f.hasText){
       read.push(['📝', `<b>${esc(p.n)}</b> ยังไม่ได้เขียนข้อความเลยสักบันทึก — ค่าที่ได้จึงมาจากระดับความรู้สึกกับคะแนนเท่านั้น <b>ความแม่นยำต่ำ</b>`]);
     } else if(p.f.about === 0){
@@ -1353,12 +1558,242 @@ function renderAnalysis(){
         ${read.map(([ic,t])=>`<div class="r"><span class="ic">${ic}</span><span>${t}</span></div>`).join('')}
       </div>
 
+      <div class="ai-box">
+        <div class="ai-head">
+          <span class="ai-title">✨ AI อ่านบันทึกทั้งหมดแล้ววิเคราะห์</span>
+          ${hasAI()
+            ? `<button class="btn solid" id="aiRun">วิเคราะห์ด้วย AI</button>`
+            : `<button class="btn liquid-glass" id="aiSetup">ตั้งค่า AI</button>`}
+        </div>
+        <div class="ai-out" id="aiOut">${
+          CFG.aiResult ? esc(CFG.aiResult.text)
+          : hasAI() ? 'กดปุ่มวิเคราะห์เพื่อให้โมเดลภาษาอ่านบันทึกทั้งหมดแล้วสรุปให้'
+          : 'ยังไม่ได้ตั้งค่า AI — ตัวเลขด้านบนคำนวณด้วยกฎที่เขียนไว้ ถ้าอยากได้การตีความจากโมเดลภาษาจริง กดตั้งค่าแล้วใส่คีย์ของคุณเอง'
+        }</div>
+        <div class="ai-when" id="aiWhen">${
+          CFG.aiResult ? `วิเคราะห์เมื่อ ${new Date(CFG.aiResult.at).toLocaleString('th-TH')} · จาก ${CFG.aiResult.n} บันทึก` : ''
+        }</div>
+      </div>
+
       <div class="caveat">
-        คำนวณในเครื่องคุณจากข้อมูลที่บันทึกไว้ — ใช้ระดับความรู้สึก คะแนน ความถี่ที่เอ่ยถึงกัน และการนับคำบวกคำลบในข้อความ
+        ตัวเลขด้านบนคำนวณในเครื่องคุณจากข้อมูลที่บันทึกไว้ — ใช้ระดับความรู้สึก คะแนน ความถี่ที่เอ่ยถึงกัน การนับคำบวกคำลบ และการแสดงความรู้สึกต่อบันทึกของอีกฝ่าย
         ไม่ได้ส่งข้อมูลออกไปที่ไหน และ<b>ไม่ใช่คำตัดสิน</b> เป็นเพียงภาพสะท้อนจากสิ่งที่เขียนไว้
         ${lowConf ? ' <b>ตอนนี้ข้อมูลยังน้อย ตัวเลขจึงยังแกว่งได้มาก</b> — เขียนต่อสัก 2-3 สัปดาห์จะแม่นขึ้นเยอะ' : ''}
       </div>
     </div>`;
+
+  const run = $('#aiRun');   if(run) run.onclick = runAI;
+  const setup = $('#aiSetup'); if(setup) setup.onclick = openSheet;
+}
+
+/* ============ ตั้งค่า (เก็บถาวรในเครื่อง) ============ */
+const CFG_KEY = 'moodDiary.cfg';
+let CFG = (()=>{ try{ return JSON.parse(localStorage.getItem(CFG_KEY)) || {}; }catch(e){ return {}; } })();
+function saveCfg(){ try{ localStorage.setItem(CFG_KEY, JSON.stringify(CFG)); return true; }catch(e){ return false; } }
+const hasSync = () => !!(CFG.sbUrl && CFG.sbKey);
+const hasAI   = () => !!CFG.aiKey;
+const nowISO  = () => new Date().toISOString();
+
+/* ============ ซิงก์ข้อมูลผ่าน Supabase ============ */
+async function sbFetch(path, opts = {}){
+  const url = CFG.sbUrl.replace(/\/+$/, '') + '/rest/v1/' + path;
+  const res = await fetch(url, {
+    ...opts,
+    headers: {
+      apikey: CFG.sbKey,
+      Authorization: 'Bearer ' + CFG.sbKey,
+      'Content-Type': 'application/json',
+      ...(opts.headers || {}),
+    },
+  });
+  if(!res.ok) throw new Error(res.status + ' — ' + (await res.text()).slice(0, 200));
+  return res.status === 204 ? null : res.json().catch(()=>null);
+}
+
+const clean = e => ({
+  id:e.id, date:e.date, name:e.name, mood:e.mood, score:e.score,
+  event:e.event||'', say:e.say||'', emoji:e.emoji||'',
+  reactions:e.reactions||[], updated_at:e.updated_at||nowISO(),
+});
+
+/* ดึงของกลางมารวมกับของในเครื่อง อันที่แก้ทีหลังชนะ แล้วส่งผลรวมกลับขึ้นไป */
+async function syncNow(){
+  if(!hasSync()) return null;
+  const remote = await sbFetch('entries?select=*') || [];
+  const byId = {};
+  remote.forEach(r=> byId[r.id] = r);
+  data.forEach(e=>{
+    const local = clean(e), r = byId[e.id];
+    if(!r || (local.updated_at || '') > (r.updated_at || '')) byId[e.id] = local;
+  });
+  const merged = Object.values(byId).map(clean)
+    .sort((a,b)=> a.date.localeCompare(b.date) || a.name.localeCompare(b.name));
+  await sbFetch('entries', {
+    method: 'POST',
+    headers: {Prefer: 'resolution=merge-duplicates,return=minimal'},
+    body: JSON.stringify(merged),
+  });
+  const before = JSON.stringify(data.map(e=>e.id).sort());
+  data = merged;
+  try{ localStorage.setItem(KEY, JSON.stringify(data)); }catch(e){}
+  return {count: merged.length, pulled: before !== JSON.stringify(merged.map(e=>e.id).sort())};
+}
+
+let syncTimer = null;
+function syncSoon(){
+  if(!hasSync()) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(async ()=>{
+    try{ await syncNow(); renderAll(); paintSyncDot('on'); }
+    catch(e){ paintSyncDot('bad'); toast('ซิงก์ไม่สำเร็จ — ' + e.message.slice(0, 60)); }
+  }, 900);
+}
+function paintSyncDot(state){
+  const d = $('#syncDot'); if(!d) return;
+  d.classList.toggle('on', state === 'on');
+  d.style.background = state === 'bad' ? 'var(--sc-1)' : '';
+}
+
+/* ============ AI ช่วยวิเคราะห์ ============ */
+function aiPrompt(){
+  const rows = data.slice().sort((a,b)=> a.date.localeCompare(b.date)).map(e=>{
+    const m = M(e.mood);
+    const rx = (e.reactions||[]).map(r=>`${r.by} ตอบกลับ ${r.emoji} ${r.text||''}`).join(' | ');
+    return `${e.date} · ${e.name} · ${m.en} (${m.lv?'Lv.'+m.lv:'Lv.X'}) · ความสุข ${e.score}/10`
+      + (e.event ? `\n  เหตุการณ์: ${e.event}` : '')
+      + (e.say ? `\n  อยากบอก: ${e.say}` : '')
+      + (rx ? `\n  ความรู้สึกจากอีกฝ่าย: ${rx}` : '');
+  }).join('\n');
+
+  return `นี่คือไดอารี่ความรู้สึกของ ${names().join(' และ ')} ที่บันทึกร่วมกัน
+
+${rows}
+
+ช่วยวิเคราะห์เป็นภาษาไทย โดยแบ่งเป็นหัวข้อดังนี้
+1. สภาพจิตใจของแต่ละคน — อ่านจากสิ่งที่เขาเขียนจริง ๆ ไม่ใช่แค่ตัวเลข
+2. ความรู้สึกที่แต่ละฝ่ายมีต่ออีกฝ่าย และมันสมดุลกันหรือไม่
+3. รูปแบบหรือสัญญาณที่น่าสนใจซึ่งตัวเลขอย่างเดียวมองไม่เห็น
+4. ข้อเสนอแนะที่ทำได้จริง 2-3 ข้อ
+
+เขียนแบบตรงไปตรงมาและอบอุ่น ไม่ต้องปลอบใจเกินจริง ถ้าข้อมูลยังน้อยเกินจะสรุปให้บอกตรง ๆ
+ห้ามแต่งเหตุการณ์ที่ไม่มีในบันทึก ความยาวไม่เกิน 500 คำ`;
+}
+
+async function runAI(){
+  const out = $('#aiOut'), btn = $('#aiRun'), when = $('#aiWhen');
+  if(!hasAI()) return;
+  btn.disabled = true;
+  out.innerHTML = '<span class="spin"></span> กำลังอ่านบันทึกทั้งหมด...';
+  try{
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': CFG.aiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: CFG.aiModel || 'claude-sonnet-5',
+        max_tokens: 1500,
+        messages: [{role: 'user', content: aiPrompt()}],
+      }),
+    });
+    const j = await res.json();
+    if(!res.ok) throw new Error(j?.error?.message || res.status);
+    const text = (j.content || []).map(c=>c.text || '').join('').trim();
+    CFG.aiResult = {text, at: nowISO(), n: data.length};
+    saveCfg();
+    out.textContent = text;
+    when.textContent = `วิเคราะห์เมื่อ ${new Date(CFG.aiResult.at).toLocaleString('th-TH')} · จาก ${data.length} บันทึก`;
+  }catch(e){
+    out.textContent = 'เรียก AI ไม่สำเร็จ — ' + e.message
+      + '\n\nถ้าขึ้นว่า CORS หรือ Failed to fetch แปลว่าเบราว์เซอร์บล็อกการเรียกจากหน้าเว็บโดยตรง ต้องใช้ backend เล็ก ๆ ช่วยส่งต่อแทน';
+  }finally{ btn.disabled = false; }
+}
+
+/* ============ ปุ่มแสดงความรู้สึกต่อบันทึกของอีกฝ่าย ============ */
+const REACT_EMOJIS = ['💗','🥺','🤗','😢','😮','👍','🙏','💔','😊','🔥'];
+
+function reactsHTML(e){
+  const others = names().filter(n=> n !== e.name);
+  const who = others.length ? others : names();
+  const list = (e.reactions || []).map((r,i)=>`
+    <span class="react">
+      <span class="em">${r.emoji || '💗'}</span>
+      <span class="by">${esc(r.by)}</span>
+      ${r.text ? `<span class="tx">${esc(r.text)}</span>` : ''}
+      <button class="rm" data-rm="${attr(e.id)}|${i}" title="ลบ" aria-label="ลบความรู้สึกนี้">✕</button>
+    </span>`).join('');
+
+  return `<div class="reacts">
+    ${list ? `<div class="react-list">${list}</div>` : ''}
+    <button class="react-open liquid-glass" data-react="${attr(e.id)}">💬 แสดงความรู้สึกต่อบันทึกนี้</button>
+    <div class="react-form" data-form="${attr(e.id)}" hidden>
+      <div class="row1">
+        <span style="font-size:.86rem;color:var(--txt-60)">ในนามของ</span>
+        ${who.map((n,i)=>`<button type="button" class="who-pick liquid-glass ${i===0?'on':''}" data-who="${attr(n)}">${esc(n)}</button>`).join('')}
+      </div>
+      <div class="ems">
+        ${REACT_EMOJIS.map((em,i)=>`<button type="button" class="liquid-glass ${i===0?'on':''}" data-em="${em}">${em}</button>`).join('')}
+      </div>
+      <div class="row2">
+        <input type="text" placeholder="อยากบอกอะไรกับบันทึกนี้..." data-txt="${attr(e.id)}">
+        <button type="button" class="btn solid" data-send="${attr(e.id)}">ส่ง</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function wireReacts(box){
+  box.querySelectorAll('[data-react]').forEach(b=> b.onclick = ()=>{
+    const f = box.querySelector(`[data-form="${CSS.escape(b.dataset.react)}"]`);
+    f.hidden = !f.hidden;
+    if(!f.hidden) f.querySelector('[data-txt]').focus();
+  });
+  box.querySelectorAll('.react-form').forEach(f=>{
+    f.querySelectorAll('[data-who]').forEach(w=> w.onclick = ()=>{
+      f.querySelectorAll('[data-who]').forEach(x=> x.classList.remove('on'));
+      w.classList.add('on');
+    });
+    f.querySelectorAll('[data-em]').forEach(w=> w.onclick = ()=>{
+      f.querySelectorAll('[data-em]').forEach(x=> x.classList.remove('on'));
+      w.classList.add('on');
+    });
+    const send = f.querySelector('[data-send]');
+    const doSend = ()=>{
+      const id = send.dataset.send;
+      const e = data.find(x=> x.id === id); if(!e) return;
+      const by = f.querySelector('[data-who].on')?.dataset.who;
+      const em = f.querySelector('[data-em].on')?.dataset.em || '💗';
+      const tx = f.querySelector('[data-txt]').value.trim();
+      if(!by){ toast('เลือกก่อนว่าใครเป็นคนแสดงความรู้สึก'); return; }
+      (e.reactions ||= []).push({by, emoji: em, text: tx, at: nowISO()});
+      e.updated_at = nowISO();
+      save(); syncSoon(); renderAll();
+      toast(`${by} แสดงความรู้สึกแล้ว`);
+      showSaved(id);
+    };
+    send.onclick = doSend;
+    f.querySelector('[data-txt]').addEventListener('keydown', ev=>{
+      if(ev.key === 'Enter'){ ev.preventDefault(); doSend(); }
+    });
+  });
+  box.querySelectorAll('[data-rm]').forEach(b=> b.onclick = ()=>{
+    const [id, i] = b.dataset.rm.split('|');
+    const e = data.find(x=> x.id === id); if(!e) return;
+    e.reactions.splice(+i, 1);
+    e.updated_at = nowISO();
+    save(); syncSoon(); renderAll();
+  });
+}
+
+/* ============ บรรยากาศตามอารมณ์รวม ============ */
+function setAmbient(){
+  if(!data.length) return;
+  const avg = data.reduce((s,e)=>s + e.score, 0) / data.length;
+  document.documentElement.style.setProperty(
+    '--ambient', `color-mix(in srgb, ${scoreColor(avg)} 13%, transparent)`);
 }
 
 /* ============ TABS ============ */
@@ -1684,8 +2119,10 @@ function renderTimeline(){
           <button class="del" title="ลบ" aria-label="ลบบันทึก" data-del="${attr(e.id)}">🗑️</button>
         </div>
       </div>
+      ${reactsHTML(e)}
     </div>`;
   }).join('');
+  wireReacts(box);
 
   box.querySelectorAll('[data-edit]').forEach(b=> b.onclick=()=>startEdit(b.dataset.edit));
   box.querySelectorAll('[data-del]').forEach(b=> b.onclick=()=>{
@@ -1728,6 +2165,8 @@ function initForm(){
       event: $('#fEvent').value.trim(),
       say: $('#fSay').value.trim(),
       emoji: pickedEmoji,
+      reactions: editId ? (data.find(x=>x.id===editId)?.reactions || []) : [],
+      updated_at: nowISO(),
     };
     const wasEdit = !!editId;
     if(wasEdit){ data = data.map(x=> x.id===editId ? rec : x); }
@@ -1737,6 +2176,7 @@ function initForm(){
     if(filter !== 'ALL' && filter !== rec.name) filter = rec.name;
 
     const ok = save();
+    syncSoon();
     resetForm();
     renderAll();
     toast(ok ? (wasEdit ? 'แก้ไขบันทึกแล้ว' : `บันทึกของ ${rec.name} วันที่ ${fmtDate(rec.date)} แล้ว`)
@@ -1800,7 +2240,120 @@ $('#fileIn').onchange = ev=>{
 };
 
 /* ============ HERO ACTIONS ============ */
-$('#navExport').onclick = doExport;
+/* ============ แผงตั้งค่า ============ */
+function openSheet(){
+  $('#cfgSbUrl').value   = CFG.sbUrl || '';
+  $('#cfgSbKey').value   = CFG.sbKey || '';
+  $('#cfgAiKey').value   = CFG.aiKey || '';
+  $('#cfgAiModel').value = CFG.aiModel || 'claude-sonnet-5';
+  paintSyncDot(hasSync() ? 'on' : '');
+  $('#aiDot').classList.toggle('on', hasAI());
+  $('#sheet').classList.add('on');
+  document.body.style.overflow = 'hidden';
+}
+function closeSheet(){
+  $('#sheet').classList.remove('on');
+  document.body.style.overflow = '';
+}
+$('#navSettings').onclick = openSheet;
+$('#sheetClose').onclick = closeSheet;
+$('#sheet').addEventListener('click', ev=>{ if(ev.target === $('#sheet')) closeSheet(); });
+document.addEventListener('keydown', ev=>{ if(ev.key === 'Escape' && $('#sheet').classList.contains('on')) closeSheet(); });
+
+$('#syncTest').onclick = async ()=>{
+  const s = $('#syncStatus');
+  CFG.sbUrl = $('#cfgSbUrl').value.trim();
+  CFG.sbKey = $('#cfgSbKey').value.trim();
+  if(!hasSync()){ s.className = 'status bad'; s.textContent = 'ต้องใส่ทั้ง URL และ anon key'; return; }
+  saveCfg();
+  s.className = 'status busy'; s.innerHTML = '<span class="spin"></span> กำลังเชื่อมต่อ...';
+  try{
+    const r = await syncNow();
+    renderAll();
+    paintSyncDot('on');
+    s.className = 'status ok';
+    s.textContent = `เชื่อมต่อสำเร็จ · ตอนนี้มี ${r.count} บันทึกที่ซิงก์กันแล้ว`
+      + (r.pulled ? ' (ดึงบันทึกของอีกเครื่องเข้ามาด้วย)' : '');
+  }catch(e){
+    paintSyncDot('bad');
+    s.className = 'status bad';
+    s.textContent = 'เชื่อมต่อไม่สำเร็จ — ' + e.message
+      + (/relation|does not exist|404/i.test(e.message) ? ' · ยังไม่ได้สร้างตาราง entries กด "วิธีตั้งค่า" เพื่อดู SQL' : '');
+  }
+};
+$('#syncOff').onclick = ()=>{
+  delete CFG.sbUrl; delete CFG.sbKey; saveCfg();
+  $('#cfgSbUrl').value = ''; $('#cfgSbKey').value = '';
+  paintSyncDot('');
+  $('#syncStatus').className = 'status'; $('#syncStatus').textContent = 'เลิกใช้ซิงก์แล้ว ข้อมูลจะอยู่ในเครื่องนี้เท่านั้น';
+};
+$('#syncHelp').onclick = ()=>{
+  const g = $('#syncGuide');
+  g.hidden = !g.hidden;
+  if(g.hidden || g.dataset.done) return;
+  g.dataset.done = '1';
+  g.innerHTML = `
+    <div class="ai-out" style="margin-top:14px;font-size:.88rem">1. สมัคร supabase.com (ฟรี) แล้วสร้างโปรเจกต์ใหม่
+2. เข้าเมนู SQL Editor วางคำสั่งข้างล่างแล้วกด Run
+3. เข้า Project Settings → API คัดลอก Project URL กับ anon public key มาวางด้านบน
+4. อีกเครื่องหนึ่งก็ใส่ค่าเดียวกัน จะเห็นไทม์ไลน์เดียวกันทันที
+
+create table entries (
+  id text primary key,
+  date text, name text, mood text,
+  score int, event text, say text, emoji text,
+  reactions jsonb default '[]',
+  updated_at timestamptz default now()
+);
+alter table entries enable row level security;
+create policy "diary access" on entries
+  for all using (true) with check (true);</div>
+    <div class="warn" style="margin-top:12px">
+      นโยบายด้านบนเปิดให้ใครที่รู้ anon key อ่านและเขียนได้ทั้งหมด เหมาะกับไดอารี่ส่วนตัวสองคนที่ไม่แชร์คีย์ให้ใคร
+      ถ้าต้องการความปลอดภัยกว่านี้ ให้เปิดระบบล็อกอินของ Supabase แล้วเปลี่ยนเงื่อนไขเป็น auth.uid() แทน
+    </div>`;
+};
+
+$('#aiTest').onclick = async ()=>{
+  const s = $('#aiStatus');
+  CFG.aiKey = $('#cfgAiKey').value.trim();
+  CFG.aiModel = $('#cfgAiModel').value.trim() || 'claude-sonnet-5';
+  if(!hasAI()){ s.className = 'status bad'; s.textContent = 'ยังไม่ได้ใส่คีย์'; return; }
+  saveCfg();
+  s.className = 'status busy'; s.innerHTML = '<span class="spin"></span> กำลังทดสอบ...';
+  try{
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': CFG.aiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({model: CFG.aiModel, max_tokens: 16, messages: [{role: 'user', content: 'ตอบว่า ok'}]}),
+    });
+    const j = await res.json();
+    if(!res.ok) throw new Error(j?.error?.message || res.status);
+    $('#aiDot').classList.add('on');
+    s.className = 'status ok';
+    s.textContent = 'เชื่อมต่อสำเร็จ · ปุ่ม "วิเคราะห์ด้วย AI" พร้อมใช้ในการ์ดวิเคราะห์แล้ว';
+    renderAll();
+  }catch(e){
+    s.className = 'status bad';
+    s.textContent = 'เชื่อมต่อไม่สำเร็จ — ' + e.message
+      + (/fetch|CORS/i.test(e.message) ? ' · เบราว์เซอร์อาจบล็อกการเรียกโดยตรง ต้องใช้ backend ช่วยส่งต่อ' : '');
+  }
+};
+$('#aiOff').onclick = ()=>{
+  delete CFG.aiKey; delete CFG.aiResult; saveCfg();
+  $('#cfgAiKey').value = '';
+  $('#aiDot').classList.remove('on');
+  $('#aiStatus').className = 'status'; $('#aiStatus').textContent = 'ลบคีย์ออกแล้ว';
+  renderAll();
+};
+$('#cfgExport').onclick = ()=> doExport();
+$('#cfgImport').onclick = ()=> doImport();
+
 $('#socExport').onclick = doExport;
 $('#socImport').onclick = doImport;
 $('#footExport').onclick = e=>{ e.preventDefault(); doExport(); };
@@ -1830,10 +2383,18 @@ function renderAll(){
   renderStats(); renderLine(); renderGauge();
   renderDonut(); renderLevels(); renderHeatmap();
   renderInsights(); renderTimeline();
+  setAmbient();
   watchReveals();
 }
 initForm();
 renderAll();
+
+/* ถ้าเปิดซิงก์ไว้ ดึงของอีกเครื่องเข้ามาตั้งแต่เปิดหน้า */
+if(hasSync()){
+  syncNow()
+    .then(()=>{ renderAll(); paintSyncDot('on'); })
+    .catch(()=> paintSyncDot('bad'));
+}
 </script>
 
 </body>
