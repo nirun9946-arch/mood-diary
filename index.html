@@ -1009,16 +1009,24 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:#fff
       </p>
       <div class="fields">
         <div class="fld">
-          <label for="cfgAiKey">Anthropic API key</label>
-          <input type="password" id="cfgAiKey" placeholder="sk-ant-..." spellcheck="false">
+          <label for="cfgAiProvider">ผู้ให้บริการ</label>
+          <select id="cfgAiProvider">
+            <option value="groq">Groq — คีย์ขึ้นต้น gsk_ (มีระดับใช้ฟรี)</option>
+            <option value="anthropic">Anthropic — คีย์ขึ้นต้น sk-ant-</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label for="cfgAiKey">API key</label>
+          <input type="password" id="cfgAiKey" placeholder="วางคีย์ของคุณที่นี่" spellcheck="false" autocomplete="off">
         </div>
         <div class="fld">
           <label for="cfgAiModel">โมเดล</label>
-          <input type="text" id="cfgAiModel" placeholder="claude-sonnet-5" spellcheck="false">
+          <input type="text" id="cfgAiModel" spellcheck="false">
         </div>
         <div class="warn">
-          หน้าเว็บนี้เปิดสาธารณะ คีย์จะถูกเก็บใน localStorage ของเครื่องคุณเท่านั้นและไม่เข้าไปในโค้ด
-          แต่ถ้าใช้เครื่องร่วมกับคนอื่น อย่าใส่คีย์ไว้ และควรตั้งวงเงินใช้งานในหน้าบัญชี Anthropic ไว้ด้วย
+          <b>อย่าส่งคีย์ให้ใครทางแชตหรือข้อความ</b> ถ้าเคยส่งไปแล้วให้ถือว่าคีย์นั้นรั่ว ควรลบทิ้งแล้วสร้างใหม่<br>
+          คีย์ที่ใส่ตรงนี้เก็บอยู่ใน localStorage ของเบราว์เซอร์เครื่องนี้เท่านั้น ไม่ถูกบันทึกลงโค้ดของเว็บ
+          และไม่มีใครที่เปิดลิงก์นี้เห็น แต่ถ้าใช้เครื่องร่วมกับคนอื่นก็ไม่ควรใส่ทิ้งไว้
         </div>
         <div class="form-actions" style="margin-top:4px">
           <button type="button" class="btn solid" id="aiTest">ทดสอบการเชื่อมต่อ</button>
@@ -1571,7 +1579,7 @@ function renderAnalysis(){
           : 'ยังไม่ได้ตั้งค่า AI — ตัวเลขด้านบนคำนวณด้วยกฎที่เขียนไว้ ถ้าอยากได้การตีความจากโมเดลภาษาจริง กดตั้งค่าแล้วใส่คีย์ของคุณเอง'
         }</div>
         <div class="ai-when" id="aiWhen">${
-          CFG.aiResult ? `วิเคราะห์เมื่อ ${new Date(CFG.aiResult.at).toLocaleString('th-TH')} · จาก ${CFG.aiResult.n} บันทึก` : ''
+          CFG.aiResult ? `วิเคราะห์โดย ${esc(CFG.aiResult.by || 'AI')} เมื่อ ${new Date(CFG.aiResult.at).toLocaleString('th-TH')} · จาก ${CFG.aiResult.n} บันทึก` : ''
         }</div>
       </div>
 
@@ -1679,36 +1687,60 @@ ${rows}
 ห้ามแต่งเหตุการณ์ที่ไม่มีในบันทึก ความยาวไม่เกิน 500 คำ`;
 }
 
+/* ผู้ให้บริการที่รองรับ — เพิ่มเจ้าใหม่ได้โดยเติมในตารางนี้ตารางเดียว */
+const AI_PROVIDERS = {
+  groq: {
+    label: 'Groq',
+    model: 'llama-3.3-70b-versatile',
+    url: 'https://api.groq.com/openai/v1/chat/completions',
+    headers: k => ({'content-type':'application/json', Authorization: 'Bearer ' + k}),
+    body: (m, prompt, max) => ({model:m, max_tokens:max, messages:[{role:'user', content:prompt}]}),
+    read: j => j?.choices?.[0]?.message?.content || '',
+  },
+  anthropic: {
+    label: 'Anthropic',
+    model: 'claude-sonnet-5',
+    url: 'https://api.anthropic.com/v1/messages',
+    headers: k => ({
+      'content-type':'application/json',
+      'x-api-key': k,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true',
+    }),
+    body: (m, prompt, max) => ({model:m, max_tokens:max, messages:[{role:'user', content:prompt}]}),
+    read: j => (j?.content || []).map(c=>c.text || '').join(''),
+  },
+};
+const providerOf = key => key.startsWith('gsk_') ? 'groq' : key.startsWith('sk-ant-') ? 'anthropic' : null;
+const aiProvider = () => AI_PROVIDERS[CFG.aiProvider] || AI_PROVIDERS.groq;
+
+async function aiCall(prompt, maxTokens){
+  const p = aiProvider();
+  const res = await fetch(p.url, {
+    method: 'POST',
+    headers: p.headers(CFG.aiKey),
+    body: JSON.stringify(p.body(CFG.aiModel || p.model, prompt, maxTokens)),
+  });
+  const j = await res.json().catch(()=>null);
+  if(!res.ok) throw new Error(j?.error?.message || ('HTTP ' + res.status));
+  return (p.read(j) || '').trim();
+}
+
 async function runAI(){
   const out = $('#aiOut'), btn = $('#aiRun'), when = $('#aiWhen');
   if(!hasAI()) return;
   btn.disabled = true;
   out.innerHTML = '<span class="spin"></span> กำลังอ่านบันทึกทั้งหมด...';
   try{
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        'x-api-key': CFG.aiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
-      body: JSON.stringify({
-        model: CFG.aiModel || 'claude-sonnet-5',
-        max_tokens: 1500,
-        messages: [{role: 'user', content: aiPrompt()}],
-      }),
-    });
-    const j = await res.json();
-    if(!res.ok) throw new Error(j?.error?.message || res.status);
-    const text = (j.content || []).map(c=>c.text || '').join('').trim();
-    CFG.aiResult = {text, at: nowISO(), n: data.length};
+    const text = await aiCall(aiPrompt(), 1500);
+    CFG.aiResult = {text, at: nowISO(), n: data.length, by: aiProvider().label};
     saveCfg();
     out.textContent = text;
-    when.textContent = `วิเคราะห์เมื่อ ${new Date(CFG.aiResult.at).toLocaleString('th-TH')} · จาก ${data.length} บันทึก`;
+    when.textContent = `วิเคราะห์โดย ${CFG.aiResult.by} เมื่อ ${new Date(CFG.aiResult.at).toLocaleString('th-TH')} · จาก ${data.length} บันทึก`;
   }catch(e){
     out.textContent = 'เรียก AI ไม่สำเร็จ — ' + e.message
-      + '\n\nถ้าขึ้นว่า CORS หรือ Failed to fetch แปลว่าเบราว์เซอร์บล็อกการเรียกจากหน้าเว็บโดยตรง ต้องใช้ backend เล็ก ๆ ช่วยส่งต่อแทน';
+      + (/model/i.test(e.message) ? '\n\nชื่อโมเดลอาจถูกยกเลิกแล้ว เข้าไปดูรายชื่อโมเดลล่าสุดของผู้ให้บริการแล้วแก้ในหน้าตั้งค่า' : '')
+      + (/fetch|CORS|NetworkError/i.test(e.message) ? '\n\nเบราว์เซอร์บล็อกการเรียกจากหน้าเว็บโดยตรง ต้องใช้ backend เล็ก ๆ ช่วยส่งต่อแทน' : '');
   }finally{ btn.disabled = false; }
 }
 
@@ -2244,8 +2276,9 @@ $('#fileIn').onchange = ev=>{
 function openSheet(){
   $('#cfgSbUrl').value   = CFG.sbUrl || '';
   $('#cfgSbKey').value   = CFG.sbKey || '';
+  $('#cfgAiProvider').value = CFG.aiProvider || 'groq';
   $('#cfgAiKey').value   = CFG.aiKey || '';
-  $('#cfgAiModel').value = CFG.aiModel || 'claude-sonnet-5';
+  $('#cfgAiModel').value = CFG.aiModel || aiProvider().model;
   paintSyncDot(hasSync() ? 'on' : '');
   $('#aiDot').classList.toggle('on', hasAI());
   $('#sheet').classList.add('on');
@@ -2314,33 +2347,46 @@ create policy "diary access" on entries
     </div>`;
 };
 
+/* เปลี่ยนผู้ให้บริการแล้วเติมชื่อโมเดลเริ่มต้นให้ ถ้ายังไม่ได้แก้เอง */
+$('#cfgAiProvider').onchange = ()=>{
+  const prev = aiProvider().model;
+  CFG.aiProvider = $('#cfgAiProvider').value;
+  const box = $('#cfgAiModel');
+  if(!box.value.trim() || box.value.trim() === prev) box.value = aiProvider().model;
+};
+/* วางคีย์แล้วเดาผู้ให้บริการจากรูปแบบคีย์ ลดโอกาสตั้งค่าผิด */
+$('#cfgAiKey').addEventListener('input', ()=>{
+  const guess = providerOf($('#cfgAiKey').value.trim());
+  if(guess && guess !== $('#cfgAiProvider').value){
+    $('#cfgAiProvider').value = guess;
+    $('#cfgAiProvider').dispatchEvent(new Event('change'));
+  }
+});
+
 $('#aiTest').onclick = async ()=>{
   const s = $('#aiStatus');
+  CFG.aiProvider = $('#cfgAiProvider').value;
   CFG.aiKey = $('#cfgAiKey').value.trim();
-  CFG.aiModel = $('#cfgAiModel').value.trim() || 'claude-sonnet-5';
+  CFG.aiModel = $('#cfgAiModel').value.trim() || aiProvider().model;
   if(!hasAI()){ s.className = 'status bad'; s.textContent = 'ยังไม่ได้ใส่คีย์'; return; }
+  const guess = providerOf(CFG.aiKey);
+  if(guess && guess !== CFG.aiProvider){
+    s.className = 'status bad';
+    s.textContent = `คีย์นี้ดูเหมือนของ ${AI_PROVIDERS[guess].label} แต่เลือกผู้ให้บริการเป็น ${aiProvider().label} — เลือกให้ตรงกันก่อน`;
+    return;
+  }
   saveCfg();
   s.className = 'status busy'; s.innerHTML = '<span class="spin"></span> กำลังทดสอบ...';
   try{
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        'x-api-key': CFG.aiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
-      body: JSON.stringify({model: CFG.aiModel, max_tokens: 16, messages: [{role: 'user', content: 'ตอบว่า ok'}]}),
-    });
-    const j = await res.json();
-    if(!res.ok) throw new Error(j?.error?.message || res.status);
+    await aiCall('ตอบกลับสั้น ๆ ว่า ok', 16);
     $('#aiDot').classList.add('on');
     s.className = 'status ok';
-    s.textContent = 'เชื่อมต่อสำเร็จ · ปุ่ม "วิเคราะห์ด้วย AI" พร้อมใช้ในการ์ดวิเคราะห์แล้ว';
+    s.textContent = `เชื่อมต่อ ${aiProvider().label} สำเร็จ · ปุ่ม "วิเคราะห์ด้วย AI" พร้อมใช้ในการ์ดวิเคราะห์แล้ว`;
     renderAll();
   }catch(e){
     s.className = 'status bad';
     s.textContent = 'เชื่อมต่อไม่สำเร็จ — ' + e.message
+      + (/model/i.test(e.message) ? ' · ชื่อโมเดลอาจถูกยกเลิกแล้ว ลองเปลี่ยนเป็นรุ่นล่าสุดของผู้ให้บริการ' : '')
       + (/fetch|CORS/i.test(e.message) ? ' · เบราว์เซอร์อาจบล็อกการเรียกโดยตรง ต้องใช้ backend ช่วยส่งต่อ' : '');
   }
 };
