@@ -1019,8 +1019,8 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:var(
       <h2 id="gateTitle">ไดอารี่ความรู้สึก</h2>
     </div>
     <p class="sheet-sub" style="margin-bottom:22px">
-      ไดอารี่นี้เป็นของส่วนตัว ต้องล็อกอินก่อนจึงจะเห็นบันทึกที่แชร์กัน
-      ล็อกอินครั้งเดียวเครื่องจะจำไว้ให้
+      ปกติเว็บจะเชื่อมให้เองโดยไม่ต้องกรอกอะไร ถ้ามาถึงหน้านี้แปลว่าเชื่อมอัตโนมัติไม่สำเร็จ
+      ลองกดปุ่มล่างสุดอีกครั้ง หรือใช้อีเมลกับรหัสผ่านก็ได้
     </p>
     <div class="fields">
       <div class="fld">
@@ -1037,8 +1037,9 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:var(
       </div>
       <div class="status" id="gateStatus"></div>
       <div style="margin-top:8px">
+        <button type="button" class="btn solid" id="gateAnon">ลองเชื่อมอัตโนมัติอีกครั้ง</button>
         <button type="button" class="btn liquid-glass" id="gateSkip" style="font-size:.85rem">
-          ใช้แบบไม่ล็อกอิน — เก็บในเครื่องนี้เท่านั้น
+          ใช้แบบเก็บในเครื่องนี้เท่านั้น
         </button>
       </div>
     </div>
@@ -1063,6 +1064,10 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:var(
         แล้ววาง 2 ค่านี้ลงไป ระบบจะซิงก์ให้อัตโนมัติทุกครั้งที่บันทึก
       </p>
       <div class="fields">
+        <div class="fld">
+          <label for="cfgNick">ชื่อที่ให้อีกฝ่ายเห็นตอนคุณเปิดอยู่</label>
+          <input type="text" id="cfgNick" placeholder="เช่น ฝน หรือ เป็ด" maxlength="24">
+        </div>
         <div class="fld">
           <label for="cfgSbUrl">Supabase Project URL</label>
           <input type="text" id="cfgSbUrl" placeholder="https://xxxxx.supabase.co" spellcheck="false">
@@ -1826,6 +1831,8 @@ function saveSess(){
 }
 const signedIn = () => !!(SESS && SESS.access_token);
 const myEmail  = () => SESS?.user?.email || '';
+/* ชื่อที่ใช้แสดงตอนอีกฝ่ายเห็นว่าเรากำลังเปิดอยู่ ตั้งเองได้ในหน้าตั้งค่า */
+const myLabel  = () => myEmail() || CFG.nickname || 'อีกเครื่องหนึ่ง';
 /* โหมดเปิดให้ใช้ในเครื่องอย่างเดียว ผู้ใช้เลือกข้ามการล็อกอิน */
 const localOnly = () => localStorage.getItem('moodDiary.localOnly') === '1';
 
@@ -1848,6 +1855,13 @@ async function doSignUp(email, password){
   if(j.access_token){ SESS = j; saveSess(); return 'in'; }
   return 'confirm';   /* โปรเจกต์ตั้งให้ยืนยันอีเมลก่อน */
 }
+/* ขอสิทธิ์แบบไม่ระบุตัวตน — ไม่ต้องกรอกอะไรเลย ใช้เปิดเว็บแล้วเข้าได้ทันที */
+async function doSignInAnon(){
+  const j = await authPost('signup', {});
+  if(!j.access_token) throw new Error('ไม่ได้รับสิทธิ์');
+  SESS = j; saveSess();
+}
+const isAnon = () => !!SESS?.user?.is_anonymous;
 async function refreshSession(){
   if(!SESS?.refresh_token) return false;
   try{
@@ -2004,11 +2018,11 @@ function liveConnect(){
       liveSend('phx_join', {config: {
         postgres_changes: [{event: '*', schema: 'public', table: 'entries'}],
         broadcast: {self: false},
-        presence: {key: SESS?.user?.id || myEmail() || 'me'},
+        presence: {key: SESS?.user?.id || 'me'},
       }});
       liveSend('access_token', {access_token: SESS.access_token});
       liveSend('presence', {type: 'presence', event: 'track',
-        payload: {email: myEmail(), at: nowISO()}});
+        payload: {email: myLabel(), at: nowISO()}});
       clearInterval(LIVE.hb);
       LIVE.hb = setInterval(()=>{
         if(ws.readyState === 1) ws.send(JSON.stringify({topic: 'phoenix', event: 'heartbeat', payload: {}, ref: String(++LIVE.ref)}));
@@ -2021,13 +2035,13 @@ function liveConnect(){
         LIVE.others.clear();
         Object.entries(m.payload || {}).forEach(([k, v])=>{
           const meta = v?.metas?.[0] || {};
-          if(meta.email && meta.email !== myEmail()) LIVE.others.set(k, meta.email);
+          if(meta.email && meta.email !== myLabel()) LIVE.others.set(k, meta.email);
         });
         paintLive();
       }else if(m.event === 'presence_diff'){
         Object.entries(m.payload?.joins || {}).forEach(([k, v])=>{
           const meta = v?.metas?.[0] || {};
-          if(meta.email && meta.email !== myEmail()) LIVE.others.set(k, meta.email);
+          if(meta.email && meta.email !== myLabel()) LIVE.others.set(k, meta.email);
         });
         Object.keys(m.payload?.leaves || {}).forEach(k=> LIVE.others.delete(k));
         paintLive();
@@ -2053,7 +2067,7 @@ function liveConnect(){
 }
 
 /* บอกอีกฝั่งว่ามีของใหม่ */
-function announceChange(){ liveSend('broadcast', {type: 'broadcast', event: 'changed', payload: {by: myEmail()}}); }
+function announceChange(){ liveSend('broadcast', {type: 'broadcast', event: 'changed', payload: {by: myLabel()}}); }
 
 /* ชั้นสำรอง: กลับมาที่แท็บเมื่อไหร่ให้ดึงทันที และดึงเผื่อไว้ทุกครึ่งนาทีถ้าซ็อกเก็ตหลุด */
 function liveFallbacks(){
@@ -2694,6 +2708,7 @@ $('#fileIn').onchange = ev=>{
 /* ============ HERO ACTIONS ============ */
 /* ============ แผงตั้งค่า ============ */
 function openSheet(){
+  $('#cfgNick').value    = CFG.nickname || '';
   $('#cfgSbUrl').value   = CFG.sbUrl || '';
   $('#cfgSbKey').value   = CFG.sbKey || '';
   $('#cfgAiProvider').value = CFG.aiProvider || 'groq';
@@ -2724,6 +2739,13 @@ $('#navSettings').onclick = openSheet;
 $('#sheetClose').onclick = closeSheet;
 $('#sheet').addEventListener('click', ev=>{ if(ev.target === $('#sheet')) closeSheet(); });
 document.addEventListener('keydown', ev=>{ if(ev.key === 'Escape' && $('#sheet').classList.contains('on')) closeSheet(); });
+
+/* ชื่อเล่นบันทึกทันทีที่พิมพ์ และประกาศให้อีกฝั่งเห็นชื่อใหม่ */
+$('#cfgNick').addEventListener('input', ()=>{
+  CFG.nickname = $('#cfgNick').value.trim();
+  saveCfg();
+  liveSend('presence', {type:'presence', event:'track', payload:{email: myLabel(), at: nowISO()}});
+});
 
 $('#syncTest').onclick = async ()=>{
   const s = $('#syncStatus');
@@ -2864,7 +2886,7 @@ async function afterSignIn(){
   $('#gateStatus').textContent = '';
   try{
     await syncNow(); renderAll(); paintSyncDot('on');
-    toast(`ยินดีต้อนรับ ${myEmail()}`);
+    toast(isAnon() ? 'เชื่อมกับไทม์ไลน์ร่วมแล้ว' : `ยินดีต้อนรับ ${myEmail()}`);
     liveConnect(); liveFallbacks();
   }catch(e){ paintSyncDot('bad'); toast('ซิงก์ไม่สำเร็จ — ' + e.message.slice(0, 60)); }
 }
@@ -2902,6 +2924,11 @@ $('#gateUp').onclick = async ()=>{
       : 'สมัครไม่สำเร็จ — ' + e.message);
   }
 };
+$('#gateAnon').onclick = async ()=>{
+  gateBusy('กำลังเชื่อม...');
+  try{ await doSignInAnon(); await afterSignIn(); }
+  catch(e){ gateBad('เชื่อมไม่สำเร็จ — ' + e.message + ' · ลองใช้อีเมลกับรหัสผ่านแทน'); }
+};
 $('#gateSkip').onclick = ()=>{
   localStorage.setItem('moodDiary.localOnly', '1');
   hideGate();
@@ -2921,7 +2948,10 @@ if(sharedMode()){
         paintSyncDot('bad'); showGate();
       });
   }else if(!localOnly()){
-    showGate();
+    /* ไม่ต้องสมัคร ไม่ต้องล็อกอิน — ขอสิทธิ์แบบไม่ระบุตัวตนให้เองเงียบ ๆ */
+    doSignInAnon()
+      .then(afterSignIn)
+      .catch(()=> showGate());   /* ขอไม่ได้จึงค่อยถามหาอีเมล */
   }
 }else if(hasSync()){
   syncNow()
