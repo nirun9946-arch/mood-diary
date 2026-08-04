@@ -1085,6 +1085,7 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:var(
           <button type="button" class="btn liquid-glass" id="syncHelp">วิธีตั้งค่า</button>
           <button type="button" class="btn liquid-glass" id="syncOff">เลิกใช้</button>
           <button type="button" class="btn liquid-glass" id="signOutBtn" hidden>ออกจากระบบ</button>
+          <button type="button" class="btn solid" id="rejoinBtn" hidden>กลับไปใช้ไทม์ไลน์ร่วม</button>
         </div>
         <div class="status" id="syncStatus"></div>
         <div id="syncGuide" hidden></div>
@@ -2719,6 +2720,25 @@ function openSheet(){
   const so = $('#signOutBtn');
   so.hidden = !signedIn();
   so.onclick = signOut;
+  /* เคยกดใช้แบบเก็บในเครื่องไว้ ต้องมีทางกลับ ไม่งั้นติดอยู่ตรงนั้นตลอด */
+  const rj = $('#rejoinBtn');
+  rj.hidden = !(localOnly() && !signedIn());
+  rj.onclick = async ()=>{
+    const s = $('#syncStatus');
+    s.className = 'status busy'; s.innerHTML = '<span class="spin"></span> กำลังเชื่อม...';
+    try{
+      localStorage.removeItem('moodDiary.localOnly');
+      await doSignInAnon();
+      await syncNow(); renderAll(); paintSyncDot('on');
+      liveConnect(); liveFallbacks();
+      rj.hidden = true; so.hidden = false;
+      s.className = 'status ok';
+      s.textContent = 'กลับมาใช้ไทม์ไลน์ร่วมแล้ว · บันทึกในเครื่องถูกรวมขึ้นไปด้วย';
+    }catch(e){
+      localStorage.setItem('moodDiary.localOnly', '1');
+      s.className = 'status bad'; s.textContent = 'เชื่อมไม่สำเร็จ — ' + e.message.slice(0, 70);
+    }
+  };
   if(signedIn()){
     const s = $('#syncStatus');
     s.className = 'status ok';
