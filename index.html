@@ -11,9 +11,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%92%97%3C%2Ftext%3E%3C%2Fsvg%3E">
-<style>*{-webkit-text-size-adjust:100%}html{background:#e7e8ee}</style>
+<style>*{-webkit-text-size-adjust:100%}html{background:#ededed}</style>
 <!-- รหัสรุ่นของไฟล์ ใช้ตรวจว่าเบราว์เซอร์ถือหน้าเก่าจากแคชอยู่หรือไม่ -->
-<script>window.__BUILD="1785908838571";</script>
+<script>window.__BUILD="1785910364606";</script>
 </head>
 <body>
 <title>ไดอารี่ความรู้สึก — Mood Diary</title>
@@ -27,6 +27,7 @@
   --bg:#ededed;
   --hero-bg:#d9d9d9;
   --tray:#f5f2ee;
+  --sheet:rgba(255,255,255,.62);
   --brand:#ef4d23;
   --ink:#0b0f1a;
   --txt:#1b1d2e;
@@ -66,7 +67,7 @@
 /* ขยายตัวอักษรทั้งหน้า 12.5% โดยไม่ต้องแก้ทีละจุด */
 html{font-size:112.5%}
 body{
-  background:var(--bg);
+  background:transparent;
   color:var(--txt);
   font-family:var(--sans);
   line-height:1.75;
@@ -160,31 +161,26 @@ em{font-style:italic}
    ============================================================ */
 .hero{
   position:relative;
-  height:calc(100svh - 24px);
-  margin:12px;
-  border-radius:1rem;
+  height:100svh;
   overflow:hidden;
-  background:var(--hero-bg);
+  background:transparent;
   display:flex;
   flex-direction:column;
-  isolation:isolate;
 }
-@media(min-width:640px){
-  .hero{height:calc(100svh - 32px);margin:16px;border-radius:1.5rem}
-}
+.bgfx{position:fixed;inset:0;z-index:-2;overflow:hidden}
 .hero-video{
   position:absolute;inset:0;width:100%;height:100%;
-  object-fit:cover;pointer-events:none;opacity:0;z-index:0;transition:opacity .6s ease;
+  object-fit:cover;pointer-events:none;opacity:0;transition:opacity .6s ease;
 }
 /* พื้นหลังสำรองเมื่อวิดีโอโหลดไม่ได้ */
 .hero-fallback{
-  position:absolute;inset:0;z-index:0;
+  position:absolute;inset:0;
   background:
     radial-gradient(820px 560px at 50% 80%, rgba(239,77,35,.22), transparent 62%),
     radial-gradient(680px 480px at 16% 92%, rgba(11,15,26,.30), transparent 60%),
     var(--hero-bg);
 }
-.hero-veil{position:absolute;inset:0;z-index:1;pointer-events:none;background:rgba(255,255,255,.10)}
+.hero-veil{position:absolute;inset:0;pointer-events:none;background:rgba(255,255,255,.10)}
 .hero-inner{position:relative;z-index:10;display:flex;flex-direction:column;height:100%;min-height:0}
 
 /* ---------- นาฟบาร์ pill ---------- */
@@ -397,7 +393,8 @@ em{font-style:italic}
    SECTION 2 — เกริ่นนำ (About)
    ============================================================ */
 .about{
-  background:var(--bg);padding:128px 24px 40px;overflow:hidden;position:relative;
+  background:var(--sheet);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  padding:128px 24px 40px;overflow:hidden;position:relative;
 }
 .about::before{
   content:'';position:absolute;inset:0;pointer-events:none;
@@ -417,7 +414,7 @@ em{font-style:italic}
 /* ============================================================
    SECTION 3 — แบนเนอร์วิดีโอ
    ============================================================ */
-.band{background:var(--bg);padding:24px 24px 80px;overflow:hidden}
+.band{background:var(--sheet);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:24px 24px 80px;overflow:hidden}
 @media(min-width:768px){ .band{padding:40px 24px 128px} }
 .band-frame{
   border-radius:1.5rem;overflow:hidden;position:relative;aspect-ratio:16/9;
@@ -450,7 +447,7 @@ em{font-style:italic}
 /* ============================================================
    SECTION 4 — หน้ารวมตัวการ์ตูน
    ============================================================ */
-.people{background:var(--bg);padding:16px 24px 24px;overflow:hidden;position:relative}
+.people{background:var(--sheet);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:16px 24px 24px;overflow:hidden;position:relative}
 .people-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
 .person{
   border-radius:1.5rem;padding:32px 24px;display:flex;flex-direction:column;
@@ -562,7 +559,7 @@ em{font-style:italic}
 /* ============================================================
    DASHBOARD
    ============================================================ */
-.board{background:var(--bg);padding:0 24px 120px;position:relative;overflow:hidden}
+.board{background:var(--sheet);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:0 24px 120px;position:relative;overflow:hidden}
 .board::before{
   content:'';position:absolute;inset:0;pointer-events:none;
   background:radial-gradient(ellipse at center, rgba(27,29,46,.04) 0%, transparent 60%);
@@ -907,15 +904,18 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:var(
 .tip.on{opacity:1}
 </style>
 
-<!-- ============================ HERO ============================ -->
-<section class="hero">
+<!-- ============================ พื้นหลังทั้งหน้า ============================ -->
+<div class="bgfx" aria-hidden="true">
   <div class="hero-fallback"></div>
   <video class="hero-video" id="heroVideo" muted autoplay loop playsinline preload="auto"
          disableremoteplayback webkit-playsinline="true" x5-playsinline="true"
          poster="https://images.unsplash.com/photo-1557683316-973673baf926?w=1600&amp;q=60"
          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260424_064411_9e9d7f84-9277-41f4-ab10-59172d89e6be.mp4"></video>
   <div class="hero-veil"></div>
+</div>
 
+<!-- ============================ HERO ============================ -->
+<section class="hero">
   <div class="hero-inner">
     <nav class="nav">
       <div class="nav-pill">
