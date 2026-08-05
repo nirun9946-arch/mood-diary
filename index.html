@@ -13,7 +13,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%92%97%3C%2Ftext%3E%3C%2Fsvg%3E">
 <style>*{-webkit-text-size-adjust:100%}html{background:#ededed}</style>
 <!-- รหัสรุ่นของไฟล์ ใช้ตรวจว่าเบราว์เซอร์ถือหน้าเก่าจากแคชอยู่หรือไม่ -->
-<script>window.__BUILD="1785910749545";</script>
+<script>window.__BUILD="1785911259232";</script>
 </head>
 <body>
 <title>ไดอารี่ความรู้สึก — Mood Diary</title>
@@ -413,37 +413,22 @@ em{font-style:italic}
 @media(min-width:768px){ .about{padding-top:176px;padding-bottom:56px} }
 
 /* ============================================================
-   SECTION 3 — แบนเนอร์วิดีโอ
+   SECTION 3 — ถาดการ์ดเต็มใบ (แทนแถบวิดีโอเดิมที่โหลดไม่ขึ้น)
    ============================================================ */
-.band{background:var(--sheet);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:24px 24px 80px;overflow:hidden}
-@media(min-width:768px){ .band{padding:40px 24px 128px} }
-.band-frame{
-  border-radius:1.5rem;overflow:hidden;position:relative;aspect-ratio:16/9;
-  background:linear-gradient(140deg,#141428,#0a0a14);
+.panel{
+  background:var(--sheet);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  padding:24px 24px 72px;overflow:hidden;position:relative;
 }
-.band-frame video{width:100%;height:100%;object-fit:cover}
-.band-shade{
-  position:absolute;inset:0;
-  background:linear-gradient(to top, rgba(0,0,0,.60) 0%, transparent 50%, transparent 100%);
+@media(min-width:640px){ .panel{padding:32px 24px 96px} }
+.panel .tray{max-width:1000px}
+.panel-foot{
+  display:flex;flex-direction:column;align-items:flex-start;gap:18px;
+  max-width:1000px;margin:28px auto 0;
 }
-.band-overlay{
-  position:absolute;left:0;right:0;bottom:0;padding:24px;
-  display:flex;flex-direction:column;gap:20px;align-items:flex-start;
+@media(min-width:760px){
+  .panel-foot{flex-direction:row;align-items:center;justify-content:space-between;gap:28px}
 }
-@media(min-width:768px){
-  .band-overlay{padding:40px;flex-direction:row;align-items:flex-end;justify-content:space-between}
-}
-.band-card{border-radius:1rem;padding:24px;max-width:448px}
-@media(min-width:768px){ .band-card{padding:32px} }
-.band-card .k{color:var(--txt-50);font-size:.9rem;margin-bottom:12px}
-.band-card p{color:#fff;font-size:.875rem;line-height:1.75}
-@media(min-width:768px){ .band-card p{font-size:1rem} }
-.band-btn{
-  border-radius:9999px;padding:12px 32px;color:#fff;font-size:.875rem;font-weight:500;
-  font-family:inherit;cursor:pointer;flex:none;transition:transform .2s ease;
-}
-.band-btn:hover{transform:scale(1.05)}
-.band-btn:active{transform:scale(.95)}
+.panel-foot p{font-size:.95rem;line-height:1.85;color:var(--txt-60);max-width:34rem}
 
 /* ============================================================
    SECTION 4 — หน้ารวมตัวการ์ตูน
@@ -969,21 +954,19 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:var(
   </div>
 </section>
 
-<!-- ============================ BAND ============================ -->
-<section class="band">
+<!-- ============================ ถาดการ์ดเต็มใบ ============================ -->
+<section class="panel">
   <div class="shell">
-    <div class="band-frame reveal rv-lg">
-      <!-- โหลดเมื่อเลื่อนมาถึงเท่านั้น ไม่ให้แย่งแบนด์วิดท์กับวิดีโอ hero -->
-      <video id="bandVideo" muted autoplay loop playsinline preload="none"
-             data-src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260402_054547_9875cfc5-155a-4229-8ec8-b7ba7125cbf8.mp4"></video>
-      <div class="band-shade"></div>
-      <div class="band-overlay">
-        <div class="band-card liquid-glass">
-          <div class="k">วิธีที่เราใช้</div>
-          <p>ความรู้สึกวันเดียวบอกอะไรไม่ได้มาก แต่ความรู้สึกสามสิบวันบอกได้เกือบทุกอย่าง เราเก็บทีละวัน แล้วให้กราฟเป็นคนสรุปให้</p>
-        </div>
-        <button class="band-btn liquid-glass lg-hover" id="bandWrite">เริ่มเขียนวันนี้</button>
-      </div>
+    <div class="head-row reveal rv-sm" style="padding-top:0">
+      <h2>ตัวเลข <em>ของวันนี้</em></h2>
+      <div class="k">ปรับมุมมองและเป้าหมายได้ในการ์ดกลาง</div>
+    </div>
+    <div class="tray reveal">
+      <div class="tray-grid" id="trayGrid2"></div>
+    </div>
+    <div class="panel-foot reveal rv-sm">
+      <p>ความรู้สึกวันเดียวบอกอะไรไม่ได้มาก แต่ความรู้สึกสามสิบวันบอกได้เกือบทุกอย่าง เราเก็บทีละวัน แล้วให้กราฟเป็นคนสรุปให้</p>
+      <button class="hero-cta" id="bandWrite">เริ่มเขียนวันนี้<span class="ring"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span></button>
     </div>
   </div>
 </section>
@@ -2394,7 +2377,11 @@ function trayRows(){
 }
 
 function renderTray(){
-  const box = $('#trayGrid'); if(!box) return;
+  /* วาดลงทุกถาดที่มีในหน้า ทั้งตัวที่โผล่ในฮีโร่และตัวเต็มใบด้านล่าง */
+  document.querySelectorAll('.tray-grid').forEach(renderTrayInto);
+}
+function renderTrayInto(box){
+  if(!box) return;
   const rows = trayRows();
   const today = new Date().toISOString().slice(0, 10);
   const yest  = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
@@ -2447,18 +2434,18 @@ function renderTray(){
     <!-- การ์ด 2: ตั้งค่ามุมมองและเป้าหมาย -->
     <div class="tcard tform">
       <div class="tfield">
-        <label for="tWho">แสดงข้อมูลของ</label>
+        <label >แสดงข้อมูลของ</label>
         <div class="selwrap">
-          <select id="tWho">
+          <select class="t-who">
             <option value="ALL" ${tray('who') === 'ALL' ? 'selected' : ''}>ทุกคน</option>
             ${people.map(n => `<option value="${attr(n)}" ${tray('who') === n ? 'selected' : ''}>${esc(n)}</option>`).join('')}
           </select><span class="chev">${ICON_CHEV}</span>
         </div>
       </div>
       <div class="tfield">
-        <label for="tPeriod">เทียบช่วงเวลา</label>
+        <label >เทียบช่วงเวลา</label>
         <div class="selwrap">
-          <select id="tPeriod">
+          <select class="t-period">
             <option value="month" ${tray('period') === 'month' ? 'selected' : ''}>เดือนนี้</option>
             <option value="week"  ${tray('period') === 'week'  ? 'selected' : ''}>7 วันล่าสุด</option>
             <option value="all"   ${tray('period') === 'all'   ? 'selected' : ''}>ทั้งหมด</option>
@@ -2466,19 +2453,19 @@ function renderTray(){
         </div>
       </div>
       <div class="tfield">
-        <label for="tTScore">เป้าหมายคะแนน (เดือนนี้)</label>
+        <label >เป้าหมายคะแนน (เดือนนี้)</label>
         <div class="numwrap"><span class="hash">#</span>
-          <input type="number" id="tTScore" min="1" max="10" step="1" value="${tray('targetScore')}"></div>
+          <input type="number" class="t-score" min="1" max="10" step="1" value="${tray('targetScore')}"></div>
       </div>
       <div class="tfield">
-        <label for="tTCount">เป้าหมายจำนวนบันทึก (เดือนนี้)</label>
+        <label >เป้าหมายจำนวนบันทึก (เดือนนี้)</label>
         <div class="numwrap"><span class="hash">#</span>
-          <input type="number" id="tTCount" min="1" max="200" step="1" value="${tray('targetCount')}"></div>
+          <input type="number" class="t-count" min="1" max="200" step="1" value="${tray('targetCount')}"></div>
       </div>
       <div class="tfoot">
-        <button type="button" class="tsave" id="tSave">บันทึก</button>
-        <button type="button" class="tcancel" id="tCancel">ยกเลิก</button>
-        <button type="button" class="tx" id="tReset" aria-label="คืนค่าเริ่มต้น" title="คืนค่าเริ่มต้น">${ICON_X}</button>
+        <button type="button" class="tsave t-save">บันทึก</button>
+        <button type="button" class="tcancel t-cancel">ยกเลิก</button>
+        <button type="button" class="tx t-reset" aria-label="คืนค่าเริ่มต้น" title="คืนค่าเริ่มต้น">${ICON_X}</button>
       </div>
     </div>
 
@@ -2498,15 +2485,16 @@ function renderTray(){
 
   box.querySelectorAll('[data-c1]').forEach(b => b.onclick = () => setTray({c1: b.dataset.c1}));
   box.querySelectorAll('[data-c3]').forEach(b => b.onclick = () => setTray({c3: b.dataset.c3}));
-  $('#tWho').onchange    = () => setTray({who: $('#tWho').value});
-  $('#tPeriod').onchange = () => setTray({period: $('#tPeriod').value});
-  $('#tSave').onclick = () => {
-    setTray({targetScore: Math.max(1, +$('#tTScore').value || 7),
-             targetCount: Math.max(1, +$('#tTCount').value || 20)});
+  const q = s => box.querySelector(s);
+  q('.t-who').onchange    = () => setTray({who: q('.t-who').value});
+  q('.t-period').onchange = () => setTray({period: q('.t-period').value});
+  q('.t-save').onclick = () => {
+    setTray({targetScore: Math.max(1, +q('.t-score').value || 7),
+             targetCount: Math.max(1, +q('.t-count').value || 20)});
     toast('บันทึกเป้าหมายแล้ว');
   };
-  $('#tCancel').onclick = renderTray;
-  $('#tReset').onclick = () => { CFG.tray = {}; saveCfg(); renderTray(); toast('คืนค่าเริ่มต้นแล้ว'); };
+  q('.t-cancel').onclick = renderTray;
+  q('.t-reset').onclick = () => { CFG.tray = {}; saveCfg(); renderTray(); toast('คืนค่าเริ่มต้นแล้ว'); };
 }
 
 /* ============ บรรยากาศตามอารมณ์รวม ============ */
@@ -3124,7 +3112,7 @@ $('#footImport').onclick = e=>{ e.preventDefault(); doImport(); };
 bind('#socTop', ()=> go('#timeline-sec'));
 $('#heroScroll').onclick = ()=> go('#board');
 $('#navWrite').onclick = ()=> go('#write');
-$('#bandWrite').onclick = ()=> go('#write');
+bind('#bandWrite', ()=> go('#write'));
 
 function quickSubmit(){
   const val = $('#quickIn').value.trim();
