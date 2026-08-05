@@ -13,7 +13,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%92%97%3C%2Ftext%3E%3C%2Fsvg%3E">
 <style>*{-webkit-text-size-adjust:100%}html{background:#e7e8ee}</style>
 <!-- รหัสรุ่นของไฟล์ ใช้ตรวจว่าเบราว์เซอร์ถือหน้าเก่าจากแคชอยู่หรือไม่ -->
-<script>window.__BUILD="1785840668644";</script>
+<script>window.__BUILD="1785908468075";</script>
 </head>
 <body>
 <title>ไดอารี่ความรู้สึก — Mood Diary</title>
@@ -24,7 +24,11 @@
    TOKENS — โลกสีดำใบเดียว (committed dark, ไม่มีธีมสว่าง)
    ============================================================ */
 :root{
-  --bg:#e7e8ee;
+  --bg:#ededed;
+  --hero-bg:#d9d9d9;
+  --tray:#f5f2ee;
+  --brand:#ef4d23;
+  --ink:#0b0f1a;
   --txt:#1b1d2e;
   --txt-80:rgba(27,29,46,.86);
   --txt-60:rgba(27,29,46,.74);
@@ -36,7 +40,7 @@
   --hover:rgba(27,29,46,.10);
   --track:rgba(27,29,46,.14);
   --input-bg:#ffffff;
-  --solid-bg:#1b1d2e;
+  --solid-bg:#0b0f1a;
   --solid-txt:#ffffff;
   --card-bg:rgba(255,255,255,.78);
 
@@ -152,129 +156,242 @@ em{font-style:italic}
 }
 
 /* ============================================================
-   SECTION 1 — HERO
+   SECTION 1 — HERO  (เฟรมมนคลิปทุกอย่างไว้ข้างใน)
    ============================================================ */
 .hero{
-  min-height:100svh;
-  overflow:hidden;
   position:relative;
+  height:calc(100svh - 24px);
+  margin:12px;
+  border-radius:1rem;
+  overflow:hidden;
+  background:var(--hero-bg);
   display:flex;
   flex-direction:column;
+  isolation:isolate;
+}
+@media(min-width:640px){
+  .hero{height:calc(100svh - 32px);margin:16px;border-radius:1.5rem}
 }
 .hero-video{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  object-position:bottom;
-  opacity:0;
-  z-index:0;
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;pointer-events:none;opacity:0;z-index:0;
 }
-/* พื้นหลังสำรอง: ถ้าวิดีโอโหลดไม่ได้ (เช่นบน Artifact ที่ CSP บล็อก) ยังสวยอยู่ */
+/* พื้นหลังสำรองเมื่อวิดีโอโหลดไม่ได้ */
 .hero-fallback{
   position:absolute;inset:0;z-index:0;
   background:
-    radial-gradient(900px 620px at 50% 78%, rgba(155,123,255,.30), transparent 62%),
-    radial-gradient(700px 520px at 18% 92%, rgba(255,111,174,.22), transparent 60%),
-    radial-gradient(760px 520px at 84% 88%, rgba(79,211,255,.18), transparent 62%),
-    #000;
+    radial-gradient(820px 560px at 50% 80%, rgba(239,77,35,.22), transparent 62%),
+    radial-gradient(680px 480px at 16% 92%, rgba(11,15,26,.30), transparent 60%),
+    var(--hero-bg);
 }
-.hero-veil{
-  position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.15) 26%, rgba(0,0,0,.20) 62%, rgba(10,10,20,.75) 84%, var(--bg) 100%);
-}
+.hero-veil{position:absolute;inset:0;z-index:1;pointer-events:none;background:rgba(255,255,255,.10)}
+.hero-inner{position:relative;z-index:10;display:flex;flex-direction:column;height:100%;min-height:0}
 
-/* ---- navbar ---- */
-.nav{position:relative;z-index:20;padding:24px}
+/* ---------- นาฟบาร์ pill ---------- */
+.nav{display:flex;justify-content:center;padding:16px 12px 0}
+@media(min-width:640px){ .nav{padding:24px 16px 0} }
 .nav-pill{
-  max-width:1020px;margin:0 auto;border-radius:9999px;
-  padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  position:relative;width:100%;max-width:760px;
+  display:flex;align-items:center;gap:8px;
+  background:#fff;border:1px solid #e5e5e5;border-radius:9999px;
+  box-shadow:0 1px 2px rgba(0,0,0,.05);
+  padding:8px 8px 8px 8px;
 }
-.nav-l,.nav-r{display:flex;align-items:center}
-.nav-brand{display:flex;align-items:center;gap:10px}
-.nav-brand span{color:#fff;font-weight:600;font-size:1.125rem;letter-spacing:-.01em}
-.nav-links{display:flex;gap:32px;margin-left:32px}
-.nav-links a{color:var(--txt-80);font-size:.875rem;font-weight:500;text-decoration:none;transition:color .2s}
-.nav-links a:hover{color:#fff}
-.nav-r{gap:12px}
-/* ป้ายบอกว่าใครกำลังเปิดอยู่ตอนนี้ */
-.live{
-  display:none;align-items:center;gap:8px;padding:7px 14px;border-radius:9999px;
-  font-size:.8rem;color:rgba(255,255,255,.85);white-space:nowrap;
+.nav-brand{display:flex;align-items:center;gap:10px;flex-shrink:0;padding-left:2px}
+.nav-brand .mark{width:28px;height:28px;flex:none}
+@media(min-width:640px){ .nav-brand .mark{width:32px;height:32px} }
+.nav-brand span{color:#0b0f1a;font-weight:600;font-size:.95rem;letter-spacing:-.01em;white-space:nowrap}
+.nav-links{display:none;gap:24px;margin-left:22px}
+@media(min-width:900px){ .nav-links{display:flex} }
+.nav-links a{
+  display:flex;align-items:center;gap:6px;
+  font-size:14px;color:#3f3f46;text-decoration:none;white-space:nowrap;transition:color .2s;
 }
-.live.on{display:flex}
-.live .pulse{
-  width:8px;height:8px;border-radius:50%;background:#41d17f;flex:none;
-  box-shadow:0 0 0 0 rgba(65,209,127,.7);animation:live 2s ease-out infinite;
+.nav-links a:hover{color:#0b0f1a}
+.nav-links a .dot{width:5px;height:5px;border-radius:50%;background:#0b0f1a;flex:none}
+.nav-links a.accent{color:var(--brand)}
+.nav-r{display:flex;align-items:center;gap:8px;margin-left:auto}
+.nav-icon{
+  display:none;width:34px;height:34px;border-radius:9999px;border:none;background:none;
+  color:#3f3f46;cursor:pointer;place-items:center;transition:background-color .2s;
 }
-@keyframes live{70%{box-shadow:0 0 0 7px rgba(65,209,127,0)}100%{box-shadow:0 0 0 0 rgba(65,209,127,0)}}
-@media (prefers-reduced-motion:reduce){ .live .pulse{animation:none} }
-@media(max-width:860px){ .live{display:none!important} }
-.nav-ghost{
-  background:none;border:none;color:#fff;font-size:.875rem;font-weight:500;
-  font-family:inherit;cursor:pointer;padding:8px 4px;
-}
+@media(min-width:640px){ .nav-icon{display:grid} }
+.nav-icon:hover{background:#f4f4f5}
 .nav-cta{
-  border-radius:9999px;padding:8px 24px;color:#fff;font-size:.875rem;font-weight:500;
-  font-family:inherit;cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;flex:none;
+  background:var(--brand);color:#fff;border:none;border-radius:9999px;
+  padding:7px 7px 7px 16px;font-family:inherit;font-size:14px;font-weight:500;
+  cursor:pointer;white-space:nowrap;transition:filter .2s;
 }
-@media(max-width:860px){ .nav-links{display:none} }
+.nav-cta:hover{filter:brightness(1.06)}
+.nav-cta .ring{
+  width:22px;height:22px;border-radius:9999px;background:rgba(255,255,255,.22);
+  display:grid;place-items:center;flex:none;
+}
+.nav-cta .full{display:none}
+@media(min-width:640px){ .nav-cta .full{display:inline} .nav-cta .short{display:none} }
+.nav-burger{
+  display:grid;place-items:center;width:36px;height:36px;border-radius:9999px;
+  border:none;background:none;color:#0b0f1a;cursor:pointer;
+}
+@media(min-width:900px){ .nav-burger{display:none} }
+.nav-menu{
+  position:absolute;top:100%;left:8px;right:8px;margin-top:8px;z-index:20;
+  background:#fff;border:1px solid #e5e5e5;border-radius:1rem;
+  box-shadow:0 10px 30px rgba(0,0,0,.12);padding:12px;
+  display:flex;flex-direction:column;gap:2px;
+}
+.nav-menu[hidden]{display:none}
+.nav-menu a,.nav-menu button{
+  display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:.7rem;
+  font-family:inherit;font-size:15px;color:#3f3f46;text-decoration:none;
+  background:none;border:none;text-align:left;cursor:pointer;width:100%;
+}
+.nav-menu a:hover,.nav-menu button:hover{background:#f4f4f5;color:#0b0f1a}
 
-/* ---- hero content ---- */
+/* ป้ายบอกว่าใครกำลังเปิดอยู่ */
+.live{
+  display:none;align-items:center;gap:7px;padding:6px 12px;border-radius:9999px;
+  font-size:12.5px;color:#3f3f46;background:#f4f4f5;white-space:nowrap;
+}
+.live.on{display:none}
+@media(min-width:1040px){ .live.on{display:flex} }
+.live .pulse{
+  width:7px;height:7px;border-radius:50%;background:#16a34a;flex:none;
+  box-shadow:0 0 0 0 rgba(22,163,74,.6);animation:live 2s ease-out infinite;
+}
+@keyframes live{70%{box-shadow:0 0 0 6px rgba(22,163,74,0)}100%{box-shadow:0 0 0 0 rgba(22,163,74,0)}}
+@media (prefers-reduced-motion:reduce){ .live .pulse{animation:none} }
+
+/* ---------- เนื้อหากลางฮีโร่ ---------- */
 .hero-main{
-  position:relative;z-index:10;flex:1;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:48px 24px;text-align:center;gap:28px;
-  transform:translateY(-8%);
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  padding:28px 16px 24px;
 }
+@media(min-width:640px){ .hero-main{padding:48px 16px 36px} }
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:#fff;border-radius:9999px;padding:6px 16px;
+  box-shadow:0 1px 2px rgba(0,0,0,.06);font-size:13px;color:#0b0f1a;
+}
+.badge .dot{width:8px;height:8px;border-radius:50%;background:var(--brand);flex:none}
 .hero-h1{
-  font-family:var(--serif);
-  font-weight:400;
-  font-size:clamp(3rem,10.5vw,8rem);
-  line-height:.98;
-  letter-spacing:-.03em;
-  color:#fff;
-  white-space:nowrap;
+  font-size:clamp(36px,8vw,72px);line-height:1.05;font-weight:500;letter-spacing:-.02em;
+  color:#0b0f1a;margin-top:20px;max-width:56rem;
 }
-.hero-h1 em{font-style:italic}
-
-.hero-pill{
-  max-width:575px;width:100%;border-radius:9999px;
-  padding:8px 8px 8px 24px;display:flex;align-items:center;gap:12px;
-}
-.hero-pill input{
-  flex:1;background:transparent;border:none;outline:none;
-  color:#fff;font-family:inherit;font-size:.95rem;padding:6px 0;min-width:0;
-}
-.hero-pill input::placeholder{color:var(--txt-40)}
-.hero-go{
-  background:#fff;color:#111;border:none;border-radius:9999px;padding:12px;
-  cursor:pointer;display:grid;place-items:center;flex:none;transition:transform .2s ease;
-}
-.hero-go:hover{transform:scale(1.06)}
-.hero-go:active{transform:scale(.94)}
-
+@media(min-width:640px){ .hero-h1{margin-top:24px} }
+.hero-h1 em{font-family:var(--serif);font-style:italic;font-weight:400}
 .hero-sub{
-  color:#fff;font-size:1rem;line-height:1.85;padding:0 16px;max-width:575px;
-  opacity:.82;
+  margin-top:16px;color:#3f3f46;padding:0 8px;max-width:38rem;
+  font-size:clamp(13px,3.5vw,16px);line-height:1.7;
 }
-.hero-manifesto{
-  border-radius:9999px;padding:12px 32px;color:#fff;font-size:.875rem;font-weight:500;
-  font-family:inherit;cursor:pointer;
+@media(min-width:640px){ .hero-sub{margin-top:24px} }
+.hero-cta{
+  margin-top:24px;display:inline-flex;align-items:center;gap:12px;
+  background:var(--ink);color:#fff;border:none;border-radius:9999px;
+  padding:8px 8px 8px 24px;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;
+  transition:filter .2s;
 }
-.hero-social{
-  position:relative;z-index:10;display:flex;justify-content:center;gap:16px;padding-bottom:48px;
+@media(min-width:640px){ .hero-cta{margin-top:32px;padding:10px 8px 10px 28px} }
+.hero-cta:hover{filter:brightness(1.25)}
+.hero-cta .ring{
+  width:24px;height:24px;border-radius:9999px;background:rgba(255,255,255,.15);
+  display:grid;place-items:center;flex:none;
 }
-.hero-social button{
-  border-radius:9999px;padding:16px;color:var(--txt-80);cursor:pointer;font-family:inherit;
-  display:grid;place-items:center;transition:color .3s,background-color .3s;
+@media(min-width:640px){ .hero-cta .ring{width:28px;height:28px} }
+
+/* ช่องเขียนด่วน — คงไว้เพราะเป็นฟีเจอร์ที่ใช้จริง */
+.hero-quick{
+  margin-top:18px;width:100%;max-width:520px;
+  display:flex;align-items:center;gap:8px;
+  background:#fff;border:1px solid #e5e5e5;border-radius:9999px;
+  box-shadow:0 1px 2px rgba(0,0,0,.05);padding:6px 6px 6px 20px;
 }
-.hero-social button:hover{color:#fff;background-color:rgba(255,255,255,.05)}
-.scroll-cue{
-  position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:10;
-  color:var(--txt-40);font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;
+.hero-quick input{
+  flex:1;min-width:0;border:none;background:none;outline:none;padding:8px 0;
+  font-family:inherit;font-size:14px;color:#0b0f1a;
 }
+.hero-quick input::placeholder{color:#a1a1aa}
+.hero-quick .mic{
+  width:34px;height:34px;border-radius:9999px;border:none;background:none;
+  color:#71717a;cursor:pointer;display:grid;place-items:center;flex:none;transition:.2s;
+}
+.hero-quick .mic:hover{background:#f4f4f5;color:#0b0f1a}
+.hero-quick .mic.rec{background:var(--brand);color:#fff}
+.hero-go{
+  width:34px;height:34px;border-radius:9999px;border:none;background:var(--ink);color:#fff;
+  cursor:pointer;display:grid;place-items:center;flex:none;transition:filter .2s;
+}
+.hero-go:hover{filter:brightness(1.3)}
+
+/* ---------- ถาดการ์ดที่ล้นออกขอบล่าง ---------- */
+.tray-wrap{padding:0 12px}
+@media(min-width:640px){ .tray-wrap{padding:0 16px} }
+.tray{
+  background:var(--tray);border-radius:1.5rem;padding:16px;
+  width:100%;max-width:880px;margin:0 auto;
+}
+@media(min-width:640px){ .tray{padding:24px} }
+.tray-grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:640px){ .tray-grid{grid-template-columns:1fr 1fr;gap:16px} }
+@media(min-width:1024px){ .tray-grid{grid-template-columns:1fr 1fr 1fr} }
+.tcard{background:#fff;border-radius:1rem;padding:20px;color:#0b0f1a}
+.tcard .head{display:flex;align-items:center;justify-content:space-between;font-size:13px;margin-bottom:10px}
+.tcard .head .t{color:var(--brand);font-weight:500}
+.tcard .head .w{color:#71717a}
+.tcard .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tcard .big{font-size:28px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.tpill{
+  display:inline-flex;align-items:center;gap:4px;border-radius:9999px;
+  padding:2px 8px;font-size:11px;font-weight:500;font-variant-numeric:tabular-nums;
+}
+.tpill.down{background:#fef2f2;color:#dc2626}
+.tpill.up{background:#f0fdf4;color:#16a34a}
+.tpill.flat{background:#f4f4f5;color:#52525b}
+.tcard .cap{font-size:11px;color:#a1a1aa;margin-top:6px}
+.tcard .mid{text-align:center;font-size:12px;color:#71717a;margin-top:14px}
+.gauge-svg{display:block;width:100%;max-width:260px;margin:0 auto}
+.gauge-ends{
+  display:flex;justify-content:space-between;font-size:11px;color:#71717a;
+  max-width:260px;margin:0 auto;
+}
+.toggle{
+  display:flex;background:#f4f4f5;border-radius:9999px;padding:4px;margin-top:14px;gap:4px;
+}
+.toggle button{
+  flex:1;border:none;background:none;font-family:inherit;font-size:12px;color:#71717a;
+  padding:7px 8px;border-radius:9999px;cursor:pointer;transition:.2s;white-space:nowrap;
+}
+.toggle button.on{background:#fff;color:#0b0f1a;font-weight:500;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+
+/* การ์ดฟอร์มตั้งเป้าหมาย */
+.tform{display:flex;flex-direction:column;gap:12px}
+.tfield{display:flex;flex-direction:column;gap:6px}
+.tfield label{font-size:12px;color:#3f3f46}
+.tfield select,.tfield .numwrap{
+  display:flex;align-items:center;gap:8px;width:100%;
+  border:1px solid #e5e5e5;border-radius:.5rem;padding:8px 12px;
+  font-family:inherit;font-size:13px;color:#0b0f1a;background:#fff;
+}
+.tfield select{appearance:none;background-image:none;cursor:pointer}
+.selwrap{position:relative}
+.selwrap .chev{position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;color:#71717a}
+.tfield .numwrap .hash{color:#a1a1aa;font-size:13px;flex:none}
+.tfield .numwrap input{
+  flex:1;min-width:0;border:none;outline:none;background:none;
+  font-family:inherit;font-size:13px;color:#0b0f1a;padding:0;
+}
+.tfoot{display:flex;align-items:center;gap:14px;margin-top:2px}
+.tsave{
+  background:var(--brand);color:#fff;border:none;border-radius:.5rem;
+  padding:8px 20px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;
+}
+.tcancel{
+  background:none;border:none;font-family:inherit;font-size:13px;color:#3f3f46;
+  text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:0;
+}
+.tx{margin-left:auto;background:none;border:none;color:#a1a1aa;cursor:pointer;display:grid;place-items:center}
+.tx:hover{color:#0b0f1a}
 
 /* ============================================================
    SECTION 2 — เกริ่นนำ (About)
@@ -793,76 +910,53 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:var(
 <!-- ============================ HERO ============================ -->
 <section class="hero">
   <div class="hero-fallback"></div>
-  <video class="hero-video" id="heroVideo" muted autoplay playsinline preload="auto"
-         src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_074625_a81f018a-956b-43fb-9aee-4d1508e30e6a.mp4"></video>
+  <video class="hero-video" id="heroVideo" muted autoplay loop playsinline preload="auto"
+         disableremoteplayback webkit-playsinline="true" x5-playsinline="true"
+         poster="https://images.unsplash.com/photo-1557683316-973673baf926?w=1600&amp;q=60"
+         src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260424_064411_9e9d7f84-9277-41f4-ab10-59172d89e6be.mp4"></video>
   <div class="hero-veil"></div>
 
-  <nav class="nav">
-    <div class="nav-pill liquid-glass">
-      <div class="nav-l">
-        <div class="nav-brand">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/>
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-          </svg>
-          <span>Mood Diary</span>
+  <div class="hero-inner">
+    <nav class="nav">
+      <div class="nav-pill">
+        <div class="nav-brand"><svg class="mark" viewBox="0 0 32 32" fill="var(--brand)" aria-hidden="true"><circle cx="26.00" cy="16.00" r="3.5"/><circle cx="23.07" cy="23.07" r="3.5"/><circle cx="16.00" cy="26.00" r="3.5"/><circle cx="8.93" cy="23.07" r="3.5"/><circle cx="6.00" cy="16.00" r="3.5"/><circle cx="8.93" cy="8.93" r="3.5"/><circle cx="16.00" cy="6.00" r="3.5"/><circle cx="23.07" cy="8.93" r="3.5"/><circle cx="16" cy="16" r="3.5"/></svg><span>Mood Diary</span></div>
+        <div class="nav-links"><a href="#people" class=""><span class='dot'></span>อารมณ์ทุกคน</a><a href="#board" class="">ภาพรวม</a><a href="#write" class="">เขียนบันทึก</a><a href="#timeline-sec" class="">ไทม์ไลน์</a></div>
+        <div class="nav-r">
+          <span class="live" id="liveChip"><span class="pulse"></span><span id="liveTxt"></span></span>
+          <button class="nav-icon" id="navSettings" aria-label="ตั้งค่า" title="ตั้งค่า"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></button>
+          <button class="nav-cta" id="navWrite">
+            <span class="full">เขียนบันทึกวันนี้</span><span class="short">เขียนบันทึก</span>
+            <span class="ring"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+          </button>
+          <button class="nav-burger" id="navBurger" aria-label="เมนู" aria-expanded="false"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16"/><path d="M4 6h16"/><path d="M4 18h16"/></svg></button>
         </div>
-        <div class="nav-links">
-          <a href="#people">อารมณ์ทุกคน</a>
-          <a href="#board">ภาพรวม</a>
-          <a href="#write">เขียนบันทึก</a>
-          <a href="#timeline-sec">ไทม์ไลน์</a>
+        <div class="nav-menu" id="navMenu" hidden>
+          <a href="#people">อารมณ์ทุกคน</a><a href="#board">ภาพรวม</a><a href="#write">เขียนบันทึก</a><a href="#timeline-sec">ไทม์ไลน์</a>
+          <button type="button" id="menuSettings">ตั้งค่า</button>
         </div>
       </div>
-      <div class="nav-r">
-        <span class="live liquid-glass" id="liveChip"><span class="pulse"></span><span id="liveTxt"></span></span>
-        <button class="nav-ghost" id="navSettings">ตั้งค่า</button>
-        <button class="nav-cta liquid-glass lg-hover" id="navWrite">เขียนบันทึก</button>
+    </nav>
+
+    <div class="hero-main">
+      <span class="badge"><span class="dot"></span>ไดอารี่ความรู้สึก</span>
+      <h1 class="hero-h1">Know how you <em>feel</em>.</h1>
+      <p class="hero-sub">บันทึกเหตุการณ์ ความรู้สึก และคะแนนความสุขในแต่ละวัน แล้วปล่อยให้ตัวเลขเล่าให้ฟังว่าใจของคุณกำลังเดินไปทางไหน</p>
+
+      <div class="hero-quick">
+        <input type="text" id="quickIn" placeholder="วันนี้เกิดอะไรขึ้นบ้าง..." aria-label="บันทึกเหตุการณ์วันนี้">
+        <button type="button" class="mic" data-mic="quickIn" aria-label="พูดเพื่อบันทึก" title="กดแล้วพูด"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 17v5"/></svg></button>
+        <button class="hero-go" id="quickGo" aria-label="เขียนบันทึกนี้"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
       </div>
-    </div>
-  </nav>
 
-  <div class="hero-main">
-    <h1 class="hero-h1">Know how you <em>feel</em>.</h1>
-
-    <div class="hero-pill liquid-glass">
-      <input type="text" id="quickIn" placeholder="วันนี้เกิดอะไรขึ้นบ้าง..." aria-label="บันทึกเหตุการณ์วันนี้">
-      <button type="button" class="mic" data-mic="quickIn" aria-label="พูดเพื่อบันทึก" title="กดแล้วพูด">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 17v5"/>
-        </svg>
-      </button>
-      <button class="hero-go" id="quickGo" aria-label="เขียนบันทึกนี้">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
-        </svg>
+      <button class="hero-cta" id="heroScroll">
+        ดูภาพรวมความรู้สึก<span class="ring"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
       </button>
     </div>
 
-    <p class="hero-sub">บันทึกเหตุการณ์ ความรู้สึก และคะแนนความสุขในแต่ละวัน แล้วปล่อยให้ตัวเลขเล่าให้ฟังว่าใจของคุณกำลังเดินไปทางไหน</p>
-
-    <button class="hero-manifesto liquid-glass lg-hover" id="heroScroll">ดูภาพรวมความรู้สึก</button>
+    <div class="tray-wrap">
+      <div class="tray"><div class="tray-grid" id="trayGrid"></div></div>
+    </div>
   </div>
-
-  <div class="hero-social">
-    <button class="liquid-glass" id="socExport" aria-label="ส่งออกข้อมูล" title="ส่งออกข้อมูล">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/>
-      </svg>
-    </button>
-    <button class="liquid-glass" id="socImport" aria-label="นำเข้าข้อมูล" title="นำเข้าข้อมูล">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 9 5-5 5 5"/><path d="M12 4v12"/>
-      </svg>
-    </button>
-    <button class="liquid-glass" id="socTop" aria-label="ไปที่ไทม์ไลน์" title="ไปที่ไทม์ไลน์">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
-      </svg>
-    </button>
-  </div>
-
-  <div class="scroll-cue">scroll</div>
 </section>
 
 <!-- ============================ ABOUT ============================ -->
@@ -1820,6 +1914,12 @@ const SITE = {
   aiProxy: '',
 };
 
+/* ไอคอนสไตล์ lucide วาดเป็น SVG ในไฟล์ ไม่ต้องพึ่งไลบรารีภายนอก */
+const ICON_UP   = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg>';
+const ICON_DOWN = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 17h6v-6"/><path d="m22 17-8.5-8.5-5 5L2 7"/></svg>';
+const ICON_CHEV = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+const ICON_X    = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
+
 /* ============ ตั้งค่า (เก็บถาวรในเครื่อง) ============ */
 const CFG_KEY = 'moodDiary.cfg';
 let CFG = (()=>{ try{ return JSON.parse(localStorage.getItem(CFG_KEY)) || {}; }catch(e){ return {}; } })();
@@ -2286,6 +2386,166 @@ function wireReacts(box){
   });
 }
 
+/* ============================================================
+   เกจแบบขีด 40 ขีด กวาด 180 องศา — ใช้ร่วมกันทั้งถาดการ์ดและแดชบอร์ด
+   ============================================================ */
+function tickGauge(value, {color = 'var(--brand)', min, max, showLabels = false} = {}){
+  const v = Math.max(0, Math.min(100, Math.round(value)));
+  const N = 40, R = 80, CX = 100, CY = 100;
+  const active = Math.round(v / 100 * N);
+  let ticks = '';
+  for(let i = 0; i < N; i++){
+    const a = Math.PI + Math.PI * (i / (N - 1));
+    const x1 = CX + (R - 10) * Math.cos(a), y1 = CY + (R - 10) * Math.sin(a);
+    const x2 = CX + R * Math.cos(a),        y2 = CY + R * Math.sin(a);
+    ticks += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"
+      style="stroke:${i < active ? color : '#d4d4d8'}" stroke-width="2.5" stroke-linecap="round"/>`;
+  }
+  return `<svg class="gauge-svg" viewBox="0 0 200 120" role="img" aria-label="${v} เปอร์เซ็นต์">
+      ${ticks}
+      <text x="100" y="105" text-anchor="middle" font-size="22" font-weight="600" style="fill:var(--ink)">${v}%</text>
+    </svg>` +
+    (showLabels ? `<div class="gauge-ends"><span>${esc(min)}</span><span>${esc(max)}</span></div>` : '');
+}
+
+/* ============================================================
+   ถาดการ์ดพรีวิวใต้ฮีโร่ — ใช้ข้อมูลจริงทั้งหมด
+   ============================================================ */
+const TRAY_DEFAULTS = {who: 'ALL', period: 'month', targetScore: 7, targetCount: 20,
+                       c1: 'score', c3: 'today'};
+const tray = k => (CFG.tray && CFG.tray[k] !== undefined) ? CFG.tray[k] : TRAY_DEFAULTS[k];
+function setTray(patch){ CFG.tray = {...(CFG.tray || {}), ...patch}; saveCfg(); renderTray(); }
+
+function trayRows(){
+  const who = tray('who');
+  let r = data.filter(e => who === 'ALL' || e.name === who);
+  const now = new Date();
+  if(tray('period') === 'month'){
+    const key = now.toISOString().slice(0, 7);
+    r = r.filter(e => e.date.startsWith(key));
+  }else if(tray('period') === 'week'){
+    const from = new Date(now.getTime() - 6 * 864e5).toISOString().slice(0, 10);
+    r = r.filter(e => e.date >= from);
+  }
+  return r.sort((a, b) => a.date.localeCompare(b.date));
+}
+
+function renderTray(){
+  const box = $('#trayGrid'); if(!box) return;
+  const rows = trayRows();
+  const today = new Date().toISOString().slice(0, 10);
+  const yest  = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+  const avg   = rows.length ? rows.reduce((s, e) => s + e.score, 0) / rows.length : 0;
+  const half  = Math.ceil(rows.length / 2);
+  const prevAvg = rows.length > 1 ? rows.slice(0, half).reduce((s, e) => s + e.score, 0) / half : avg;
+  const dScore  = avg - prevAvg;
+
+  const scoreMode = tray('c1') === 'score';
+  const big1 = scoreMode ? avg.toFixed(1) : String(rows.length);
+  const pct1 = scoreMode
+    ? Math.min(100, avg / Math.max(1, tray('targetScore')) * 100)
+    : Math.min(100, rows.length / Math.max(1, tray('targetCount')) * 100);
+  const pill1 = scoreMode
+    ? (Math.abs(dScore) < .05
+        ? {cls: 'flat', ic: '', tx: 'ทรงตัว'}
+        : dScore > 0
+          ? {cls: 'up',   ic: ICON_UP,   tx: `+${dScore.toFixed(1)} (${Math.round(Math.abs(dScore) / Math.max(prevAvg, .1) * 100)}%)`}
+          : {cls: 'down', ic: ICON_DOWN, tx: `${dScore.toFixed(1)} (${Math.round(Math.abs(dScore) / Math.max(prevAvg, .1) * 100)}%)`})
+    : {cls: 'flat', ic: '', tx: `เป้า ${tray('targetCount')}`};
+
+  const todayN = data.filter(e => e.date === today).length;
+  const yestN  = data.filter(e => e.date === yest).length;
+  const dN = todayN - yestN;
+  const monthKey2 = today.slice(0, 7);
+  const daysLogged = new Set(data.filter(e => e.date.startsWith(monthKey2)).map(e => e.date)).size;
+  const dayOfMonth = new Date().getDate();
+  const todayMode = tray('c3') === 'today';
+  const big3 = todayMode ? String(todayN) : String(daysLogged);
+  const pct3 = todayMode ? Math.min(100, todayN * 100) : Math.min(100, daysLogged / dayOfMonth * 100);
+
+  const people = names();
+  box.innerHTML = `
+    <!-- การ์ด 1: คะแนนความสุข -->
+    <div class="tcard">
+      <div class="head"><span class="t">${scoreMode ? 'คะแนนความสุข' : 'จำนวนบันทึก'}</span>
+        <span class="w">${tray('period') === 'month' ? 'เดือนนี้' : tray('period') === 'week' ? '7 วันล่าสุด' : 'ทั้งหมด'}</span></div>
+      <div class="row"><span class="big">${big1}</span>
+        <span class="tpill ${pill1.cls}">${pill1.ic}${esc(pill1.tx)}</span></div>
+      <div class="cap">เทียบกับช่วงครึ่งแรกของช่วงเวลานี้</div>
+      <div class="mid">ความคืบหน้าต่อเป้าหมาย</div>
+      ${tickGauge(pct1, {color: 'var(--brand)', showLabels: true,
+        min: scoreMode ? avg.toFixed(1) : rows.length, max: scoreMode ? tray('targetScore') : tray('targetCount')})}
+      <div class="toggle">
+        <button type="button" class="${scoreMode ? 'on' : ''}" data-c1="score">คะแนน</button>
+        <button type="button" class="${scoreMode ? '' : 'on'}" data-c1="count">จำนวนบันทึก</button>
+      </div>
+    </div>
+
+    <!-- การ์ด 2: ตั้งค่ามุมมองและเป้าหมาย -->
+    <div class="tcard tform">
+      <div class="tfield">
+        <label for="tWho">แสดงข้อมูลของ</label>
+        <div class="selwrap">
+          <select id="tWho">
+            <option value="ALL" ${tray('who') === 'ALL' ? 'selected' : ''}>ทุกคน</option>
+            ${people.map(n => `<option value="${attr(n)}" ${tray('who') === n ? 'selected' : ''}>${esc(n)}</option>`).join('')}
+          </select><span class="chev">${ICON_CHEV}</span>
+        </div>
+      </div>
+      <div class="tfield">
+        <label for="tPeriod">เทียบช่วงเวลา</label>
+        <div class="selwrap">
+          <select id="tPeriod">
+            <option value="month" ${tray('period') === 'month' ? 'selected' : ''}>เดือนนี้</option>
+            <option value="week"  ${tray('period') === 'week'  ? 'selected' : ''}>7 วันล่าสุด</option>
+            <option value="all"   ${tray('period') === 'all'   ? 'selected' : ''}>ทั้งหมด</option>
+          </select><span class="chev">${ICON_CHEV}</span>
+        </div>
+      </div>
+      <div class="tfield">
+        <label for="tTScore">เป้าหมายคะแนน (เดือนนี้)</label>
+        <div class="numwrap"><span class="hash">#</span>
+          <input type="number" id="tTScore" min="1" max="10" step="1" value="${tray('targetScore')}"></div>
+      </div>
+      <div class="tfield">
+        <label for="tTCount">เป้าหมายจำนวนบันทึก (เดือนนี้)</label>
+        <div class="numwrap"><span class="hash">#</span>
+          <input type="number" id="tTCount" min="1" max="200" step="1" value="${tray('targetCount')}"></div>
+      </div>
+      <div class="tfoot">
+        <button type="button" class="tsave" id="tSave">บันทึก</button>
+        <button type="button" class="tcancel" id="tCancel">ยกเลิก</button>
+        <button type="button" class="tx" id="tReset" aria-label="คืนค่าเริ่มต้น" title="คืนค่าเริ่มต้น">${ICON_X}</button>
+      </div>
+    </div>
+
+    <!-- การ์ด 3: ความสม่ำเสมอ -->
+    <div class="tcard">
+      <div class="head"><span class="t">${todayMode ? 'บันทึกวันนี้' : 'วันที่บันทึกแล้ว'}</span>
+        <span class="w">${todayMode ? 'วันนี้' : 'เดือนนี้'}</span></div>
+      <div class="row"><span class="big">${big3}</span>
+        <span class="tpill ${dN > 0 ? 'up' : dN < 0 ? 'down' : 'flat'}">${dN > 0 ? ICON_UP : dN < 0 ? ICON_DOWN : ''}${dN > 0 ? '+' : ''}${dN}</span></div>
+      <div class="cap">เทียบกับเมื่อวาน</div>
+      ${tickGauge(pct3, {color: '#9ca3af'})}
+      <div class="toggle">
+        <button type="button" class="${todayMode ? 'on' : ''}" data-c3="today">วันนี้</button>
+        <button type="button" class="${todayMode ? '' : 'on'}" data-c3="month">เดือนนี้</button>
+      </div>
+    </div>`;
+
+  box.querySelectorAll('[data-c1]').forEach(b => b.onclick = () => setTray({c1: b.dataset.c1}));
+  box.querySelectorAll('[data-c3]').forEach(b => b.onclick = () => setTray({c3: b.dataset.c3}));
+  $('#tWho').onchange    = () => setTray({who: $('#tWho').value});
+  $('#tPeriod').onchange = () => setTray({period: $('#tPeriod').value});
+  $('#tSave').onclick = () => {
+    setTray({targetScore: Math.max(1, +$('#tTScore').value || 7),
+             targetCount: Math.max(1, +$('#tTCount').value || 20)});
+    toast('บันทึกเป้าหมายแล้ว');
+  };
+  $('#tCancel').onclick = renderTray;
+  $('#tReset').onclick = () => { CFG.tray = {}; saveCfg(); renderTray(); toast('คืนค่าเริ่มต้นแล้ว'); };
+}
+
 /* ============ บรรยากาศตามอารมณ์รวม ============ */
 function setAmbient(){
   if(!data.length) return;
@@ -2428,18 +2688,7 @@ function renderGauge(){
 
   box.innerHTML = `
   <div class="gauge-wrap">
-    <svg class="chart-svg" viewBox="0 0 ${W} ${H}" style="max-width:290px">
-      ${arc(0,1,R,10,'var(--track)')}
-      ${arc(0,.2,R,10,'var(--sc-1)')}
-      ${arc(.2,.4,R,10,'var(--sc-2)')}
-      ${arc(.4,.6,R,10,'var(--sc-3)')}
-      ${arc(.6,.8,R,10,'var(--sc-4)')}
-      ${arc(.8,1,R,10,'var(--sc-5)')}
-      <line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" style="stroke:${state.c}" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="${cx}" cy="${cy}" r="7" style="fill:var(--bg);stroke:${state.c}" stroke-width="3"/>
-      <text x="26" y="162" style="fill:var(--txt-40)" font-size="13">0</text>
-      <text x="252" y="162" style="fill:var(--txt-40)" font-size="13">10</text>
-    </svg>
+    ${tickGauge(v*10, {color: state.c, showLabels:true, min:'0', max:'10'})}
     <div class="gauge-val" style="color:${state.c}">${v.toFixed(1)}</div>
     <div class="gauge-state" style="color:${state.c}">${state.t}</div>
     <div class="gauge-note">${state.d}<br><span style="color:var(--txt-40)">คำนวณจาก ${recent.length} บันทึกล่าสุด</span></div>
@@ -2787,6 +3036,18 @@ function closeSheet(){
   document.body.style.overflow = '';
 }
 $('#navSettings').onclick = openSheet;
+bind('#menuSettings', ()=>{ closeMenu(); openSheet(); });
+/* เมนูมือถือ */
+const navMenu = $('#navMenu'), navBurger = $('#navBurger');
+function closeMenu(){ navMenu.hidden = true; navBurger.setAttribute('aria-expanded','false'); }
+navBurger.onclick = ()=>{
+  navMenu.hidden = !navMenu.hidden;
+  navBurger.setAttribute('aria-expanded', String(!navMenu.hidden));
+};
+navMenu.querySelectorAll('a').forEach(a=> a.onclick = closeMenu);
+document.addEventListener('click', ev=>{
+  if(!navMenu.hidden && !navMenu.contains(ev.target) && ev.target !== navBurger && !navBurger.contains(ev.target)) closeMenu();
+});
 $('#sheetClose').onclick = closeSheet;
 $('#sheet').addEventListener('click', ev=>{ if(ev.target === $('#sheet')) closeSheet(); });
 document.addEventListener('keydown', ev=>{ if(ev.key === 'Escape' && $('#sheet').classList.contains('on')) closeSheet(); });
@@ -2893,11 +3154,12 @@ $('#aiOff').onclick = ()=>{
 $('#cfgExport').onclick = ()=> doExport();
 $('#cfgImport').onclick = ()=> doImport();
 
-$('#socExport').onclick = doExport;
-$('#socImport').onclick = doImport;
+const bind = (sel, fn) => { const el = $(sel); if(el) el.onclick = fn; };
+bind('#socExport', doExport);
+bind('#socImport', doImport);
 $('#footExport').onclick = e=>{ e.preventDefault(); doExport(); };
 $('#footImport').onclick = e=>{ e.preventDefault(); doImport(); };
-$('#socTop').onclick = ()=> go('#timeline-sec');
+bind('#socTop', ()=> go('#timeline-sec'));
 $('#heroScroll').onclick = ()=> go('#board');
 $('#navWrite').onclick = ()=> go('#write');
 $('#bandWrite').onclick = ()=> go('#write');
@@ -2922,6 +3184,7 @@ function renderAll(){
   renderStats(); renderLine(); renderGauge();
   renderDonut(); renderLevels(); renderHeatmap();
   renderInsights(); renderTimeline();
+  renderTray();
   setAmbient();
   watchReveals();
 }
