@@ -13,7 +13,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%92%97%3C%2Ftext%3E%3C%2Fsvg%3E">
 <style>*{-webkit-text-size-adjust:100%}html{background:#e7e8ee}</style>
 <!-- รหัสรุ่นของไฟล์ ใช้ตรวจว่าเบราว์เซอร์ถือหน้าเก่าจากแคชอยู่หรือไม่ -->
-<script>window.__BUILD="1785908468075";</script>
+<script>window.__BUILD="1785908838571";</script>
 </head>
 <body>
 <title>ไดอารี่ความรู้สึก — Mood Diary</title>
@@ -174,7 +174,7 @@ em{font-style:italic}
 }
 .hero-video{
   position:absolute;inset:0;width:100%;height:100%;
-  object-fit:cover;pointer-events:none;opacity:0;z-index:0;
+  object-fit:cover;pointer-events:none;opacity:0;z-index:0;transition:opacity .6s ease;
 }
 /* พื้นหลังสำรองเมื่อวิดีโอโหลดไม่ได้ */
 .hero-fallback{
@@ -1325,6 +1325,8 @@ function showSaved(id){
 
 /* ============ helper ============ */
 const $ = s => document.querySelector(s);
+/* ผูกปุ่มแบบไม่ล้มถ้าไม่มีปุ่มนั้นอยู่ในหน้า */
+const bind = (sel, fn) => { const el = $(sel); if(el) el.onclick = fn; };
 const scoreColor = s => s>=8 ? 'var(--sc-5)' : s>=6 ? 'var(--sc-4)' : s>=4 ? 'var(--sc-3)' : s>=2 ? 'var(--sc-2)' : 'var(--sc-1)';
 const fmtDate = iso => { const [y,m,d] = iso.split('-').map(Number); return `${d} ${TH_MON[m-1]} ${y+543}`; };
 const rows = () => data.filter(e => filter==='ALL' || e.name===filter)
@@ -1339,58 +1341,18 @@ function toast(msg){
   clearTimeout(t._t); t._t = setTimeout(()=>t.classList.remove('on'), 2200);
 }
 
-/* ============ HERO VIDEO — ครอสเฟดวนลูป ============ */
+/* ============ วิดีโอพื้นหลัง ============ */
+/* เล่นวนด้วยความสามารถของเบราว์เซอร์ล้วน ไม่มีอนิเมชันเพิ่ม ตามดีไซน์ */
 (function heroVideo(){
   const v = $('#heroVideo');
   if(!v) return;
-  let raf = null;
-  const fade = (from, to, ms, done) => {
-    cancelAnimationFrame(raf);
-    const t0 = performance.now();
-    const step = now => {
-      const p = Math.min(1, (now - t0) / ms);
-      v.style.opacity = String(from + (to - from) * p);
-      if(p < 1) raf = requestAnimationFrame(step); else if(done) done();
-    };
-    raf = requestAnimationFrame(step);
-  };
-  let fadingOut = false;
-  v.addEventListener('canplay', ()=>{
-    v.play().catch(()=>{});
-    fade(0, 1, 500);
-  }, {once:true});
-  v.addEventListener('timeupdate', ()=>{
-    if(!v.duration || fadingOut) return;
-    if(v.duration - v.currentTime <= 0.55){
-      fadingOut = true;
-      fade(parseFloat(v.style.opacity || 1), 0, 500);
-    }
-  });
-  v.addEventListener('ended', ()=>{
-    v.style.opacity = '0';
-    setTimeout(()=>{
-      v.currentTime = 0;
-      v.play().catch(()=>{});
-      fadingOut = false;
-      fade(0, 1, 500);
-    }, 100);
-  });
+  const show = ()=>{ v.style.opacity = '1'; };
+  v.addEventListener('loadeddata', show);
+  v.addEventListener('canplay', ()=>{ show(); v.play().catch(()=>{}); });
+  if(v.readyState >= 2) show();
+  /* บางเบราว์เซอร์บล็อกการเล่นอัตโนมัติจนกว่าผู้ใช้จะแตะหน้าจอ */
+  document.addEventListener('click', ()=>{ if(v.paused) v.play().catch(()=>{}); }, {once:true});
   v.addEventListener('error', ()=>{ v.style.display = 'none'; });
-})();
-
-/* ============ LAZY VIDEO — โหลดตอนเลื่อนมาถึง ============ */
-(function lazyVideo(){
-  const v = $('#bandVideo');
-  if(!v) return;
-  const lazy = new IntersectionObserver(en=>{
-    if(en[0].isIntersecting){
-      v.src = v.dataset.src;
-      v.load();
-      v.play().catch(()=>{});
-      lazy.disconnect();
-    }
-  }, {rootMargin:'300px 0px'});
-  lazy.observe(v);
 })();
 
 /* ============ SCROLL REVEAL ============ */
@@ -3154,7 +3116,6 @@ $('#aiOff').onclick = ()=>{
 $('#cfgExport').onclick = ()=> doExport();
 $('#cfgImport').onclick = ()=> doImport();
 
-const bind = (sel, fn) => { const el = $(sel); if(el) el.onclick = fn; };
 bind('#socExport', doExport);
 bind('#socImport', doImport);
 $('#footExport').onclick = e=>{ e.preventDefault(); doExport(); };
@@ -3176,17 +3137,27 @@ $('#quickGo').onclick = quickSubmit;
 $('#quickIn').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); quickSubmit(); } });
 
 /* ============ RENDER ALL ============ */
+/* เรียกทีละส่วนแบบกันล้ม ส่วนไหนพังก็ไม่ลากส่วนอื่นลงไปด้วย */
+function safe(name, fn){
+  try{ fn(); }
+  catch(e){ console.error('[mood-diary] ' + name + ' ล้มเหลว:', e); }
+}
 function renderAll(){
-  renderPeople();
-  renderAnalysis();
-  renderTabs();
-  $('#nameList').innerHTML = names().map(n=>`<option value="${attr(n)}">`).join('');
-  renderStats(); renderLine(); renderGauge();
-  renderDonut(); renderLevels(); renderHeatmap();
-  renderInsights(); renderTimeline();
-  renderTray();
-  setAmbient();
-  watchReveals();
+  safe('people',   renderPeople);
+  safe('analysis', renderAnalysis);
+  safe('tabs',     renderTabs);
+  safe('nameList', ()=>{ $('#nameList').innerHTML = names().map(n=>`<option value="${attr(n)}">`).join(''); });
+  safe('stats',    renderStats);
+  safe('line',     renderLine);
+  safe('gauge',    renderGauge);
+  safe('donut',    renderDonut);
+  safe('levels',   renderLevels);
+  safe('heatmap',  renderHeatmap);
+  safe('insights', renderInsights);
+  safe('timeline', renderTimeline);
+  safe('tray',     renderTray);
+  safe('ambient',  setAmbient);
+  safe('reveals',  watchReveals);
 }
 initForm();
 renderAll();
