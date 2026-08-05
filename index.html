@@ -13,7 +13,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%92%97%3C%2Ftext%3E%3C%2Fsvg%3E">
 <style>*{-webkit-text-size-adjust:100%}html{background:#ededed}</style>
 <!-- รหัสรุ่นของไฟล์ ใช้ตรวจว่าเบราว์เซอร์ถือหน้าเก่าจากแคชอยู่หรือไม่ -->
-<script>window.__BUILD="1785910364606";</script>
+<script>window.__BUILD="1785910749545";</script>
 </head>
 <body>
 <title>ไดอารี่ความรู้สึก — Mood Diary</title>
@@ -170,7 +170,8 @@ em{font-style:italic}
 .bgfx{position:fixed;inset:0;z-index:-2;overflow:hidden}
 .hero-video{
   position:absolute;inset:0;width:100%;height:100%;
-  object-fit:cover;pointer-events:none;opacity:0;transition:opacity .6s ease;
+  object-fit:cover;pointer-events:none;opacity:1;transition:opacity .6s ease;
+  background:url('butterflies.jpg') center/cover no-repeat;
 }
 /* พื้นหลังสำรองเมื่อวิดีโอโหลดไม่ได้ */
 .hero-fallback{
@@ -909,8 +910,8 @@ input[type=range]{padding:0;background:transparent;border:none;accent-color:var(
   <div class="hero-fallback"></div>
   <video class="hero-video" id="heroVideo" muted autoplay loop playsinline preload="auto"
          disableremoteplayback webkit-playsinline="true" x5-playsinline="true"
-         poster="https://images.unsplash.com/photo-1557683316-973673baf926?w=1600&amp;q=60"
-         src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260424_064411_9e9d7f84-9277-41f4-ab10-59172d89e6be.mp4"></video>
+         poster="butterflies.jpg"
+         src="butterflies.mp4"></video>
   <div class="hero-veil"></div>
 </div>
 
